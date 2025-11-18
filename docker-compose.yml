@@ -1,0 +1,73 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: pw2-mongodb
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin123
+      MONGO_INITDB_DATABASE: pw2_db
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - pw2-network
+
+  # Backend API (Node.js + Express + TypeScript)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    container_name: pw2-backend
+    restart: unless-stopped
+    environment:
+      NODE_ENV: development
+      PORT: 4000
+      MONGO_URI: mongodb://admin:admin123@mongodb:27017/pw2_db?authSource=admin
+      CORS_ORIGIN: http://localhost:3000
+    ports:
+      - '4000:4000'
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/package.json:/app/package.json
+      - ./backend/tsconfig.json:/app/tsconfig.json
+      - /app/node_modules
+    depends_on:
+      - mongodb
+    networks:
+      - pw2-network
+    command: npm run dev
+
+  # Frontend (React) - Preparado para cuando lo implementes
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: pw2-frontend
+  #   restart: unless-stopped
+  #   environment:
+  #     - REACT_APP_API_URL=http://localhost:4000
+  #   ports:
+  #     - '3000:3000'
+  #   volumes:
+  #     - ./frontend/src:/app/src
+  #     - ./frontend/public:/app/public
+  #     - /app/node_modules
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - pw2-network
+  #   command: npm start
+
+networks:
+  pw2-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  mongodb_config:
