@@ -7,11 +7,10 @@
     "dev": "nodemon",
     "build": "tsc",
     "start": "node dist/index.js",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\"",
     "format:check": "prettier --check \"src/**/*.ts\"",
-    "prepare": "husky",
     "commit": "cz",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -31,8 +30,6 @@
     "mongoose": "^8.20.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^19.0.3",
-    "@commitlint/config-conventional": "^19.0.3",
     "@eslint/js": "^9.39.1",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.5",
@@ -46,8 +43,6 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "globals": "^15.13.0",
-    "husky": "^9.0.11",
-    "lint-staged": "^15.2.2",
     "nodemon": "^3.1.11",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
@@ -59,11 +54,5 @@
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
-  },
-  "lint-staged": {
-    "*.ts": [
-      "eslint --fix",
-      "prettier --write"
-    ]
   }
 }
