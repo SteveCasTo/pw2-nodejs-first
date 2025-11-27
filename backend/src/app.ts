@@ -2,6 +2,7 @@ import express, { Application } from 'express';
 import cors from 'cors';
 import { errorHandler, notFound } from '@middlewares/errorHandler';
 import categoriaRoutes from '@routes/categoria.routes';
+import subcategoriaRoutes from '@routes/subcategoria.routes';
 import config from '@config/constants';
 
 const app: Application = express();
@@ -25,6 +26,7 @@ app.get('/health', (_req, res) => {
 });
 
 app.use('/api/categorias', categoriaRoutes);
+app.use('/api/subcategorias', subcategoriaRoutes);
 
 app.use(notFound);
 
