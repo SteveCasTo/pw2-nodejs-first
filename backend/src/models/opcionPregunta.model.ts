@@ -37,4 +37,8 @@ const opcionPreguntaSchema = new Schema<IOpcionPregunta>(
 
 opcionPreguntaSchema.index({ id_pregunta: 1 });
 
-export const OpcionPregunta = model<IOpcionPregunta>('OpcionPregunta', opcionPreguntaSchema, 'opciones_pregunta');
+export const OpcionPregunta = model<IOpcionPregunta>(
+  'OpcionPregunta',
+  opcionPreguntaSchema,
+  'opciones_pregunta'
+);

@@ -39,7 +39,6 @@ const cicloSchema = new Schema<ICiclo>(
   }
 );
 
-cicloSchema.index({ nombre_ciclo: 1 }, { unique: true });
 cicloSchema.index({ activo: 1 });
 
 export const Ciclo = model<ICiclo>('Ciclo', cicloSchema, 'ciclos');

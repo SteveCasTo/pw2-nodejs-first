@@ -1,20 +1,24 @@
 import { RangoEdad } from '@models/rangoEdad.model';
 import { IRangoEdad } from '../types/models.types';
 
-export class RangoEdadService {
-  async getAll(filtros?: { activo?: boolean }): Promise<IRangoEdad[]> {
+interface FiltrosRango {
+  activo?: boolean;
+}
+
+export const rangoEdadService = {
+  async getAll(filtros?: FiltrosRango): Promise<IRangoEdad[]> {
     const query: Record<string, unknown> = {};
-    
+
     if (filtros?.activo !== undefined) {
       query.activo = filtros.activo;
     }
 
     return await RangoEdad.find(query).sort({ edad_minima: 1 });
-  }
+  },
 
   async getById(id: string): Promise<IRangoEdad | null> {
     return await RangoEdad.findById(id);
-  }
+  },
 
   async create(data: {
     nombre_rango: string;
@@ -22,9 +26,13 @@ export class RangoEdadService {
     edad_maxima: number;
     activo?: boolean;
   }): Promise<IRangoEdad> {
-    const existente = await RangoEdad.findOne({ nombre_rango: data.nombre_rango });
+    const existente = await RangoEdad.findOne({
+      nombre_rango: data.nombre_rango,
+    });
     if (existente) {
-      throw new Error(`Ya existe un rango con el nombre "${data.nombre_rango}"`);
+      throw new Error(
+        `Ya existe un rango con el nombre "${data.nombre_rango}"`
+      );
     }
 
     if (data.edad_maxima <= data.edad_minima) {
@@ -33,7 +41,7 @@ export class RangoEdadService {
 
     const rangoEdad = new RangoEdad(data);
     return await rangoEdad.save();
-  }
+  },
 
   async update(
     id: string,
@@ -50,7 +58,9 @@ export class RangoEdadService {
         _id: { $ne: id },
       });
       if (existente) {
-        throw new Error(`Ya existe otro rango con el nombre "${data.nombre_rango}"`);
+        throw new Error(
+          `Ya existe otro rango con el nombre "${data.nombre_rango}"`
+        );
       }
     }
 
@@ -70,7 +80,7 @@ export class RangoEdadService {
       new: true,
       runValidators: true,
     });
-  }
+  },
 
   async delete(id: string): Promise<IRangoEdad | null> {
     return await RangoEdad.findByIdAndUpdate(
@@ -78,11 +88,9 @@ export class RangoEdadService {
       { activo: false },
       { new: true }
     );
-  }
+  },
 
   async hardDelete(id: string): Promise<IRangoEdad | null> {
     return await RangoEdad.findByIdAndDelete(id);
-  }
-}
-
-export const rangoEdadService = new RangoEdadService();
+  },
+};

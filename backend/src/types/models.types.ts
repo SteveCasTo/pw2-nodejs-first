@@ -27,7 +27,6 @@ export interface IUsuarioPrivilegio extends Document {
 // ==================== CATEGORÍAS ====================
 export interface ICategoria extends Document {
   nombre_categoria: string;
-  descripcion?: string;
   fecha_creacion: Date;
   activo: boolean;
 }
@@ -57,7 +56,12 @@ export interface INivelDificultad extends Document {
 
 // ==================== ESTADOS DE PREGUNTA ====================
 export interface IEstadoPregunta extends Document {
-  nombre_estado: 'borrador' | 'revision' | 'publicada' | 'rechazada' | 'archivada';
+  nombre_estado:
+    | 'borrador'
+    | 'revision'
+    | 'publicada'
+    | 'rechazada'
+    | 'archivada';
   descripcion?: string;
   orden: number;
 }
@@ -79,7 +83,12 @@ export interface IPregunta extends Document {
   id_rango_edad: Types.ObjectId;
   id_dificultad: Types.ObjectId;
   id_estado: Types.ObjectId;
-  tipo_pregunta: 'seleccion_multiple' | 'verdadero_falso' | 'desarrollo' | 'respuesta_corta' | 'emparejamiento';
+  tipo_pregunta:
+    | 'seleccion_multiple'
+    | 'verdadero_falso'
+    | 'desarrollo'
+    | 'respuesta_corta'
+    | 'emparejamiento';
   titulo_pregunta: string;
   id_contenido_pregunta?: Types.ObjectId;
   puntos_recomendados: number;

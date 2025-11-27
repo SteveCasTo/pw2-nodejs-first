@@ -26,7 +26,7 @@ export default [
         },
       ],
       'no-console': ['warn', { allow: ['warn', 'error'] }],
-      'prettier/prettier': 'error',
+      'prettier/prettier': 'off',
     },
   },
   {

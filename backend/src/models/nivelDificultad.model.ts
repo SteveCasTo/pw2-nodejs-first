@@ -6,11 +6,9 @@ const nivelDificultadSchema = new Schema<INivelDificultad>(
     nivel: {
       type: String,
       required: [true, 'El nivel es requerido'],
-      enum: {
-        values: ['facil', 'medio', 'dificil'],
-        message: '{VALUE} no es un nivel válido',
-      },
       unique: true,
+      trim: true,
+      maxlength: [50, 'El nivel no puede exceder 50 caracteres'],
     },
     descripcion: {
       type: String,
@@ -26,8 +24,6 @@ const nivelDificultadSchema = new Schema<INivelDificultad>(
     versionKey: false,
   }
 );
-
-nivelDificultadSchema.index({ nivel: 1 }, { unique: true });
 
 export const NivelDificultad = model<INivelDificultad>(
   'NivelDificultad',

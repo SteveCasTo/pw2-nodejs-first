@@ -1,21 +1,22 @@
 import { Request, Response, NextFunction } from 'express';
-import { rangoEdadService } from '@services/rangoEdad.service';
+import { nivelDificultadService } from '@services/nivelDificultad.service';
 
-export const rangoEdadController = {
+export const nivelDificultadController = {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const { activo } = req.query;
+      const { nivel, activo } = req.query;
 
       const filtros = {
+        ...(nivel && { nivel: nivel as string }),
         activo: activo === 'false' ? false : true,
       };
 
-      const rangos = await rangoEdadService.getAll(filtros);
+      const niveles = await nivelDificultadService.getAll(filtros);
 
       res.status(200).json({
         success: true,
-        data: rangos,
-        count: rangos.length,
+        data: niveles,
+        count: niveles.length,
       });
     } catch (error) {
       next(error);
@@ -34,11 +35,11 @@ export const rangoEdadController = {
         return;
       }
 
-      const rango = await rangoEdadService.getById(id);
+      const nivel = await nivelDificultadService.getById(id);
 
       res.status(200).json({
         success: true,
-        data: rango,
+        data: nivel,
       });
     } catch (error) {
       next(error);
@@ -47,12 +48,12 @@ export const rangoEdadController = {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const rango = await rangoEdadService.create(req.body);
+      const nivel = await nivelDificultadService.create(req.body);
 
       res.status(201).json({
         success: true,
-        message: 'Rango de edad creado exitosamente',
-        data: rango,
+        message: 'Nivel de dificultad creado exitosamente',
+        data: nivel,
       });
     } catch (error) {
       next(error);
@@ -71,12 +72,12 @@ export const rangoEdadController = {
         return;
       }
 
-      const rango = await rangoEdadService.update(id, req.body);
+      const nivel = await nivelDificultadService.update(id, req.body);
 
       res.status(200).json({
         success: true,
-        message: 'Rango de edad actualizado exitosamente',
-        data: rango,
+        message: 'Nivel de dificultad actualizado exitosamente',
+        data: nivel,
       });
     } catch (error) {
       next(error);
@@ -95,12 +96,12 @@ export const rangoEdadController = {
         return;
       }
 
-      const rango = await rangoEdadService.delete(id);
+      const nivel = await nivelDificultadService.delete(id);
 
       res.status(200).json({
         success: true,
-        message: 'Rango de edad desactivado exitosamente',
-        data: rango,
+        message: 'Nivel de dificultad desactivado exitosamente',
+        data: nivel,
       });
     } catch (error) {
       next(error);
@@ -119,12 +120,12 @@ export const rangoEdadController = {
         return;
       }
 
-      const rango = await rangoEdadService.hardDelete(id);
+      const nivel = await nivelDificultadService.hardDelete(id);
 
       res.status(200).json({
         success: true,
-        message: 'Rango de edad eliminado permanentemente',
-        data: rango,
+        message: 'Nivel de dificultad eliminado permanentemente',
+        data: nivel,
       });
     } catch (error) {
       next(error);

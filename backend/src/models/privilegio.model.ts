@@ -29,6 +29,8 @@ const privilegioSchema = new Schema<IPrivilegio>(
   }
 );
 
-privilegioSchema.index({ nombre_privilegio: 1 }, { unique: true });
-
-export const Privilegio = model<IPrivilegio>('Privilegio', privilegioSchema, 'privilegios');
+export const Privilegio = model<IPrivilegio>(
+  'Privilegio',
+  privilegioSchema,
+  'privilegios'
+);

@@ -57,4 +57,8 @@ intentoExamenSchema.index({ id_examen: 1 });
 intentoExamenSchema.index({ id_usuario: 1 });
 intentoExamenSchema.index({ id_examen: 1, id_usuario: 1 });
 
-export const IntentoExamen = model<IIntentoExamen>('IntentoExamen', intentoExamenSchema, 'intentos_examen');
+export const IntentoExamen = model<IIntentoExamen>(
+  'IntentoExamen',
+  intentoExamenSchema,
+  'intentos_examen'
+);

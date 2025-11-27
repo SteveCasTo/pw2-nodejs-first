@@ -10,10 +10,6 @@ const categoriaSchema = new Schema<ICategoria>(
       maxlength: [100, 'El nombre no puede exceder 100 caracteres'],
       trim: true,
     },
-    descripcion: {
-      type: String,
-      maxlength: [255, 'La descripción no puede exceder 255 caracteres'],
-    },
     fecha_creacion: {
       type: Date,
       default: Date.now,
@@ -29,6 +25,8 @@ const categoriaSchema = new Schema<ICategoria>(
   }
 );
 
-categoriaSchema.index({ nombre_categoria: 1 }, { unique: true });
-
-export const Categoria = model<ICategoria>('Categoria', categoriaSchema, 'categorias');
+export const Categoria = model<ICategoria>(
+  'Categoria',
+  categoriaSchema,
+  'categorias'
+);

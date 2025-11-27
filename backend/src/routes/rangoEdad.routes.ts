@@ -1,12 +1,40 @@
 import { Router } from 'express';
 import { rangoEdadController } from '@controllers/rangoEdad.controller';
+import { rangoEdadValidators } from '@middlewares/validators/rangoEdad.validator';
+import { validate } from '@middlewares/validate';
 
 const router = Router();
 
-router.get('/', (req, res, next) => rangoEdadController.getAll(req, res, next));
-router.get('/:id', (req, res, next) => rangoEdadController.getById(req, res, next));
-router.post('/', (req, res, next) => rangoEdadController.create(req, res, next));
-router.put('/:id', (req, res, next) => rangoEdadController.update(req, res, next));
-router.delete('/:id', (req, res, next) => rangoEdadController.delete(req, res, next));
+router.get('/', rangoEdadController.getAll);
+router.get(
+  '/:id',
+  rangoEdadValidators.getById,
+  validate,
+  rangoEdadController.getById
+);
+router.post(
+  '/',
+  rangoEdadValidators.create,
+  validate,
+  rangoEdadController.create
+);
+router.put(
+  '/:id',
+  rangoEdadValidators.update,
+  validate,
+  rangoEdadController.update
+);
+router.patch(
+  '/:id/desactivar',
+  rangoEdadValidators.delete,
+  validate,
+  rangoEdadController.desactivar
+);
+router.delete(
+  '/:id',
+  rangoEdadValidators.delete,
+  validate,
+  rangoEdadController.delete
+);
 
 export default router;

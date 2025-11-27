@@ -1,21 +1,23 @@
 import { Request, Response, NextFunction } from 'express';
-import { rangoEdadService } from '@services/rangoEdad.service';
+import { subcategoriaService } from '@services/subcategoria.service';
 
-export const rangoEdadController = {
+export const subcategoriaController = {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
-      const { activo } = req.query;
+      const { activo, id_categoria } = req.query;
 
       const filtros = {
         activo: activo === 'false' ? false : true,
+        ...(id_categoria &&
+          typeof id_categoria === 'string' && { id_categoria }),
       };
 
-      const rangos = await rangoEdadService.getAll(filtros);
+      const subcategorias = await subcategoriaService.getAll(filtros);
 
       res.status(200).json({
         success: true,
-        data: rangos,
-        count: rangos.length,
+        data: subcategorias,
+        count: subcategorias.length,
       });
     } catch (error) {
       next(error);
@@ -34,11 +36,36 @@ export const rangoEdadController = {
         return;
       }
 
-      const rango = await rangoEdadService.getById(id);
+      const subcategoria = await subcategoriaService.getById(id);
 
       res.status(200).json({
         success: true,
-        data: rango,
+        data: subcategoria,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async getByCategoria(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id_categoria } = req.params;
+
+      if (!id_categoria) {
+        res.status(400).json({
+          success: false,
+          message: 'El ID de categoría es requerido',
+        });
+        return;
+      }
+
+      const subcategorias =
+        await subcategoriaService.getByCategoria(id_categoria);
+
+      res.status(200).json({
+        success: true,
+        data: subcategorias,
+        count: subcategorias.length,
       });
     } catch (error) {
       next(error);
@@ -47,12 +74,12 @@ export const rangoEdadController = {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const rango = await rangoEdadService.create(req.body);
+      const nuevaSubcategoria = await subcategoriaService.create(req.body);
 
       res.status(201).json({
         success: true,
-        message: 'Rango de edad creado exitosamente',
-        data: rango,
+        message: 'Subcategoría creada exitosamente',
+        data: nuevaSubcategoria,
       });
     } catch (error) {
       next(error);
@@ -71,12 +98,15 @@ export const rangoEdadController = {
         return;
       }
 
-      const rango = await rangoEdadService.update(id, req.body);
+      const subcategoriaActualizada = await subcategoriaService.update(
+        id,
+        req.body
+      );
 
       res.status(200).json({
         success: true,
-        message: 'Rango de edad actualizado exitosamente',
-        data: rango,
+        message: 'Subcategoría actualizada exitosamente',
+        data: subcategoriaActualizada,
       });
     } catch (error) {
       next(error);
@@ -95,12 +125,12 @@ export const rangoEdadController = {
         return;
       }
 
-      const rango = await rangoEdadService.delete(id);
+      const subcategoriaEliminada = await subcategoriaService.delete(id);
 
       res.status(200).json({
         success: true,
-        message: 'Rango de edad desactivado exitosamente',
-        data: rango,
+        message: 'Subcategoría desactivada exitosamente',
+        data: subcategoriaEliminada,
       });
     } catch (error) {
       next(error);
@@ -119,12 +149,12 @@ export const rangoEdadController = {
         return;
       }
 
-      const rango = await rangoEdadService.hardDelete(id);
+      const subcategoriaEliminada = await subcategoriaService.hardDelete(id);
 
       res.status(200).json({
         success: true,
-        message: 'Rango de edad eliminado permanentemente',
-        data: rango,
+        message: 'Subcategoría eliminada permanentemente',
+        data: subcategoriaEliminada,
       });
     } catch (error) {
       next(error);

@@ -28,7 +28,10 @@ const usuarioPrivilegioSchema = new Schema<IUsuarioPrivilegio>(
   }
 );
 
-usuarioPrivilegioSchema.index({ id_usuario: 1, id_privilegio: 1 }, { unique: true });
+usuarioPrivilegioSchema.index(
+  { id_usuario: 1, id_privilegio: 1 },
+  { unique: true }
+);
 
 export const UsuarioPrivilegio = model<IUsuarioPrivilegio>(
   'UsuarioPrivilegio',

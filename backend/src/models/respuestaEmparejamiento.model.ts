@@ -32,7 +32,10 @@ const respuestaEmparejamientoSchema = new Schema<IRespuestaEmparejamiento>(
   }
 );
 
-respuestaEmparejamientoSchema.index({ id_intento: 1, id_examen_pregunta: 1, id_par: 1 }, { unique: true });
+respuestaEmparejamientoSchema.index(
+  { id_intento: 1, id_examen_pregunta: 1, id_par: 1 },
+  { unique: true }
+);
 
 export const RespuestaEmparejamiento = model<IRespuestaEmparejamiento>(
   'RespuestaEmparejamiento',

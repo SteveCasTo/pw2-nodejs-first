@@ -1,10 +1,16 @@
 import express, { Application } from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
 import { errorHandler, notFound } from '@middlewares/errorHandler';
 import rangoEdadRoutes from '@routes/rangoEdad.routes';
+import categoriaRoutes from '@routes/categoria.routes';
+import subcategoriaRoutes from '@routes/subcategoria.routes';
+import nivelDificultadRoutes from '@routes/nivelDificultad.routes';
 import config from '@config/constants';
 
 const app: Application = express();
+
+app.use(helmet());
 
 app.use(
   cors({
@@ -13,8 +19,8 @@ app.use(
   })
 );
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 app.get('/health', (_req, res) => {
   res.status(200).json({
@@ -23,8 +29,10 @@ app.get('/health', (_req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
-
 app.use('/api/rangos-edad', rangoEdadRoutes);
+app.use('/api/categorias', categoriaRoutes);
+app.use('/api/subcategorias', subcategoriaRoutes);
+app.use('/api/niveles-dificultad', nivelDificultadRoutes);
 
 app.use(notFound);
 

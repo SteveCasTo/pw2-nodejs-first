@@ -45,4 +45,8 @@ const examenPreguntaSchema = new Schema<IExamenPregunta>(
 
 examenPreguntaSchema.index({ id_examen: 1, id_pregunta: 1 }, { unique: true });
 
-export const ExamenPregunta = model<IExamenPregunta>('ExamenPregunta', examenPreguntaSchema, 'examenes_preguntas');
+export const ExamenPregunta = model<IExamenPregunta>(
+  'ExamenPregunta',
+  examenPreguntaSchema,
+  'examenes_preguntas'
+);
