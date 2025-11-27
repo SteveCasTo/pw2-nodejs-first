@@ -36,7 +36,10 @@ const revisionPreguntaSchema = new Schema<IRevisionPregunta>(
   }
 );
 
-revisionPreguntaSchema.index({ id_pregunta: 1, id_revisor: 1 }, { unique: true });
+revisionPreguntaSchema.index(
+  { id_pregunta: 1, id_revisor: 1 },
+  { unique: true }
+);
 
 export const RevisionPregunta = model<IRevisionPregunta>(
   'RevisionPregunta',

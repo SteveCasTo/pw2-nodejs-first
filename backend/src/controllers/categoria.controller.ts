@@ -1,29 +1,34 @@
 import { Request, Response, NextFunction } from 'express';
-import { rangoEdadService } from '@services/rangoEdad.service';
+import { categoriaService } from '@services/categoria.service';
 
-export class RangoEdadController {
+export class CategoriaController {
   async getAll(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { activo } = req.query;
-      
-      const filtros = activo !== undefined ? { activo: activo === 'true' } : undefined;
-      
-      const rangos = await rangoEdadService.getAll(filtros);
-      
+
+      const filtros =
+        activo !== undefined ? { activo: activo === 'true' } : undefined;
+
+      const categorias = await categoriaService.getAll(filtros);
+
       res.status(200).json({
         success: true,
-        data: rangos,
-        count: rangos.length,
+        data: categorias,
+        count: categorias.length,
       });
     } catch (error) {
       next(error);
     }
   }
 
-  async getById(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getById(
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> {
     try {
       const { id } = req.params;
-      
+
       if (!id) {
         res.status(400).json({
           success: false,
@@ -31,20 +36,20 @@ export class RangoEdadController {
         });
         return;
       }
-      
-      const rango = await rangoEdadService.getById(id);
-      
-      if (!rango) {
+
+      const categoria = await categoriaService.getById(id);
+
+      if (!categoria) {
         res.status(404).json({
           success: false,
-          message: 'Rango de edad no encontrado',
+          message: 'Categoría no encontrada',
         });
         return;
       }
 
       res.status(200).json({
         success: true,
-        data: rango,
+        data: categoria,
       });
     } catch (error) {
       next(error);
@@ -53,27 +58,25 @@ export class RangoEdadController {
 
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const { nombre_rango, edad_minima, edad_maxima, activo } = req.body;
+      const { nombre_categoria, activo } = req.body;
 
-      if (!nombre_rango || edad_minima === undefined || edad_maxima === undefined) {
+      if (!nombre_categoria) {
         res.status(400).json({
           success: false,
-          message: 'Los campos nombre_rango, edad_minima y edad_maxima son requeridos',
+          message: 'El campo nombre_categoria es requerido',
         });
         return;
       }
 
-      const nuevoRango = await rangoEdadService.create({
-        nombre_rango,
-        edad_minima,
-        edad_maxima,
+      const nuevaCategoria = await categoriaService.create({
+        nombre_categoria,
         activo,
       });
 
       res.status(201).json({
         success: true,
-        message: 'Rango de edad creado exitosamente',
-        data: nuevoRango,
+        message: 'Categoría creada exitosamente',
+        data: nuevaCategoria,
       });
     } catch (error) {
       next(error);
@@ -83,7 +86,7 @@ export class RangoEdadController {
   async update(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
       const { id } = req.params;
-      const { nombre_rango, edad_minima, edad_maxima, activo } = req.body;
+      const { nombre_categoria, activo } = req.body;
 
       if (!id) {
         res.status(400).json({
@@ -93,25 +96,23 @@ export class RangoEdadController {
         return;
       }
 
-      const rangoActualizado = await rangoEdadService.update(id, {
-        nombre_rango,
-        edad_minima,
-        edad_maxima,
+      const categoriaActualizada = await categoriaService.update(id, {
+        nombre_categoria,
         activo,
       });
 
-      if (!rangoActualizado) {
+      if (!categoriaActualizada) {
         res.status(404).json({
           success: false,
-          message: 'Rango de edad no encontrado',
+          message: 'Categoría no encontrada',
         });
         return;
       }
 
       res.status(200).json({
         success: true,
-        message: 'Rango de edad actualizado exitosamente',
-        data: rangoActualizado,
+        message: 'Categoría actualizada exitosamente',
+        data: categoriaActualizada,
       });
     } catch (error) {
       next(error);
@@ -130,20 +131,20 @@ export class RangoEdadController {
         return;
       }
 
-      const rangoEliminado = await rangoEdadService.delete(id);
+      const categoriaEliminada = await categoriaService.delete(id);
 
-      if (!rangoEliminado) {
+      if (!categoriaEliminada) {
         res.status(404).json({
           success: false,
-          message: 'Rango de edad no encontrado',
+          message: 'Categoría no encontrada',
         });
         return;
       }
 
       res.status(200).json({
         success: true,
-        message: 'Rango de edad desactivado exitosamente',
-        data: rangoEliminado,
+        message: 'Categoría desactivada exitosamente',
+        data: categoriaEliminada,
       });
     } catch (error) {
       next(error);
@@ -151,4 +152,4 @@ export class RangoEdadController {
   }
 }
 
-export const rangoEdadController = new RangoEdadController();
+export const categoriaController = new CategoriaController();

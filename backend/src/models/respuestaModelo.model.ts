@@ -27,4 +27,8 @@ const respuestaModeloSchema = new Schema<IRespuestaModelo>(
 
 respuestaModeloSchema.index({ id_pregunta: 1 });
 
-export const RespuestaModelo = model<IRespuestaModelo>('RespuestaModelo', respuestaModeloSchema, 'respuestas_modelo');
+export const RespuestaModelo = model<IRespuestaModelo>(
+  'RespuestaModelo',
+  respuestaModeloSchema,
+  'respuestas_modelo'
+);

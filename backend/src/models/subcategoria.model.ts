@@ -33,6 +33,13 @@ const subcategoriaSchema = new Schema<ISubcategoria>(
   }
 );
 
-subcategoriaSchema.index({ id_categoria: 1, nombre_subcategoria: 1 }, { unique: true });
+subcategoriaSchema.index(
+  { id_categoria: 1, nombre_subcategoria: 1 },
+  { unique: true }
+);
 
-export const Subcategoria = model<ISubcategoria>('Subcategoria', subcategoriaSchema, 'subcategorias');
+export const Subcategoria = model<ISubcategoria>(
+  'Subcategoria',
+  subcategoriaSchema,
+  'subcategorias'
+);

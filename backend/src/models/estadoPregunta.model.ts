@@ -31,4 +31,8 @@ const estadoPreguntaSchema = new Schema<IEstadoPregunta>(
 estadoPreguntaSchema.index({ nombre_estado: 1 }, { unique: true });
 estadoPreguntaSchema.index({ orden: 1 }, { unique: true });
 
-export const EstadoPregunta = model<IEstadoPregunta>('EstadoPregunta', estadoPreguntaSchema, 'estados_pregunta');
+export const EstadoPregunta = model<IEstadoPregunta>(
+  'EstadoPregunta',
+  estadoPreguntaSchema,
+  'estados_pregunta'
+);

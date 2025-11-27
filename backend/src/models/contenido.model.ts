@@ -45,4 +45,8 @@ const contenidoSchema = new Schema<IContenido>(
 contenidoSchema.index({ tipo_contenido: 1 });
 contenidoSchema.index({ subido_por: 1 });
 
-export const Contenido = model<IContenido>('Contenido', contenidoSchema, 'contenidos');
+export const Contenido = model<IContenido>(
+  'Contenido',
+  contenidoSchema,
+  'contenidos'
+);

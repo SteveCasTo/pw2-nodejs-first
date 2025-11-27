@@ -39,4 +39,8 @@ const rangoEdadSchema = new Schema<IRangoEdad>(
 rangoEdadSchema.index({ nombre_rango: 1 });
 rangoEdadSchema.index({ activo: 1 });
 
-export const RangoEdad = model<IRangoEdad>('RangoEdad', rangoEdadSchema, 'rangos_edad');
+export const RangoEdad = model<IRangoEdad>(
+  'RangoEdad',
+  rangoEdadSchema,
+  'rangos_edad'
+);

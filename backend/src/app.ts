@@ -1,7 +1,7 @@
 import express, { Application } from 'express';
 import cors from 'cors';
 import { errorHandler, notFound } from '@middlewares/errorHandler';
-import rangoEdadRoutes from '@routes/rangoEdad.routes';
+import categoriaRoutes from '@routes/categoria.routes';
 import config from '@config/constants';
 
 const app: Application = express();
@@ -24,7 +24,7 @@ app.get('/health', (_req, res) => {
   });
 });
 
-app.use('/api/rangos-edad', rangoEdadRoutes);
+app.use('/api/categorias', categoriaRoutes);
 
 app.use(notFound);
 

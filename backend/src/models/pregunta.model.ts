@@ -28,7 +28,13 @@ const preguntaSchema = new Schema<IPregunta>(
       type: String,
       required: [true, 'El tipo de pregunta es requerido'],
       enum: {
-        values: ['seleccion_multiple', 'verdadero_falso', 'desarrollo', 'respuesta_corta', 'emparejamiento'],
+        values: [
+          'seleccion_multiple',
+          'verdadero_falso',
+          'desarrollo',
+          'respuesta_corta',
+          'emparejamiento',
+        ],
         message: '{VALUE} no es un tipo de pregunta válido',
       },
     },
@@ -102,4 +108,8 @@ preguntaSchema.index({ tipo_pregunta: 1 });
 preguntaSchema.index({ activa: 1 });
 preguntaSchema.index({ creado_por: 1 });
 
-export const Pregunta = model<IPregunta>('Pregunta', preguntaSchema, 'preguntas');
+export const Pregunta = model<IPregunta>(
+  'Pregunta',
+  preguntaSchema,
+  'preguntas'
+);
