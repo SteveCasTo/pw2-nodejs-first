@@ -24,6 +24,12 @@ router.put(
   validate,
   categoriaController.update
 );
+router.patch(
+  '/:id/desactivar',
+  categoriaValidators.delete,
+  validate,
+  categoriaController.desactivar
+);
 router.delete(
   '/:id',
   categoriaValidators.delete,

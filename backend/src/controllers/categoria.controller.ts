@@ -83,7 +83,7 @@ export const categoriaController = {
     }
   },
 
-  async delete(req: Request, res: Response, next: NextFunction) {
+  async desactivar(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
 
@@ -100,6 +100,30 @@ export const categoriaController = {
       res.status(200).json({
         success: true,
         message: 'Categoría desactivada exitosamente',
+        data: categoriaEliminada,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        res.status(400).json({
+          success: false,
+          message: 'El ID es requerido',
+        });
+        return;
+      }
+
+      const categoriaEliminada = await categoriaService.hardDelete(id);
+
+      res.status(200).json({
+        success: true,
+        message: 'Categoría eliminada permanentemente',
         data: categoriaEliminada,
       });
     } catch (error) {

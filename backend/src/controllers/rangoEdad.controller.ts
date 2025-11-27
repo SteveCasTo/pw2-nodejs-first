@@ -83,7 +83,7 @@ export const rangoEdadController = {
     }
   },
 
-  async delete(req: Request, res: Response, next: NextFunction) {
+  async desactivar(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
 
@@ -100,6 +100,30 @@ export const rangoEdadController = {
       res.status(200).json({
         success: true,
         message: 'Rango de edad desactivado exitosamente',
+        data: rango,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        res.status(400).json({
+          success: false,
+          message: 'El ID es requerido',
+        });
+        return;
+      }
+
+      const rango = await rangoEdadService.hardDelete(id);
+
+      res.status(200).json({
+        success: true,
+        message: 'Rango de edad eliminado permanentemente',
         data: rango,
       });
     } catch (error) {

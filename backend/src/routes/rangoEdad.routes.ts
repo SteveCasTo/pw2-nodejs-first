@@ -24,6 +24,12 @@ router.put(
   validate,
   rangoEdadController.update
 );
+router.patch(
+  '/:id/desactivar',
+  rangoEdadValidators.delete,
+  validate,
+  rangoEdadController.desactivar
+);
 router.delete(
   '/:id',
   rangoEdadValidators.delete,

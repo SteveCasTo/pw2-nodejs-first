@@ -84,7 +84,7 @@ export const nivelDificultadController = {
     }
   },
 
-  async delete(req: Request, res: Response, next: NextFunction) {
+  async desactivar(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
 
@@ -101,6 +101,30 @@ export const nivelDificultadController = {
       res.status(200).json({
         success: true,
         message: 'Nivel de dificultad desactivado exitosamente',
+        data: nivel,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        res.status(400).json({
+          success: false,
+          message: 'El ID es requerido',
+        });
+        return;
+      }
+
+      const nivel = await nivelDificultadService.hardDelete(id);
+
+      res.status(200).json({
+        success: true,
+        message: 'Nivel de dificultad eliminado permanentemente',
         data: nivel,
       });
     } catch (error) {

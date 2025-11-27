@@ -24,6 +24,12 @@ router.put(
   validate,
   nivelDificultadController.update
 );
+router.patch(
+  '/:id/desactivar',
+  nivelDificultadValidators.delete,
+  validate,
+  nivelDificultadController.desactivar
+);
 router.delete(
   '/:id',
   nivelDificultadValidators.delete,

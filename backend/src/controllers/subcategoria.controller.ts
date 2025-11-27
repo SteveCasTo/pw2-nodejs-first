@@ -113,7 +113,7 @@ export const subcategoriaController = {
     }
   },
 
-  async delete(req: Request, res: Response, next: NextFunction) {
+  async desactivar(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
 
@@ -130,6 +130,30 @@ export const subcategoriaController = {
       res.status(200).json({
         success: true,
         message: 'Subcategoría desactivada exitosamente',
+        data: subcategoriaEliminada,
+      });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async delete(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        res.status(400).json({
+          success: false,
+          message: 'El ID es requerido',
+        });
+        return;
+      }
+
+      const subcategoriaEliminada = await subcategoriaService.hardDelete(id);
+
+      res.status(200).json({
+        success: true,
+        message: 'Subcategoría eliminada permanentemente',
         data: subcategoriaEliminada,
       });
     } catch (error) {
