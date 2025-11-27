@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { categoriaService } from '@services/categoria.service';
+import { rangoEdadService } from '@services/rangoEdad.service';
 
-export const categoriaController = {
+export const rangoEdadController = {
   async getAll(req: Request, res: Response, next: NextFunction) {
     try {
       const { activo } = req.query;
@@ -10,12 +10,12 @@ export const categoriaController = {
         ...(activo !== undefined && { activo: activo === 'true' }),
       };
 
-      const categorias = await categoriaService.getAll(filtros);
+      const rangos = await rangoEdadService.getAll(filtros);
 
       res.status(200).json({
         success: true,
-        data: categorias,
-        count: categorias.length,
+        data: rangos,
+        count: rangos.length,
       });
     } catch (error) {
       next(error);
@@ -34,11 +34,11 @@ export const categoriaController = {
         return;
       }
 
-      const categoria = await categoriaService.getById(id);
+      const rango = await rangoEdadService.getById(id);
 
       res.status(200).json({
         success: true,
-        data: categoria,
+        data: rango,
       });
     } catch (error) {
       next(error);
@@ -47,12 +47,12 @@ export const categoriaController = {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const nuevaCategoria = await categoriaService.create(req.body);
+      const rango = await rangoEdadService.create(req.body);
 
       res.status(201).json({
         success: true,
-        message: 'Categoría creada exitosamente',
-        data: nuevaCategoria,
+        message: 'Rango de edad creado exitosamente',
+        data: rango,
       });
     } catch (error) {
       next(error);
@@ -71,12 +71,12 @@ export const categoriaController = {
         return;
       }
 
-      const categoriaActualizada = await categoriaService.update(id, req.body);
+      const rango = await rangoEdadService.update(id, req.body);
 
       res.status(200).json({
         success: true,
-        message: 'Categoría actualizada exitosamente',
-        data: categoriaActualizada,
+        message: 'Rango de edad actualizado exitosamente',
+        data: rango,
       });
     } catch (error) {
       next(error);
@@ -95,12 +95,12 @@ export const categoriaController = {
         return;
       }
 
-      const categoriaEliminada = await categoriaService.delete(id);
+      const rango = await rangoEdadService.delete(id);
 
       res.status(200).json({
         success: true,
-        message: 'Categoría desactivada exitosamente',
-        data: categoriaEliminada,
+        message: 'Rango de edad desactivado exitosamente',
+        data: rango,
       });
     } catch (error) {
       next(error);

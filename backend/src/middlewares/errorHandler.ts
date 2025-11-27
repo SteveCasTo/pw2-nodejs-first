@@ -40,7 +40,11 @@ export const errorHandler = (
   } else if (err.name === 'CastError') {
     statusCode = 400;
     response.message = 'ID inválido';
-  } else if (err.name === 'MongoServerError' && 'code' in err && err.code === 11000) {
+  } else if (
+    err.name === 'MongoServerError' &&
+    'code' in err &&
+    err.code === 11000
+  ) {
     statusCode = 409;
     response.message = 'Ya existe un registro con esos datos';
   } else if (err.name === 'JsonWebTokenError') {

@@ -34,9 +34,7 @@ export const rangoEdadValidators = {
   ],
 
   update: [
-    param('id')
-      .isMongoId()
-      .withMessage('ID de rango inválido'),
+    param('id').isMongoId().withMessage('ID de rango inválido'),
 
     body('nombre_rango')
       .optional()
@@ -62,15 +60,7 @@ export const rangoEdadValidators = {
       .withMessage('El campo activo debe ser un booleano'),
   ],
 
-  getById: [
-    param('id')
-      .isMongoId()
-      .withMessage('ID de rango inválido'),
-  ],
+  getById: [param('id').isMongoId().withMessage('ID de rango inválido')],
 
-  delete: [
-    param('id')
-      .isMongoId()
-      .withMessage('ID de rango inválido'),
-  ],
+  delete: [param('id').isMongoId().withMessage('ID de rango inválido')],
 };

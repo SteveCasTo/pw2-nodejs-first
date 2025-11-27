@@ -1,12 +1,34 @@
 import { Router } from 'express';
 import { categoriaController } from '@controllers/categoria.controller';
+import { categoriaValidators } from '@middlewares/validators/categoria.validator';
+import { validate } from '@middlewares/validate';
 
 const router = Router();
 
 router.get('/', categoriaController.getAll);
-router.get('/:id', categoriaController.getById);
-router.post('/', categoriaController.create);
-router.put('/:id', categoriaController.update);
-router.delete('/:id', categoriaController.delete);
+router.get(
+  '/:id',
+  categoriaValidators.getById,
+  validate,
+  categoriaController.getById
+);
+router.post(
+  '/',
+  categoriaValidators.create,
+  validate,
+  categoriaController.create
+);
+router.put(
+  '/:id',
+  categoriaValidators.update,
+  validate,
+  categoriaController.update
+);
+router.delete(
+  '/:id',
+  categoriaValidators.delete,
+  validate,
+  categoriaController.delete
+);
 
 export default router;

@@ -11,7 +11,7 @@ interface FiltrosSubcategoria {
 export const subcategoriaService = {
   async getAll(filtros?: FiltrosSubcategoria): Promise<ISubcategoria[]> {
     const query: Record<string, unknown> = {};
-    
+
     if (filtros?.activo !== undefined) {
       query.activo = filtros.activo;
     }
@@ -26,11 +26,16 @@ export const subcategoriaService = {
   },
 
   async getById(id: string): Promise<ISubcategoria | null> {
-    return await Subcategoria.findById(id).populate('id_categoria', 'nombre_categoria');
+    return await Subcategoria.findById(id).populate(
+      'id_categoria',
+      'nombre_categoria'
+    );
   },
 
   async getByCategoria(id_categoria: string): Promise<ISubcategoria[]> {
-    return await Subcategoria.find({ id_categoria, activo: true }).sort({ nombre_subcategoria: 1 });
+    return await Subcategoria.find({ id_categoria, activo: true }).sort({
+      nombre_subcategoria: 1,
+    });
   },
 
   async create(data: {
@@ -45,7 +50,9 @@ export const subcategoriaService = {
     }
 
     if (!categoria.activo) {
-      throw new Error('No se puede crear una subcategoría para una categoría inactiva');
+      throw new Error(
+        'No se puede crear una subcategoría para una categoría inactiva'
+      );
     }
 
     const existente = await Subcategoria.findOne({
@@ -104,7 +111,9 @@ export const subcategoriaService = {
 
     const updateData = { ...data };
     if (data.id_categoria) {
-      updateData.id_categoria = new Types.ObjectId(data.id_categoria) as unknown as string;
+      updateData.id_categoria = new Types.ObjectId(
+        data.id_categoria
+      ) as unknown as string;
     }
 
     return await Subcategoria.findByIdAndUpdate(id, updateData, {

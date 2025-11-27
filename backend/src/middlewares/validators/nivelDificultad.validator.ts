@@ -22,9 +22,7 @@ export const nivelDificultadValidators = {
   ],
 
   update: [
-    param('id')
-      .isMongoId()
-      .withMessage('ID de nivel inválido'),
+    param('id').isMongoId().withMessage('ID de nivel inválido'),
 
     body('nivel')
       .optional()
@@ -46,15 +44,7 @@ export const nivelDificultadValidators = {
       .withMessage('El campo activo debe ser un booleano'),
   ],
 
-  getById: [
-    param('id')
-      .isMongoId()
-      .withMessage('ID de nivel inválido'),
-  ],
+  getById: [param('id').isMongoId().withMessage('ID de nivel inválido')],
 
-  delete: [
-    param('id')
-      .isMongoId()
-      .withMessage('ID de nivel inválido'),
-  ],
+  delete: [param('id').isMongoId().withMessage('ID de nivel inválido')],
 };

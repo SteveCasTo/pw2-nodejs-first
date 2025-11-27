@@ -8,7 +8,7 @@ interface FiltrosRango {
 export const rangoEdadService = {
   async getAll(filtros?: FiltrosRango): Promise<IRangoEdad[]> {
     const query: Record<string, unknown> = {};
-    
+
     if (filtros?.activo !== undefined) {
       query.activo = filtros.activo;
     }
@@ -26,9 +26,13 @@ export const rangoEdadService = {
     edad_maxima: number;
     activo?: boolean;
   }): Promise<IRangoEdad> {
-    const existente = await RangoEdad.findOne({ nombre_rango: data.nombre_rango });
+    const existente = await RangoEdad.findOne({
+      nombre_rango: data.nombre_rango,
+    });
     if (existente) {
-      throw new Error(`Ya existe un rango con el nombre "${data.nombre_rango}"`);
+      throw new Error(
+        `Ya existe un rango con el nombre "${data.nombre_rango}"`
+      );
     }
 
     if (data.edad_maxima <= data.edad_minima) {
@@ -54,7 +58,9 @@ export const rangoEdadService = {
         _id: { $ne: id },
       });
       if (existente) {
-        throw new Error(`Ya existe otro rango con el nombre "${data.nombre_rango}"`);
+        throw new Error(
+          `Ya existe otro rango con el nombre "${data.nombre_rango}"`
+        );
       }
     }
 
