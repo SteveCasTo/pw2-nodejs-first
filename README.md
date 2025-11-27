@@ -1,22 +1,22 @@
 # PW2 Node.js Project
 
-Proyecto backend desarrollado con Node.js, Express, TypeScript y MongoDB.
+Proyecto backend desarrollado con Node.js, Express, TypeScript y MongoDB Atlas para un sistema de exámenes educativos.
 
 ## 🚀 Tecnologías
 
 ### Backend
-- **Node.js** con **TypeScript**
-- **Express.js** - Framework web
-- **MongoDB** con **Mongoose** - Base de datos
+- **Node.js** v20.x con **TypeScript**
+- **Express.js** v5 - Framework web
+- **MongoDB Atlas** con **Mongoose** - Base de datos NoSQL
 - **Docker** & **Docker Compose** - Containerización
 
 ### Herramientas de Desarrollo
 - **ESLint** - Linting de código
 - **Prettier** - Formateo de código
-- **Husky** - Git hooks
-- **lint-staged** - Pre-commit linting
 - **Commitizen** - Commits convencionales
 - **Commitlint** - Validación de commits
+- **Nodemon** - Hot reload en desarrollo
+- **ts-node** - Ejecución TypeScript directa
 
 ## 📁 Estructura del Proyecto
 
@@ -24,214 +24,54 @@ Proyecto backend desarrollado con Node.js, Express, TypeScript y MongoDB.
 pw2-nodejs-first/
 ├── backend/
 │   ├── src/
-│   │   ├── config/         # Configuraciones (DB, etc)
-│   │   ├── controllers/    # Controladores
+│   │   ├── config/         # Configuraciones (DB, variables de entorno)
+│   │   ├── controllers/    # Controladores HTTP
 │   │   ├── middlewares/    # Middlewares personalizados
-│   │   ├── models/         # Modelos de Mongoose
-│   │   ├── routes/         # Rutas de la API
+│   │   ├── models/         # Modelos de Mongoose (esquemas)
+│   │   ├── routes/         # Definición de rutas API
 │   │   ├── services/       # Lógica de negocio
-│   │   ├── types/          # Types de TypeScript
-│   │   ├── utils/          # Utilidades
-│   │   └── index.ts        # Entry point
-│   ├── .husky/             # Git hooks
-│   ├── Dockerfile          # Dockerfile para producción
-│   ├── Dockerfile.dev      # Dockerfile para desarrollo
-│   ├── package.json
-│   ├── tsconfig.json
-│   └── .env.example
-├── docker-compose.yml
-└── README.md
-```
-
-## 🛠️ Instalación
-
-### Prerrequisitos
-- Node.js >= 20.x
-- npm o yarn
-- Docker y Docker Compose (opcional)
-
-### Instalación Local
-
-1. **Clonar el repositorio**
-```bash
-git clone <url-del-repositorio>
-cd pw2-nodejs-first
-```
-
-2. **Instalar dependencias del backend**
-```bash
-cd backend
-npm install
-```
-
-3. **Configurar variables de entorno**
-```bash
-cp .env.example .env
-```
-Edita el archivo `.env` con tus configuraciones.
-
-4. **Inicializar Husky**
-```bash
-npm run prepare
-```
-
-## 🚀 Uso
-
-### Desarrollo Local
-
-```bash
-cd backend
-npm run dev
-```
-
-El servidor estará disponible en `http://localhost:4000`
-
-### Desarrollo con Docker
-
-```bash
-# Desde la raíz del proyecto
-docker-compose up
-
-# En modo detached (background)
-docker-compose up -d
-
-# Detener contenedores
-docker-compose down
-```
-
-### Comandos Disponibles
-
-```bash
-# Desarrollo
-npm run dev          # Inicia servidor con nodemon y hot-reload
-
-# Producción
-npm run build        # Compila TypeScript
-npm start            # Inicia servidor en producción
-
-# Linting y Formateo
-npm run lint         # Ejecuta ESLint
-npm run lint:fix     # Corrige errores de ESLint automáticamente
-npm run format       # Formatea código con Prettier
-npm run format:check # Verifica formateo
-
-# Commits
-npm run commit       # Inicia Commitizen para commits convencionales
-```
-
-## 📝 Convenciones de Commits
-
-Este proyecto usa **Conventional Commits** con Commitizen. Para hacer un commit:
-
-```bash
-git add .
-npm run commit
-```
-
-Tipos de commit disponibles:
-- `feat`: Nueva funcionalidad
-- `fix`: Corrección de bugs
-- `docs`: Cambios en documentación
-- `style`: Cambios de formato (no afectan el código)
-- `refactor`: Refactorización de código
-- `perf`: Mejoras de rendimiento
-- `test`: Agregar o modificar tests
-- `build`: Cambios en el sistema de build
-- `ci`: Cambios en CI/CD
-- `chore`: Otras tareas
-
-## 🔧 Configuración
-
-### TypeScript Path Aliases
-
-El proyecto usa path aliases para imports más limpios:
-
-```typescript
-import { example } from '@config/example';
-import { User } from '@models/User';
-```
-
-### Variables de Entorno
-
-Crea un archivo `.env` basado en `.env.example`:
-
-```env
-NODE_ENV=development
-PORT=4000
-MONGO_URI=mongodb://localhost:27017/pw2_db
-CORS_ORIGIN=http://localhost:3000
-```
-
-## 🐳 Docker
-
-### Servicios en Docker Compose
-
-- **mongodb**: Base de datos MongoDB (puerto 27017)
-- **backend**: API de Node.js (puerto 4000)
-- **frontend**: React app (puerto 3000) - _Preparado para implementación futura_
-
-## 🤝 Contribuir
-
-Este es un proyecto en equipo. Por favor sigue estas guías:
-
-1. **Branch naming**: `feature/nombre-feature`, `fix/nombre-fix`
-2. **Commits**: Usa `npm run commit` para commits convencionales
-3. **Code style**: El código debe pasar ESLint y Prettier antes de commit (automático con Husky)
-
-## 👥 Equipo
-
-- [Añadir nombres del equipo]
-
-## 📄 Licencia
-
-ISC
-
-### Backend
-- **Node.js** con **TypeScript**
-- **Express.js** - Framework web
-- **MongoDB** con **Mongoose** - Base de datos
-- **Docker** & **Docker Compose** - Containerización
-
-### Herramientas de Desarrollo
-- **ESLint** - Linting de código
-- **Prettier** - Formateo de código
-- **Husky** - Git hooks
-- **lint-staged** - Pre-commit linting
-- **Commitizen** - Commits convencionales
-- **Commitlint** - Validación de commits
-
-## 📁 Estructura del Proyecto
-
-```
-pw2-nodejs-first/
-├── backend/
-│   ├── src/
-│   │   ├── config/         # Configuraciones (DB, etc)
-│   │   ├── controllers/    # Controladores
-│   │   ├── middlewares/    # Middlewares personalizados
-│   │   ├── models/         # Modelos de Mongoose
-│   │   ├── routes/         # Rutas de la API
-│   │   ├── services/       # Lógica de negocio
-│   │   ├── types/          # Types de TypeScript
-│   │   ├── utils/          # Utilidades
+│   │   ├── types/          # Interfaces y tipos TypeScript
+│   │   ├── utils/          # Funciones auxiliares
 │   │   ├── app.ts          # Configuración de Express
-│   │   └── server.ts       # Entry point
-│   ├── .husky/             # Git hooks
+│   │   └── server.ts       # Entry point del servidor
 │   ├── Dockerfile          # Dockerfile para producción
 │   ├── Dockerfile.dev      # Dockerfile para desarrollo
 │   ├── package.json
 │   ├── tsconfig.json
+│   ├── eslint.config.mjs
 │   └── .env.example
 ├── docker-compose.yml
 └── README.md
 ```
 
+## 🗄️ Estructura de Base de Datos
+
+El proyecto incluye 22 colecciones MongoDB basadas en el siguiente esquema:
+
+**Entidades Principales:**
+- `usuarios` - Usuarios del sistema
+- `privilegios` - Roles y permisos
+- `categorias` y `subcategorias` - Organización de contenido
+- `preguntas` - Preguntas de exámenes (múltiples tipos)
+- `examenes` - Definición de exámenes
+- `intentos_examen` - Intentos de usuarios
+- `rangos_edad` - Rangos de edad objetivo
+- `niveles_dificultad` - Niveles de dificultad
+
+**Entidades de Soporte:**
+- `opciones_pregunta` - Opciones para preguntas de selección
+- `pares_emparejamiento` - Pares para preguntas de emparejamiento
+- `contenidos` - Archivos multimedia
+- `respuestas_*` - Diferentes tipos de respuestas
+- Y más...
+
 ## 🛠️ Instalación
 
 ### Prerrequisitos
-- Node.js >= 20.x
-- npm o yarn
-- Docker y Docker Compose (opcional)
+- **Node.js** >= 20.x
+- **npm** o **yarn**
+- **Docker** y **Docker Compose** (opcional)
+- Cuenta en **MongoDB Atlas** (o MongoDB local)
 
 ### Instalación Local
 
@@ -251,11 +91,10 @@ npm install
 ```bash
 cp .env.example .env
 ```
-Edita el archivo `.env` con tus configuraciones.
 
-4. **Inicializar Husky**
-```bash
-npm run prepare
+Edita el archivo `.env` y configura tu **MongoDB Atlas URI**:
+```env
+MONGO_URI=mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority
 ```
 
 ## 🚀 Uso
@@ -263,15 +102,11 @@ npm run prepare
 ### Desarrollo Local
 
 ```bash
-# Iniciar MongoDB localmente (si no usas Docker)
-# Asegúrate de tener MongoDB instalado y corriendo en localhost:27017
-
-# Iniciar el servidor en modo desarrollo
 cd backend
 npm run dev
 ```
 
-El servidor estará disponible en `http://localhost:4000`
+El servidor estará disponible en **http://localhost:4000**
 
 ### Desarrollo con Docker
 
@@ -296,101 +131,107 @@ docker-compose down
 npm run dev          # Inicia servidor con nodemon y hot-reload
 
 # Producción
-npm run build        # Compila TypeScript
-npm start            # Inicia servidor en producción
+npm run build        # Compila TypeScript a JavaScript
+npm start            # Inicia servidor compilado
 
-# Linting y Formateo
+# Code Quality
 npm run lint         # Ejecuta ESLint
 npm run lint:fix     # Corrige errores de ESLint automáticamente
 npm run format       # Formatea código con Prettier
-npm run format:check # Verifica formateo
-
-# Commits
-npm run commit       # Inicia Commitizen para commits convencionales
+npm run format:check # Verifica formateo sin modificar
 ```
-
-## 📝 Convenciones de Commits
-
-Este proyecto usa **Conventional Commits** con Commitizen. Para hacer un commit:
-
-```bash
-git add .
-npm run commit
-```
-
-Tipos de commit disponibles:
-- `feat`: Nueva funcionalidad
-- `fix`: Corrección de bugs
-- `docs`: Cambios en documentación
-- `style`: Cambios de formato (no afectan el código)
-- `refactor`: Refactorización de código
-- `perf`: Mejoras de rendimiento
-- `test`: Agregar o modificar tests
-- `build`: Cambios en el sistema de build
-- `ci`: Cambios en CI/CD
-- `chore`: Otras tareas
 
 ## 🔧 Configuración
+
+### Variables de Entorno
+
+Archivo `.env`:
+
+```env
+NODE_ENV=development
+PORT=4000
+MONGO_URI=mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority
+CORS_ORIGIN=http://localhost:3000
+```
 
 ### TypeScript Path Aliases
 
 El proyecto usa path aliases para imports más limpios:
 
 ```typescript
-import { exampleController } from '@controllers/example.controller';
 import { connectDB } from '@config/database';
-import { formatDate } from '@utils/helpers';
-```
-
-### Variables de Entorno
-
-Crea un archivo `.env` basado en `.env.example`:
-
-```env
-NODE_ENV=development
-PORT=4000
-MONGO_URI=mongodb://localhost:27017/pw2_db
-CORS_ORIGIN=http://localhost:3000
+import { RangoEdad } from '@models/rangoEdad.model';
+import { rangoEdadService } from '@services/rangoEdad.service';
+import { errorHandler } from '@middlewares/errorHandler';
 ```
 
 ## 🐳 Docker
 
 ### Servicios en Docker Compose
 
-- **mongodb**: Base de datos MongoDB (puerto 27017)
+- **mongodb**: Base de datos MongoDB local (puerto 27017) - para desarrollo sin Atlas
 - **backend**: API de Node.js (puerto 4000)
-- **frontend**: React app (puerto 3000) - _Preparado para implementación futura_
 
-### Acceso a MongoDB en Docker
+**Nota**: Para producción se recomienda usar MongoDB Atlas en lugar del contenedor local.
 
-```bash
-# Entrar al contenedor de MongoDB
-docker exec -it pw2-mongodb mongosh
+## 📚 API Endpoints
 
-# Autenticarse
-use admin
-db.auth("admin", "admin123")
+### Rangos de Edad (Ejemplo CRUD)
 
-# Ver bases de datos
-show dbs
+| Método | Endpoint | Descripción |
+|--------|----------|-------------|
+| GET | `/api/rangos-edad` | Obtener todos los rangos de edad |
+| GET | `/api/rangos-edad/:id` | Obtener un rango por ID |
+| POST | `/api/rangos-edad` | Crear nuevo rango de edad |
+| PUT | `/api/rangos-edad/:id` | Actualizar rango existente |
+| DELETE | `/api/rangos-edad/:id` | Eliminar rango de edad |
+
+#### Ejemplo de Request (POST)
+
+```json
+{
+  "nombre_rango": "Adolescentes",
+  "edad_minima": 13,
+  "edad_maxima": 17,
+  "activo": true
+}
 ```
+
+### Testing con Postman
+
+1. Importa la colección de Postman (si está disponible)
+2. Configura la variable `baseUrl` a `http://localhost:4000`
+3. Prueba los endpoints de CRUD
+
+## 📚 Funcionalidades Implementadas
+
+- [x] Conexión a MongoDB Atlas
+- [x] Estructura MVC completa y modular
+- [x] 22 modelos Mongoose con esquemas completos
+- [x] CRUD completo de Rangos de Edad (ejemplo funcional)
+- [x] Middleware global de manejo de errores
+- [x] Configuración Docker para desarrollo
+- [x] TypeScript con strict mode
+- [x] ESLint + Prettier configurados
+- [x] Path aliases para imports limpios
+
+## 🚧 Próximos Pasos
+
+- [ ] Implementar autenticación JWT
+- [ ] Agregar validación de datos con Zod
+- [ ] Implementar testing con Jest
+- [ ] Desarrollar frontend con React
+- [ ] Agregar más CRUDs para otras entidades
+- [ ] Implementar paginación y filtros
+- [ ] Configurar CI/CD
+- [ ] Documentación con Swagger/OpenAPI
 
 ## 🤝 Contribuir
 
-Este es un proyecto en equipo. Por favor sigue estas guías:
-
 1. **Branch naming**: `feature/nombre-feature`, `fix/nombre-fix`
-2. **Commits**: Usa `npm run commit` para commits convencionales
-3. **Code style**: El código debe pasar ESLint y Prettier antes de commit (automático con Husky)
-4. **Pull Requests**: Describe claramente los cambios realizados
-
-## 📚 Próximos Pasos
-
-- [ ] Implementar autenticación JWT
-- [ ] Agregar validación de datos (joi/zod)
-- [ ] Implementar testing (Jest)
-- [ ] Desarrollar frontend con React
-- [ ] Configurar CI/CD
+2. **Code style**: El código debe pasar ESLint y Prettier
+3. **Pull Requests**: Describe claramente los cambios realizados
+4. **Testing**: Asegúrate de probar tu código antes de hacer push
 
 ## 👥 Equipo
 
@@ -399,3 +240,29 @@ Este es un proyecto en equipo. Por favor sigue estas guías:
 ## 📄 Licencia
 
 ISC
+
+---
+
+## 🆘 Troubleshooting
+
+### Error de conexión a MongoDB
+- Verifica que tu MongoDB Atlas URI sea correcta
+- Asegúrate de que tu IP esté en la whitelist de Atlas
+- Verifica usuario y contraseña
+
+### Puerto 4000 en uso
+```bash
+# Windows
+netstat -ano | findstr :4000
+
+# Cambiar puerto en .env
+PORT=5000
+```
+
+### Errores de TypeScript
+```bash
+# Limpiar y reconstruir
+rm -rf dist node_modules
+npm install
+npm run build
+```
