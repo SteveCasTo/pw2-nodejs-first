@@ -1,8 +1,12 @@
 import { Categoria } from '@models/categoria.model';
 import { ICategoria } from '../types/models.types';
 
-export class CategoriaService {
-  async getAll(filtros?: { activo?: boolean }): Promise<ICategoria[]> {
+interface FiltrosCategoria {
+  activo?: boolean;
+}
+
+export const categoriaService = {
+  async getAll(filtros?: FiltrosCategoria): Promise<ICategoria[]> {
     const query: Record<string, unknown> = {};
 
     if (filtros?.activo !== undefined) {
@@ -10,11 +14,11 @@ export class CategoriaService {
     }
 
     return await Categoria.find(query).sort({ nombre_categoria: 1 });
-  }
+  },
 
   async getById(id: string): Promise<ICategoria | null> {
     return await Categoria.findById(id);
-  }
+  },
 
   async create(data: {
     nombre_categoria: string;
@@ -34,7 +38,7 @@ export class CategoriaService {
       fecha_creacion: new Date(),
     });
     return await categoria.save();
-  }
+  },
 
   async update(
     id: string,
@@ -59,7 +63,7 @@ export class CategoriaService {
       new: true,
       runValidators: true,
     });
-  }
+  },
 
   async delete(id: string): Promise<ICategoria | null> {
     return await Categoria.findByIdAndUpdate(
@@ -67,11 +71,9 @@ export class CategoriaService {
       { activo: false },
       { new: true }
     );
-  }
+  },
 
   async hardDelete(id: string): Promise<ICategoria | null> {
     return await Categoria.findByIdAndDelete(id);
-  }
-}
-
-export const categoriaService = new CategoriaService();
+  },
+};
