@@ -7,7 +7,7 @@ export const rangoEdadController = {
       const { activo } = req.query;
 
       const filtros = {
-        ...(activo !== undefined && { activo: activo === 'true' }),
+        activo: activo === 'false' ? false : true,
       };
 
       const rangos = await rangoEdadService.getAll(filtros);

@@ -7,7 +7,7 @@ export const subcategoriaController = {
       const { activo, id_categoria } = req.query;
 
       const filtros = {
-        ...(activo !== undefined && { activo: activo === 'true' }),
+        activo: activo === 'false' ? false : true,
         ...(id_categoria &&
           typeof id_categoria === 'string' && { id_categoria }),
       };

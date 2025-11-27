@@ -18,12 +18,6 @@ const rangoEdadSchema = new Schema<IRangoEdad>(
       type: Number,
       required: [true, 'La edad máxima es requerida'],
       min: [0, 'La edad máxima debe ser mayor o igual a 0'],
-      validate: {
-        validator: function (this: IRangoEdad, value: number) {
-          return value > this.edad_minima;
-        },
-        message: 'La edad máxima debe ser mayor que la edad mínima',
-      },
     },
     activo: {
       type: Boolean,

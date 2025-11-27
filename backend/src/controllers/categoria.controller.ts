@@ -7,7 +7,7 @@ export const categoriaController = {
       const { activo } = req.query;
 
       const filtros = {
-        ...(activo !== undefined && { activo: activo === 'true' }),
+        activo: activo === 'false' ? false : true,
       };
 
       const categorias = await categoriaService.getAll(filtros);

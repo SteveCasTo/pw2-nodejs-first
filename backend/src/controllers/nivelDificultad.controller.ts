@@ -8,7 +8,7 @@ export const nivelDificultadController = {
 
       const filtros = {
         ...(nivel && { nivel: nivel as string }),
-        ...(activo !== undefined && { activo: activo === 'true' }),
+        activo: activo === 'false' ? false : true,
       };
 
       const niveles = await nivelDificultadService.getAll(filtros);

@@ -1,7 +1,6 @@
 import express, { Application } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import mongoSanitize from 'express-mongo-sanitize';
 import { errorHandler, notFound } from '@middlewares/errorHandler';
 import rangoEdadRoutes from '@routes/rangoEdad.routes';
 import categoriaRoutes from '@routes/categoria.routes';
@@ -12,8 +11,6 @@ import config from '@config/constants';
 const app: Application = express();
 
 app.use(helmet());
-
-app.use(mongoSanitize());
 
 app.use(
   cors({

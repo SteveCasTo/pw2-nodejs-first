@@ -25,8 +25,6 @@ const categoriaSchema = new Schema<ICategoria>(
   }
 );
 
-categoriaSchema.index({ nombre_categoria: 1 }, { unique: true });
-
 export const Categoria = model<ICategoria>(
   'Categoria',
   categoriaSchema,

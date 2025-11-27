@@ -25,8 +25,6 @@ const nivelDificultadSchema = new Schema<INivelDificultad>(
   }
 );
 
-nivelDificultadSchema.index({ nivel: 1 }, { unique: true });
-
 export const NivelDificultad = model<INivelDificultad>(
   'NivelDificultad',
   nivelDificultadSchema,

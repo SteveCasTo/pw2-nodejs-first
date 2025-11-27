@@ -36,7 +36,6 @@ const usuarioSchema = new Schema<IUsuario>(
   }
 );
 
-usuarioSchema.index({ correo: 1 }, { unique: true });
 usuarioSchema.index({ activo: 1 });
 
 export const Usuario = model<IUsuario>('Usuario', usuarioSchema, 'usuarios');
