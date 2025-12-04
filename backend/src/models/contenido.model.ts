@@ -13,7 +13,7 @@ const contenidoSchema = new Schema<IContenido>(
     },
     url_contenido: {
       type: String,
-      required: [true, 'La URL del contenido es requerida'],
+      trim: true,
     },
     nombre_archivo: {
       type: String,

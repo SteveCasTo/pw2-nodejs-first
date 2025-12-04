@@ -7,6 +7,8 @@ import categoriaRoutes from '@routes/categoria.routes';
 import subcategoriaRoutes from '@routes/subcategoria.routes';
 import nivelDificultadRoutes from '@routes/nivelDificultad.routes';
 import estadoPreguntaRoutes from '@routes/estadoPregunta.routes';
+import contenidoRoutes from '@routes/contenido.routes';
+import preguntaRoutes from '@routes/pregunta.routes';
 import config from '@config/constants';
 
 const app: Application = express();
@@ -35,6 +37,8 @@ app.use('/api/categorias', categoriaRoutes);
 app.use('/api/subcategorias', subcategoriaRoutes);
 app.use('/api/niveles-dificultad', nivelDificultadRoutes);
 app.use('/api/estados-pregunta', estadoPreguntaRoutes);
+app.use('/api/contenidos', contenidoRoutes);
+app.use('/api/preguntas', preguntaRoutes);
 
 app.use(notFound);
 
