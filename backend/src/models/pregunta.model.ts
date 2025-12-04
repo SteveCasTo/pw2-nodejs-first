@@ -71,7 +71,6 @@ const preguntaSchema = new Schema<IPregunta>(
     creado_por: {
       type: Schema.Types.ObjectId,
       ref: 'Usuario',
-      required: [true, 'El creador es requerido'],
     },
     votos_requeridos: {
       type: Number,

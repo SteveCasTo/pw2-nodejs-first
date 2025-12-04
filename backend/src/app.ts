@@ -11,6 +11,9 @@ import authRoutes from '@routes/auth.routes';
 import privilegioRoutes from '@routes/privilegio.routes';
 import usuarioPrivilegioRoutes from '@routes/usuarioPrivilegio.routes';
 import cicloRoutes from '@routes/ciclo.routes';
+import estadoPreguntaRoutes from '@routes/estadoPregunta.routes';
+import contenidoRoutes from '@routes/contenido.routes';
+import preguntaRoutes from '@routes/pregunta.routes';
 import config from '@config/constants';
 
 const app: Application = express();
@@ -45,6 +48,9 @@ app.use('/api/niveles-dificultad', nivelDificultadRoutes);
 app.use('/api/privilegios', privilegioRoutes);
 app.use('/api/usuario-privilegios', usuarioPrivilegioRoutes);
 app.use('/api/ciclos', cicloRoutes);
+app.use('/api/estados-pregunta', estadoPreguntaRoutes);
+app.use('/api/contenidos', contenidoRoutes);
+app.use('/api/preguntas', preguntaRoutes);
 
 app.use(notFound);
 
