@@ -11,7 +11,12 @@ router.use(restrictTo('superadmin'));
 router.get('/', usuarioPrivilegioController.getAll);
 router.get('/usuario/:userId', usuarioPrivilegioController.getByUserId);
 router.get('/:id', usuarioPrivilegioController.getById);
-router.post('/', usuarioPrivilegioValidators.create, validate, usuarioPrivilegioController.create);
+router.post(
+  '/',
+  usuarioPrivilegioValidators.create,
+  validate,
+  usuarioPrivilegioController.create
+);
 router.delete('/:id', usuarioPrivilegioController.delete);
 router.delete(
   '/usuario/:userId/privilegio/:privilegioId',

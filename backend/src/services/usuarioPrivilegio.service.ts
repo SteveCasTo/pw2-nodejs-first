@@ -80,10 +80,7 @@ const usuarioPrivilegioService = {
     return usuarioPrivilegio;
   },
 
-  deleteByUserAndPrivilege: async (
-    userId: string,
-    privilegioId: string
-  ) => {
+  deleteByUserAndPrivilege: async (userId: string, privilegioId: string) => {
     const usuarioPrivilegio = await UsuarioPrivilegio.findOneAndDelete({
       id_usuario: userId,
       id_privilegio: privilegioId,

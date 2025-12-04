@@ -27,7 +27,8 @@ const config = {
   EMAIL_PORT: parseInt(process.env.EMAIL_PORT || '587', 10),
   EMAIL_USER: process.env.EMAIL_USER || '',
   EMAIL_PASSWORD: process.env.EMAIL_PASSWORD || '',
-  EMAIL_FROM: process.env.EMAIL_FROM || 'Sistema de Examenes <noreply@sistema.com>',
+  EMAIL_FROM:
+    process.env.EMAIL_FROM || 'Sistema de Examenes <noreply@sistema.com>',
 
   isDevelopment: process.env.NODE_ENV === 'development',
   isProduction: process.env.NODE_ENV === 'production',

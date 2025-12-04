@@ -56,7 +56,8 @@ const authService = {
         nombre: usuario.nombre,
         activo: usuario.activo,
       },
-      privilegios: privilegios.map((up: any) => ({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      privilegios: (privilegios as any).map((up: any) => ({
         nombre: up.id_privilegio?.nombre_privilegio,
         descripcion: up.id_privilegio?.descripcion,
       })),
@@ -96,7 +97,7 @@ const authService = {
       correo_electronico: usuario.correo_electronico,
       nombre: usuario.nombre,
       activo: usuario.activo,
-      message: emailSent 
+      message: emailSent
         ? 'Usuario creado exitosamente. Contraseña enviada por correo.'
         : 'Usuario creado exitosamente.',
       ...(process.env.NODE_ENV === 'development' && { password }),
@@ -123,7 +124,8 @@ const authService = {
         nombre: usuario.nombre,
         activo: usuario.activo,
       },
-      privilegios: privilegios.map((up: any) => ({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      privilegios: (privilegios as any).map((up: any) => ({
         nombre: up.id_privilegio?.nombre_privilegio,
         descripcion: up.id_privilegio?.descripcion,
       })),
@@ -146,7 +148,9 @@ const authService = {
     }
 
     if (currentPassword === newPassword) {
-      throw new Error('La nueva contraseña debe ser diferente a la contraseña actual');
+      throw new Error(
+        'La nueva contraseña debe ser diferente a la contraseña actual'
+      );
     }
 
     usuario.password = newPassword;

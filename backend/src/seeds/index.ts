@@ -20,11 +20,11 @@ const seedDatabase = async () => {
       throw new Error('MONGO_URI no está definida en .env');
     }
 
-    console.log('Conectando a MongoDB...');
+    console.warn('Conectando a MongoDB...');
     await mongoose.connect(mongoUri);
-    console.log('Conectado a MongoDB\n');
+    console.warn('Conectado a MongoDB\n');
 
-    console.log('Creando privilegios por defecto...');
+    console.warn('Creando privilegios por defecto...');
     const privilegiosData = [
       {
         nombre_privilegio: 'superadmin',
@@ -50,16 +50,16 @@ const seedDatabase = async () => {
         nombre_privilegio: privData.nombre_privilegio,
       });
       if (existing) {
-        console.log(`${privData.nombre_privilegio}: Ya existe`);
+        console.warn(`${privData.nombre_privilegio}: Ya existe`);
         privilegios.push(existing);
       } else {
         const priv = await Privilegio.create(privData);
-        console.log(`${privData.nombre_privilegio}: Creado`);
+        console.warn(`${privData.nombre_privilegio}: Creado`);
         privilegios.push(priv);
       }
     }
 
-    console.log('\nCreando usuario superadmin...');
+    console.warn('\nCreando usuario superadmin...');
     const adminEmail = 'admin@sistema.com';
     const adminPassword = 'Admin123!@#';
 
@@ -68,17 +68,17 @@ const seedDatabase = async () => {
     });
 
     if (adminUser) {
-      console.log(`${adminEmail}: Ya existe`);
+      console.warn(`${adminEmail}: Ya existe`);
     } else {
       adminUser = await Usuario.create({
         correo_electronico: adminEmail,
         password: adminPassword,
         nombre: 'Super Admin',
       });
-      console.log(`${adminEmail}: Creado`);
+      console.warn(`${adminEmail}: Creado`);
     }
 
-    console.log('\nCreando usuario editor...');
+    console.warn('\nCreando usuario editor...');
     const editorEmail = 'editor@sistema.com';
     const editorPassword = 'Editor123!@#';
 
@@ -87,7 +87,7 @@ const seedDatabase = async () => {
     });
 
     if (editorUser) {
-      console.log(`${editorEmail}: Ya existe`);
+      console.warn(`${editorEmail}: Ya existe`);
     } else {
       editorUser = await Usuario.create({
         correo_electronico: editorEmail,
@@ -95,10 +95,10 @@ const seedDatabase = async () => {
         nombre: 'Usuario Editor',
         creado_por: adminUser._id,
       });
-      console.log(`${editorEmail}: Creado`);
+      console.warn(`${editorEmail}: Creado`);
     }
 
-    console.log('\nCreando usuario organizador...');
+    console.warn('\nCreando usuario organizador...');
     const organizadorEmail = 'organizador@sistema.com';
     const organizadorPassword = 'Organizador123!@#';
 
@@ -107,7 +107,7 @@ const seedDatabase = async () => {
     });
 
     if (organizadorUser) {
-      console.log(`${organizadorEmail}: Ya existe`);
+      console.warn(`${organizadorEmail}: Ya existe`);
     } else {
       organizadorUser = await Usuario.create({
         correo_electronico: organizadorEmail,
@@ -115,10 +115,10 @@ const seedDatabase = async () => {
         nombre: 'Usuario Organizador',
         creado_por: adminUser._id,
       });
-      console.log(`${organizadorEmail}: Creado`);
+      console.warn(`${organizadorEmail}: Creado`);
     }
 
-    console.log('\nCreando usuario estudiante...');
+    console.warn('\nCreando usuario estudiante...');
     const estudianteEmail = 'estudiante@sistema.com';
     const estudiantePassword = 'Estudiante123!@#';
 
@@ -127,7 +127,7 @@ const seedDatabase = async () => {
     });
 
     if (estudianteUser) {
-      console.log(`${estudianteEmail}: Ya existe`);
+      console.warn(`${estudianteEmail}: Ya existe`);
     } else {
       estudianteUser = await Usuario.create({
         correo_electronico: estudianteEmail,
@@ -135,21 +135,19 @@ const seedDatabase = async () => {
         nombre: 'Usuario Estudiante',
         creado_por: adminUser._id,
       });
-      console.log(`${estudianteEmail}: Creado`);
+      console.warn(`${estudianteEmail}: Creado`);
     }
 
-    console.log('\nAsignando privilegios...');
+    console.warn('\nAsignando privilegios...');
     const superadminPriv = privilegios.find(
-      (p) => p.nombre_privilegio === 'superadmin'
+      p => p.nombre_privilegio === 'superadmin'
     );
-    const editorPriv = privilegios.find(
-      (p) => p.nombre_privilegio === 'editor'
-    );
+    const editorPriv = privilegios.find(p => p.nombre_privilegio === 'editor');
     const organizadorPriv = privilegios.find(
-      (p) => p.nombre_privilegio === 'organizador'
+      p => p.nombre_privilegio === 'organizador'
     );
     const estudiantePriv = privilegios.find(
-      (p) => p.nombre_privilegio === 'estudiante'
+      p => p.nombre_privilegio === 'estudiante'
     );
 
     if (!superadminPriv || !editorPriv || !organizadorPriv || !estudiantePriv) {
@@ -166,9 +164,9 @@ const seedDatabase = async () => {
         id_usuario: adminUser._id,
         id_privilegio: superadminPriv._id,
       });
-      console.log('Privilegio superadmin asignado');
+      console.warn('Privilegio superadmin asignado');
     } else {
-      console.log('Privilegio superadmin ya asignado');
+      console.warn('Privilegio superadmin ya asignado');
     }
 
     const existingEditor = await UsuarioPrivilegio.findOne({
@@ -182,9 +180,9 @@ const seedDatabase = async () => {
         id_privilegio: editorPriv._id,
         asignado_por: adminUser._id,
       });
-      console.log('Privilegio editor asignado');
+      console.warn('Privilegio editor asignado');
     } else {
-      console.log('Privilegio editor ya asignado');
+      console.warn('Privilegio editor ya asignado');
     }
 
     const existingOrganizador = await UsuarioPrivilegio.findOne({
@@ -198,9 +196,9 @@ const seedDatabase = async () => {
         id_privilegio: organizadorPriv._id,
         asignado_por: adminUser._id,
       });
-      console.log('Privilegio organizador asignado');
+      console.warn('Privilegio organizador asignado');
     } else {
-      console.log('Privilegio organizador ya asignado');
+      console.warn('Privilegio organizador ya asignado');
     }
 
     const existingEstudiante = await UsuarioPrivilegio.findOne({
@@ -214,12 +212,12 @@ const seedDatabase = async () => {
         id_privilegio: estudiantePriv._id,
         asignado_por: adminUser._id,
       });
-      console.log('Privilegio estudiante asignado');
+      console.warn('Privilegio estudiante asignado');
     } else {
-      console.log('Privilegio estudiante ya asignado');
+      console.warn('Privilegio estudiante ya asignado');
     }
 
-    console.log('\nCreando rangos de edad...');
+    console.warn('\nCreando rangos de edad...');
     const rangosData = [
       { nombre_rango: '3-5 años', edad_minima: 3, edad_maxima: 5 },
       { nombre_rango: '6-8 años', edad_minima: 6, edad_maxima: 8 },
@@ -233,13 +231,13 @@ const seedDatabase = async () => {
       });
       if (!existing) {
         await RangoEdad.create(rangoData);
-        console.log(`${rangoData.nombre_rango}: Creado`);
+        console.warn(`${rangoData.nombre_rango}: Creado`);
       } else {
-        console.log(`${rangoData.nombre_rango}: Ya existe`);
+        console.warn(`${rangoData.nombre_rango}: Ya existe`);
       }
     }
 
-    console.log('\nCreando categorías...');
+    console.warn('\nCreando categorías...');
     const categoriasData = [
       {
         nombre_categoria: 'Matemáticas',
@@ -267,20 +265,18 @@ const seedDatabase = async () => {
       if (!existing) {
         const cat = await Categoria.create(catData);
         categorias.push(cat);
-        console.log(`${catData.nombre_categoria}: Creado`);
+        console.warn(`${catData.nombre_categoria}: Creado`);
       } else {
         categorias.push(existing);
-        console.log(`${catData.nombre_categoria}: Ya existe`);
+        console.warn(`${catData.nombre_categoria}: Ya existe`);
       }
     }
 
-    console.log('\nCreando subcategorías...');
+    console.warn('\nCreando subcategorías...');
     const matematicasCat = categorias.find(
-      (c) => c.nombre_categoria === 'Matemáticas'
+      c => c.nombre_categoria === 'Matemáticas'
     );
-    const cienciasCat = categorias.find(
-      (c) => c.nombre_categoria === 'Ciencias'
-    );
+    const cienciasCat = categorias.find(c => c.nombre_categoria === 'Ciencias');
 
     if (matematicasCat && cienciasCat) {
       const subcategoriasData = [
@@ -302,14 +298,14 @@ const seedDatabase = async () => {
         });
         if (!existing) {
           await Subcategoria.create(subData);
-          console.log(`${subData.nombre_subcategoria}: Creado`);
+          console.warn(`${subData.nombre_subcategoria}: Creado`);
         } else {
-          console.log(`${subData.nombre_subcategoria}: Ya existe`);
+          console.warn(`${subData.nombre_subcategoria}: Ya existe`);
         }
       }
     }
 
-    console.log('\nCreando niveles de dificultad...');
+    console.warn('\nCreando niveles de dificultad...');
     const nivelesData = [
       { nivel: 'Fácil', descripcion: 'Nivel básico para principiantes' },
       { nivel: 'Intermedio', descripcion: 'Nivel medio con más desafíos' },
@@ -323,13 +319,13 @@ const seedDatabase = async () => {
       });
       if (!existing) {
         await NivelDificultad.create(nivelData);
-        console.log(`${nivelData.nivel}: Creado`);
+        console.warn(`${nivelData.nivel}: Creado`);
       } else {
-        console.log(`${nivelData.nivel}: Ya existe`);
+        console.warn(`${nivelData.nivel}: Ya existe`);
       }
     }
 
-    console.log('\nCreando ciclos...');
+    console.warn('\nCreando ciclos...');
     const ciclosData = [
       {
         nombre_ciclo: '2025/1',
@@ -353,25 +349,25 @@ const seedDatabase = async () => {
       });
       if (!existing) {
         await Ciclo.create(cicloData);
-        console.log(`${cicloData.nombre_ciclo}: Creado`);
+        console.warn(`${cicloData.nombre_ciclo}: Creado`);
       } else {
-        console.log(`${cicloData.nombre_ciclo}: Ya existe`);
+        console.warn(`${cicloData.nombre_ciclo}: Ya existe`);
       }
     }
 
-    console.log('\nSEED COMPLETADO EXITOSAMENTE');
-    console.log('\nCREDENCIALES DE USUARIOS:');
-    console.log('─'.repeat(50));
-    console.log(`Superadmin: ${adminEmail} / ${adminPassword}`);
-    console.log(`Editor:     ${editorEmail} / ${editorPassword}`);
-    console.log(`Organizador: ${organizadorEmail} / ${organizadorPassword}`);
-    console.log(`Estudiante: ${estudianteEmail} / ${estudiantePassword}`);
+    console.warn('\nSEED COMPLETADO EXITOSAMENTE');
+    console.warn('\nCREDENCIALES DE USUARIOS:');
+    console.warn('─'.repeat(50));
+    console.warn(`Superadmin: ${adminEmail} / ${adminPassword}`);
+    console.warn(`Editor:     ${editorEmail} / ${editorPassword}`);
+    console.warn(`Organizador: ${organizadorEmail} / ${organizadorPassword}`);
+    console.warn(`Estudiante: ${estudianteEmail} / ${estudiantePassword}`);
   } catch (error) {
     console.error('\nError durante el seed:', error);
     process.exit(1);
   } finally {
     await mongoose.disconnect();
-    console.log('Desconectado de MongoDB');
+    console.warn('Desconectado de MongoDB');
     process.exit(0);
   }
 };

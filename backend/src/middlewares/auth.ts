@@ -48,8 +48,9 @@ export const protect = async (
       .select('id_privilegio');
 
     const nombrePrivilegios = privilegios
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .map((up: any) => up.id_privilegio?.nombre_privilegio)
-      .filter(Boolean);
+      .filter(Boolean) as string[];
 
     req.user = {
       id: usuario._id.toString(),
@@ -58,7 +59,7 @@ export const protect = async (
     };
 
     next();
-  } catch (error) {
+  } catch {
     res.status(401).json({
       success: false,
       error: 'Token inválido o expirado',

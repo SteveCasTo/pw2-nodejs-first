@@ -45,9 +45,13 @@ export const authValidators = {
       .isLength({ min: 8 })
       .withMessage('La nueva contraseña debe tener al menos 8 caracteres')
       .matches(/[a-z]/)
-      .withMessage('La nueva contraseña debe contener al menos una letra minúscula')
+      .withMessage(
+        'La nueva contraseña debe contener al menos una letra minúscula'
+      )
       .matches(/[A-Z]/)
-      .withMessage('La nueva contraseña debe contener al menos una letra mayúscula')
+      .withMessage(
+        'La nueva contraseña debe contener al menos una letra mayúscula'
+      )
       .matches(/\d/)
       .withMessage('La nueva contraseña debe contener al menos un número')
       .matches(/[@$!%*?&]/)

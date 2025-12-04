@@ -98,7 +98,10 @@ const cicloController = {
         return;
       }
 
-      const ciclo = await cicloService.delete(req.params.id as string, req.user.id);
+      const ciclo = await cicloService.delete(
+        req.params.id as string,
+        req.user.id
+      );
 
       res.status(200).json({
         success: true,

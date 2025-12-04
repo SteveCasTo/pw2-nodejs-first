@@ -7,7 +7,9 @@ export const estadoPreguntaValidators = {
       .notEmpty()
       .withMessage('El nombre del estado es requerido')
       .isIn(['borrador', 'revision', 'publicada', 'rechazada', 'archivada'])
-      .withMessage('Estado inválido. Valores permitidos: borrador, revision, publicada, rechazada, archivada'),
+      .withMessage(
+        'Estado inválido. Valores permitidos: borrador, revision, publicada, rechazada, archivada'
+      ),
 
     body('descripcion')
       .optional()

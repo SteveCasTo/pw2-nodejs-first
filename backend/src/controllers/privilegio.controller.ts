@@ -29,7 +29,9 @@ const privilegioController = {
 
   getById: async (req: Request, res: Response): Promise<void> => {
     try {
-      const privilegio = await privilegioService.getById(req.params.id as string);
+      const privilegio = await privilegioService.getById(
+        req.params.id as string
+      );
 
       res.status(200).json({
         success: true,
@@ -66,10 +68,13 @@ const privilegioController = {
 
   update: async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-      const privilegio = await privilegioService.update(req.params.id as string, {
-        ...req.body,
-        actualizado_por: req.user?.id,
-      });
+      const privilegio = await privilegioService.update(
+        req.params.id as string,
+        {
+          ...req.body,
+          actualizado_por: req.user?.id,
+        }
+      );
 
       res.status(200).json({
         success: true,
@@ -128,7 +133,9 @@ const privilegioController = {
       res.status(400).json({
         success: false,
         error:
-          error instanceof Error ? error.message : 'Error al eliminar privilegio',
+          error instanceof Error
+            ? error.message
+            : 'Error al eliminar privilegio',
       });
     }
   },

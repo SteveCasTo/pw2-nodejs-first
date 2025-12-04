@@ -3,7 +3,13 @@ import { IContenido } from '../types/models.types';
 import { Types } from 'mongoose';
 
 interface FiltrosContenido {
-  tipo_contenido?: 'texto' | 'imagen' | 'audio' | 'video' | 'documento' | 'otro';
+  tipo_contenido?:
+    | 'texto'
+    | 'imagen'
+    | 'audio'
+    | 'video'
+    | 'documento'
+    | 'otro';
   subido_por?: string;
 }
 
@@ -32,7 +38,13 @@ export const contenidoService = {
   },
 
   async create(data: {
-    tipo_contenido: 'texto' | 'imagen' | 'audio' | 'video' | 'documento' | 'otro';
+    tipo_contenido:
+      | 'texto'
+      | 'imagen'
+      | 'audio'
+      | 'video'
+      | 'documento'
+      | 'otro';
     url_contenido?: string;
     nombre_archivo?: string;
     tamanio_bytes?: number;

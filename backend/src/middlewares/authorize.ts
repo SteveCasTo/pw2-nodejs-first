@@ -11,7 +11,7 @@ export const restrictTo = (...roles: string[]) => {
       return;
     }
 
-    const hasPermission = req.user.privilegios.some((privilegio) =>
+    const hasPermission = req.user.privilegios.some(privilegio =>
       roles.includes(privilegio)
     );
 

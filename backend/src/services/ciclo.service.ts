@@ -58,9 +58,7 @@ const cicloService = {
     }
 
     if (fecha_inicio && fecha_fin && fecha_inicio >= fecha_fin) {
-      throw new Error(
-        'La fecha de inicio debe ser anterior a la fecha de fin'
-      );
+      throw new Error('La fecha de inicio debe ser anterior a la fecha de fin');
     }
 
     const ciclo = await Ciclo.create(data);
@@ -92,9 +90,7 @@ const cicloService = {
     }
 
     if (fecha_inicio && fecha_fin && fecha_inicio >= fecha_fin) {
-      throw new Error(
-        'La fecha de inicio debe ser anterior a la fecha de fin'
-      );
+      throw new Error('La fecha de inicio debe ser anterior a la fecha de fin');
     }
 
     const ciclo = await Ciclo.findByIdAndUpdate(id, data, {
