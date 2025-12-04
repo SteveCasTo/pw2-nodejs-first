@@ -1,9 +1,10 @@
 import { Schema, model } from 'mongoose';
+import bcrypt from 'bcryptjs';
 import { IUsuario } from '../types/models.types';
 
 const usuarioSchema = new Schema<IUsuario>(
   {
-    correo: {
+    correo_electronico: {
       type: String,
       required: [true, 'El correo es requerido'],
       unique: true,
@@ -12,7 +13,13 @@ const usuarioSchema = new Schema<IUsuario>(
       maxlength: [255, 'El correo no puede exceder 255 caracteres'],
       match: [/^\S+@\S+\.\S+$/, 'El correo no es válido'],
     },
-    nombre_completo: {
+    password: {
+      type: String,
+      required: [true, 'La contraseña es requerida'],
+      minlength: [6, 'La contraseña debe tener al menos 6 caracteres'],
+      select: false,
+    },
+    nombre: {
       type: String,
       maxlength: [255, 'El nombre no puede exceder 255 caracteres'],
       trim: true,
@@ -21,7 +28,7 @@ const usuarioSchema = new Schema<IUsuario>(
       type: Date,
       default: Date.now,
     },
-    registrado_por: {
+    creado_por: {
       type: Schema.Types.ObjectId,
       ref: 'Usuario',
     },
@@ -35,6 +42,20 @@ const usuarioSchema = new Schema<IUsuario>(
     versionKey: false,
   }
 );
+
+usuarioSchema.pre('save', async function (next) {
+  if (!this.isModified('password')) return next();
+
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
+
+usuarioSchema.methods.comparePassword = async function (
+  candidatePassword: string
+): Promise<boolean> {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 
 usuarioSchema.index({ activo: 1 });
 
