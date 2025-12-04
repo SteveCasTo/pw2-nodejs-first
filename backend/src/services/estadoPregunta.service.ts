@@ -11,7 +11,12 @@ export const estadoPreguntaService = {
   },
 
   async create(data: {
-    nombre_estado: 'borrador' | 'revision' | 'publicada' | 'rechazada' | 'archivada';
+    nombre_estado:
+      | 'borrador'
+      | 'revision'
+      | 'publicada'
+      | 'rechazada'
+      | 'archivada';
     descripcion?: string;
     orden: number;
   }): Promise<IEstadoPregunta> {
@@ -30,9 +35,7 @@ export const estadoPreguntaService = {
       orden: data.orden,
     });
     if (existenteOrden) {
-      throw new Error(
-        `Ya existe un estado con el orden ${data.orden}`
-      );
+      throw new Error(`Ya existe un estado con el orden ${data.orden}`);
     }
 
     const estado = new EstadoPregunta(data);

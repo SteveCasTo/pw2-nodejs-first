@@ -49,7 +49,10 @@ export const preguntaService = {
       .populate('id_rango_edad', 'nombre_rango edad_minima edad_maxima')
       .populate('id_dificultad', 'nivel descripcion')
       .populate('id_estado', 'nombre_estado descripcion')
-      .populate('id_contenido_pregunta', 'tipo_contenido url_contenido nombre_archivo')
+      .populate(
+        'id_contenido_pregunta',
+        'tipo_contenido url_contenido nombre_archivo'
+      )
       .populate('creado_por', 'correo nombre_completo')
       .sort({ fecha_creacion: -1 });
   },
@@ -60,7 +63,10 @@ export const preguntaService = {
       .populate('id_rango_edad', 'nombre_rango edad_minima edad_maxima')
       .populate('id_dificultad', 'nivel descripcion')
       .populate('id_estado', 'nombre_estado descripcion')
-      .populate('id_contenido_pregunta', 'tipo_contenido url_contenido nombre_archivo')
+      .populate(
+        'id_contenido_pregunta',
+        'tipo_contenido url_contenido nombre_archivo'
+      )
       .populate('creado_por', 'correo nombre_completo');
   },
 

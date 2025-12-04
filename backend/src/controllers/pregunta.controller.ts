@@ -23,7 +23,8 @@ export const preguntaController = {
         id_subcategoria: id_subcategoria as string | undefined,
         id_dificultad: id_dificultad as string | undefined,
         id_estado: id_estado as string | undefined,
-        activa: activa === 'false' ? false : activa === 'true' ? true : undefined,
+        activa:
+          activa === 'false' ? false : activa === 'true' ? true : undefined,
       };
 
       const preguntas = await preguntaService.getAll(filtros);

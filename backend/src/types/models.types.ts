@@ -1,15 +1,15 @@
 import { Document, Types } from 'mongoose';
 
-// ==================== USUARIOS ====================
 export interface IUsuario extends Document {
-  correo: string;
-  nombre_completo?: string;
+  correo_electronico: string;
+  password: string;
+  nombre?: string;
   fecha_registro: Date;
-  registrado_por?: Types.ObjectId;
+  creado_por?: Types.ObjectId;
   activo: boolean;
+  comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
-// ==================== PRIVILEGIOS ====================
 export interface IPrivilegio extends Document {
   nombre_privilegio: string;
   descripcion?: string;
@@ -24,7 +24,6 @@ export interface IUsuarioPrivilegio extends Document {
   fecha_asignacion: Date;
 }
 
-// ==================== CATEGORÍAS ====================
 export interface ICategoria extends Document {
   nombre_categoria: string;
   fecha_creacion: Date;
@@ -39,7 +38,6 @@ export interface ISubcategoria extends Document {
   activo: boolean;
 }
 
-// ==================== RANGOS DE EDAD ====================
 export interface IRangoEdad extends Document {
   nombre_rango: string;
   edad_minima: number;
@@ -47,14 +45,12 @@ export interface IRangoEdad extends Document {
   activo: boolean;
 }
 
-// ==================== NIVELES DE DIFICULTAD ====================
 export interface INivelDificultad extends Document {
   nivel: 'facil' | 'medio' | 'dificil';
   descripcion?: string;
   activo: boolean;
 }
 
-// ==================== ESTADOS DE PREGUNTA ====================
 export interface IEstadoPregunta extends Document {
   nombre_estado:
     | 'borrador'
@@ -66,7 +62,6 @@ export interface IEstadoPregunta extends Document {
   orden: number;
 }
 
-// ==================== CONTENIDOS ====================
 export interface IContenido extends Document {
   tipo_contenido: 'texto' | 'imagen' | 'audio' | 'video' | 'documento' | 'otro';
   url_contenido: string;
@@ -77,7 +72,6 @@ export interface IContenido extends Document {
   subido_por?: Types.ObjectId;
 }
 
-// ==================== PREGUNTAS ====================
 export interface IPregunta extends Document {
   id_subcategoria: Types.ObjectId;
   id_rango_edad: Types.ObjectId;
@@ -138,7 +132,6 @@ export interface IRevisionPregunta extends Document {
   fecha_revision: Date;
 }
 
-// ==================== CICLOS ====================
 export interface ICiclo extends Document {
   nombre_ciclo: string;
   descripcion?: string;
@@ -149,7 +142,6 @@ export interface ICiclo extends Document {
   creado_por?: Types.ObjectId;
 }
 
-// ==================== EXÁMENES ====================
 export interface IExamen extends Document {
   titulo: string;
   descripcion?: string;
@@ -178,7 +170,6 @@ export interface IExamenPregunta extends Document {
   agregada_por?: Types.ObjectId;
 }
 
-// ==================== INTENTOS ====================
 export interface IIntentoExamen extends Document {
   id_examen: Types.ObjectId;
   id_usuario: Types.ObjectId;
@@ -192,7 +183,6 @@ export interface IIntentoExamen extends Document {
   completado: boolean;
 }
 
-// ==================== RESPUESTAS ====================
 export interface IRespuestaSeleccion extends Document {
   id_intento: Types.ObjectId;
   id_examen_pregunta: Types.ObjectId;

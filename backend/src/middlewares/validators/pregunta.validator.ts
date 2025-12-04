@@ -78,7 +78,7 @@ export const preguntaValidators = {
     body('creado_por')
       .optional({ values: 'falsy' })
       .trim()
-      .custom((value) => {
+      .custom(value => {
         if (!value) return true;
         return /^[0-9a-fA-F]{24}$/.test(value);
       })
@@ -92,7 +92,9 @@ export const preguntaValidators = {
     body('fecha_publicacion')
       .optional()
       .isISO8601()
-      .withMessage('La fecha de publicación debe tener formato ISO 8601 válido'),
+      .withMessage(
+        'La fecha de publicación debe tener formato ISO 8601 válido'
+      ),
 
     body('activa')
       .optional()
@@ -118,7 +120,10 @@ export const preguntaValidators = {
       .isMongoId()
       .withMessage('ID de nivel de dificultad inválido'),
 
-    body('id_estado').optional().isMongoId().withMessage('ID de estado inválido'),
+    body('id_estado')
+      .optional()
+      .isMongoId()
+      .withMessage('ID de estado inválido'),
 
     body('tipo_pregunta')
       .optional()
