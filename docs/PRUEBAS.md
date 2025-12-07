@@ -1,8 +1,24 @@
 # 🧪 GUÍA DE PRUEBAS - API REST
 
+## 🔐 Generar Certificados SSL (Opcional)
+
+Si necesitas regenerar los certificados SSL para HTTPS/HTTP2, ejecuta:
+
+```bash
+cd backend/certs
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365 -nodes -subj "/C=XX/ST=Dev/L=Local/O=DevTeam/OU=Development/CN=localhost"
+```
+
+**Nota:** Los certificados ya están incluidos en el repositorio. Solo regenera si han expirado o los eliminaste.
+
+---
+
 ## 📋 Requisitos Previos
 1. Ejecutar `npm run seed` para cargar datos iniciales
-2. Servidor corriendo en `http://localhost:3000`
+2. Servidor corriendo en:
+   - HTTP: `http://localhost:3000`
+   - HTTPS: `https://localhost:3001`
+   - HTTP/2: `https://localhost:3002`
 
 ## 👥 CREDENCIALES DE USUARIOS
 
