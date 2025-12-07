@@ -1,6 +1,11 @@
 import app from './app';
 import { connectDB } from '@config/database';
 import config from '@config/constants';
+import http from 'http';
+import https from 'https';
+import spdy from 'spdy';
+import fs from 'fs';
+import path from 'path';
 
 // Importar modelos para registrarlos en Mongoose
 import './models/categoria.model';
@@ -29,10 +34,45 @@ const startServer = async () => {
   try {
     await connectDB();
 
-    app.listen(config.PORT, () => {
-      console.warn(`Servidor corriendo en modo: ${config.NODE_ENV}`);
-      console.warn(`Puerto: ${config.PORT}`);
-      console.warn(`URL: http://localhost:${config.PORT}`);
+    const httpServer = http.createServer((req, res) => {
+      (req as any).serverType = 'HTTP';
+      app(req, res);
+    });
+    httpServer.listen(config.PORT, () => {
+      console.log(`HTTP -> http://localhost:${config.PORT}`);
+    });
+
+    const certPath = path.join(__dirname, '../certs');
+    const sslOptions = {
+      key: fs.readFileSync(path.join(certPath, 'key.pem')),
+      cert: fs.readFileSync(path.join(certPath, 'cert.pem')),
+    };
+
+    const portHTTPS = process.env.PORT_HTTPS || '3001';
+    const httpsServer = https.createServer(sslOptions, (req, res) => {
+      (req as any).serverType = 'HTTPS';
+      app(req, res);
+    });
+    httpsServer.listen(portHTTPS, () => {
+      console.log(`HTTPS (HTTP/1.1) -> https://localhost:${portHTTPS}`);
+    });
+
+    const portHTTP2 = process.env.PORT_HTTP2 || '3002';
+    const http2Server = spdy.createServer(
+      {
+        ...sslOptions,
+        spdy: {
+          protocols: ['h2'],
+          plain: false,
+        },
+      },
+      (req, res) => {
+        (req as any).serverType = 'HTTP2';
+        app(req, res);
+      }
+    );
+    http2Server.listen(portHTTP2, () => {
+      console.log(`HTTP/2 -> https://localhost:${portHTTP2}`);
     });
   } catch (error) {
     console.error('Error al iniciar el servidor:', error);

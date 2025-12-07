@@ -30,10 +30,22 @@ app.use(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-app.get('/health', (_req, res) => {
+app.use((req, res, next) => {
+  const serverType = (req as any).serverType;
+  const protocol = serverType === 'HTTP2' ? 'HTTP/2.0' : 
+                   serverType === 'HTTPS' ? 'HTTPS (HTTP/1.1)' : 'HTTP/1.1';
+  
+  res.setHeader('X-Protocol-Used', protocol);
+  (req as any).detectedProtocol = protocol;
+  next();
+});
+
+app.get('/health', (req, res) => {
+  const protocol = (req as any).detectedProtocol || `HTTP/${req.httpVersion}`;
   res.status(200).json({
     success: true,
     message: 'Server is running',
+    protocol: protocol,
     timestamp: new Date().toISOString(),
   });
 });
