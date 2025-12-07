@@ -35,11 +35,11 @@ const startServer = async () => {
     await connectDB();
 
     const httpServer = http.createServer((req, res) => {
-      (req as any).serverType = 'HTTP';
+      (req as unknown as Record<string, unknown>).serverType = 'HTTP';
       app(req, res);
     });
     httpServer.listen(config.PORT, () => {
-      console.log(`HTTP -> http://localhost:${config.PORT}`);
+      console.warn(`HTTP -> http://localhost:${config.PORT}`);
     });
 
     const certPath = path.join(__dirname, '../certs');
@@ -50,11 +50,11 @@ const startServer = async () => {
 
     const portHTTPS = process.env.PORT_HTTPS || '3001';
     const httpsServer = https.createServer(sslOptions, (req, res) => {
-      (req as any).serverType = 'HTTPS';
+      (req as unknown as Record<string, unknown>).serverType = 'HTTPS';
       app(req, res);
     });
     httpsServer.listen(portHTTPS, () => {
-      console.log(`HTTPS (HTTP/1.1) -> https://localhost:${portHTTPS}`);
+      console.warn(`HTTPS (HTTP/1.1) -> https://localhost:${portHTTPS}`);
     });
 
     const portHTTP2 = process.env.PORT_HTTP2 || '3002';
@@ -67,12 +67,12 @@ const startServer = async () => {
         },
       },
       (req, res) => {
-        (req as any).serverType = 'HTTP2';
+        (req as unknown as Record<string, unknown>).serverType = 'HTTP2';
         app(req, res);
       }
     );
     http2Server.listen(portHTTP2, () => {
-      console.log(`HTTP/2 -> https://localhost:${portHTTP2}`);
+      console.warn(`HTTP/2 -> https://localhost:${portHTTP2}`);
     });
   } catch (error) {
     console.error('Error al iniciar el servidor:', error);
