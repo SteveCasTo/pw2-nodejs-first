@@ -30,18 +30,27 @@ app.use(
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-app.use((req, res, next) => {
-  const serverType = (req as any).serverType;
-  const protocol = serverType === 'HTTP2' ? 'HTTP/2.0' : 
-                   serverType === 'HTTPS' ? 'HTTPS (HTTP/1.1)' : 'HTTP/1.1';
-  
+interface RequestWithProtocol extends express.Request {
+  serverType?: 'HTTP' | 'HTTPS' | 'HTTP2';
+  detectedProtocol?: string;
+}
+
+app.use((req: RequestWithProtocol, res, next) => {
+  const serverType = req.serverType;
+  const protocol =
+    serverType === 'HTTP2'
+      ? 'HTTP/2.0'
+      : serverType === 'HTTPS'
+        ? 'HTTPS (HTTP/1.1)'
+        : 'HTTP/1.1';
+
   res.setHeader('X-Protocol-Used', protocol);
-  (req as any).detectedProtocol = protocol;
+  req.detectedProtocol = protocol;
   next();
 });
 
-app.get('/health', (req, res) => {
-  const protocol = (req as any).detectedProtocol || `HTTP/${req.httpVersion}`;
+app.get('/health', (req: RequestWithProtocol, res) => {
+  const protocol = req.detectedProtocol || `HTTP/${req.httpVersion}`;
   res.status(200).json({
     success: true,
     message: 'Server is running',
