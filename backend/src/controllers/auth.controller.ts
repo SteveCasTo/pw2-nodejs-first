@@ -22,19 +22,16 @@ const authController = {
 
   register: async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-      if (!req.user) {
-        res.status(401).json({
-          success: false,
-          error: 'No autorizado',
-        });
-        return;
-      }
+      // Permitir registro sin autenticación (para el primer usuario)
+      // Si hay un usuario autenticado, usar su ID (para registros posteriores por superadmin)
+      const createdBy = req.user?.id;
 
-      const result = await authService.register(req.body, req.user.id);
+      const result = await authService.register(req.body, createdBy);
 
       res.status(201).json({
         success: true,
         data: result,
+        message: 'Usuario registrado exitosamente',
       });
     } catch (error) {
       res.status(400).json({

@@ -1,5 +1,6 @@
 import { Usuario } from '@models/usuario.model';
 import { UsuarioPrivilegio } from '@models/usuarioPrivilegio.model';
+import { Privilegio } from '@models/privilegio.model';
 import { generateToken } from '@utils/jwt';
 import { sendWelcomeEmail } from '@utils/email';
 import { generatePassword } from '@utils/generatePassword';
@@ -64,7 +65,7 @@ const authService = {
     };
   },
 
-  register: async (data: RegisterData, adminId: string) => {
+  register: async (data: RegisterData, adminId?: string) => {
     const { correo_electronico } = data;
 
     const existingUser = await Usuario.findOne({ correo_electronico });
@@ -77,8 +78,38 @@ const authService = {
     const usuario = await Usuario.create({
       ...data,
       password,
-      creado_por: adminId,
+      ...(adminId && { creado_por: adminId }),
     });
+
+    // Si es el primer usuario del sistema, asignarle privilegio de superadmin
+    const userCount = await Usuario.countDocuments();
+    console.log('👤 Total de usuarios en el sistema:', userCount);
+    
+    if (userCount === 1) {
+      console.log('🔐 Primer usuario detectado. Asignando privilegio de superadmin...');
+      
+      // Buscar o crear el privilegio de superadmin
+      let superadminPrivilegio = await Privilegio.findOne({
+        nombre_privilegio: 'superadmin',
+      });
+
+      if (!superadminPrivilegio) {
+        console.log('➕ Creando privilegio de superadmin...');
+        superadminPrivilegio = await Privilegio.create({
+          nombre_privilegio: 'superadmin',
+          descripcion: 'Acceso total al sistema',
+        });
+      } else {
+        console.log('✅ Privilegio superadmin encontrado:', superadminPrivilegio._id);
+      }
+
+      // Asignar el privilegio al usuario
+      const usuarioPrivilegio = await UsuarioPrivilegio.create({
+        id_usuario: usuario._id,
+        id_privilegio: superadminPrivilegio._id,
+      });
+      console.log('✅ Privilegio asignado exitosamente:', usuarioPrivilegio);
+    }
 
     let emailSent = false;
     try {

@@ -15,6 +15,8 @@ const config = {
   NODE_ENV: process.env.NODE_ENV || 'development',
 
   PORT: parseInt(process.env.PORT || '3000', 10),
+  PORT_HTTPS: parseInt(process.env.PORT_HTTPS || '3001', 10),
+  PORT_HTTP2: parseInt(process.env.PORT_HTTP2 || '3002', 10),
   BACKEND_URL:
     process.env.BACKEND_URL || `http://localhost:${process.env.PORT || 3000}`,
 

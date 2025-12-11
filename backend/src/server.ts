@@ -48,16 +48,16 @@ const startServer = async () => {
       cert: fs.readFileSync(path.join(certPath, 'cert.pem')),
     };
 
-    const portHTTPS = process.env.PORT_HTTPS || '3001';
     const httpsServer = https.createServer(sslOptions, (req, res) => {
       (req as unknown as Record<string, unknown>).serverType = 'HTTPS';
       app(req, res);
     });
-    httpsServer.listen(portHTTPS, () => {
-      console.warn(`HTTPS (HTTP/1.1) -> https://localhost:${portHTTPS}`);
+    httpsServer.listen(config.PORT_HTTPS, () => {
+      console.warn(
+        `HTTPS (HTTP/1.1) -> https://localhost:${config.PORT_HTTPS}`
+      );
     });
 
-    const portHTTP2 = process.env.PORT_HTTP2 || '3002';
     const http2Server = spdy.createServer(
       {
         ...sslOptions,
@@ -71,8 +71,8 @@ const startServer = async () => {
         app(req, res);
       }
     );
-    http2Server.listen(portHTTP2, () => {
-      console.warn(`HTTP/2 -> https://localhost:${portHTTP2}`);
+    http2Server.listen(config.PORT_HTTP2, () => {
+      console.warn(`HTTP/2 -> https://localhost:${config.PORT_HTTP2}`);
     });
   } catch (error) {
     console.error('Error al iniciar el servidor:', error);

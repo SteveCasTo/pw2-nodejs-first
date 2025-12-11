@@ -1,0 +1,1452 @@
+================================================================================
+POSTMAN REQUESTS - PROYECTO pw2-nodejs-first
+GUÍA DE PRUEBAS SECUENCIAL E INCREMENTAL
+================================================================================
+Base URL: http://localhost:4000
+Todas las rutas (excepto /health y /api/auth/login) requieren autenticación
+================================================================================
+
+INSTRUCCIONES:
+1. Ejecuta las peticiones EN ORDEN según aparecen
+2. Guarda los IDs que recibes en cada respuesta para usar en las siguientes
+3. Copia el token del login y úsalo en todas las peticiones siguientes
+4. Reemplaza los {{id_*}} con los IDs reales que vayas obteniendo
+
+================================================================================
+PASO 1: VERIFICAR QUE EL SERVIDOR ESTÁ CORRIENDO
+================================================================================
+
+Health Check
+------------
+GET http://localhost:4000/health
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "message": "Server is running",
+  "protocol": "HTTP/1.1",
+  "timestamp": "2024-12-10T15:30:00.000Z"
+}
+
+================================================================================
+PASO 2: REGISTRAR EL PRIMER USUARIO (SUPERADMIN)
+================================================================================
+
+NOTA: El primer usuario en el sistema recibe automáticamente rol de superadmin
+
+Registrar Usuario
+-----------------
+POST http://localhost:4000/api/auth/register
+Content-Type: application/json
+
+Body:
+{
+  "correo_electronico": "admin@example.com",
+  "password": "Password123!",
+  "nombre": "Administrador Principal"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675daaaaabcd5678ef901234",
+    "correo_electronico": "admin@example.com",
+    "nombre": "Administrador Principal",
+    "activo": true,
+    "fecha_registro": "2024-12-10T15:30:00.000Z"
+  },
+  "message": "Usuario registrado exitosamente"
+}
+
+Guardar: {{id_usuario_admin}} = 675daaaaabcd5678ef901234
+
+================================================================================
+PASO 3: HACER LOGIN Y OBTENER TOKEN
+================================================================================
+
+Login
+-----
+POST http://localhost:4000/api/auth/login
+Content-Type: application/json
+
+Body:
+{
+  "correo_electronico": "admin@example.com",
+  "password": "Password123!"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NWRhYWFhYWJjZDU2NzhlZjkwMTIzNCIsImlhdCI6MTczMzg0MjgwMCwiZXhwIjoxNzM0NDQ3NjAwfQ.xyz123...",
+    "user": {
+      "_id": "675daaaaabcd5678ef901234",
+      "correo_electronico": "admin@example.com",
+      "nombre": "Administrador Principal"
+    }
+  },
+  "message": "Login exitoso"
+}
+
+COPIAR EL TOKEN - Usarlo en todas las siguientes peticiones como:
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+================================================================================
+PASO 4: VERIFICAR AUTENTICACIÓN
+================================================================================
+
+Obtener Datos del Usuario Actual
+---------------------------------
+GET http://localhost:4000/api/auth/me
+Authorization: Bearer {{token}}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675daaaaabcd5678ef901234",
+    "correo_electronico": "admin@example.com",
+    "nombre": "Administrador Principal",
+    "activo": true,
+    "fecha_registro": "2024-12-10T15:30:00.000Z"
+  }
+}
+
+================================================================================
+PASO 5: CREAR PRIVILEGIOS DEL SISTEMA
+================================================================================
+
+5.1. Crear Privilegio "editor"
+-------------------------------
+POST http://localhost:4000/api/privilegios
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_privilegio": "editor",
+  "descripcion": "Puede crear y editar preguntas y exámenes"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675dbbbbabcd5678ef901235",
+    "nombre_privilegio": "editor",
+    "descripcion": "Puede crear y editar preguntas y exámenes",
+    "activo": true,
+    "fecha_creacion": "2024-12-10T15:31:00.000Z"
+  },
+  "message": "Privilegio creado exitosamente"
+}
+
+Guardar: {{id_privilegio_editor}} = 675dbbbbabcd5678ef901235
+
+5.2. Crear Privilegio "revisor"
+--------------------------------
+POST http://localhost:4000/api/privilegios
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_privilegio": "revisor",
+  "descripcion": "Puede revisar y aprobar preguntas creadas por otros"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675dccccabcd5678ef901236",
+    "nombre_privilegio": "revisor",
+    "descripcion": "Puede revisar y aprobar preguntas creadas por otros",
+    "activo": true,
+    "fecha_creacion": "2024-12-10T15:32:00.000Z"
+  },
+  "message": "Privilegio creado exitosamente"
+}
+
+Guardar: {{id_privilegio_revisor}} = 675dccccabcd5678ef901236
+
+5.3. Listar Todos los Privilegios
+----------------------------------
+GET http://localhost:4000/api/privilegios
+Authorization: Bearer {{token}}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "675d0000abcd5678ef901230",
+      "nombre_privilegio": "superadmin",
+      "descripcion": "Acceso total al sistema",
+      "activo": true
+    },
+    {
+      "_id": "675dbbbbabcd5678ef901235",
+      "nombre_privilegio": "editor",
+      "descripcion": "Puede crear y editar preguntas y exámenes",
+      "activo": true
+    },
+    {
+      "_id": "675dccccabcd5678ef901236",
+      "nombre_privilegio": "revisor",
+      "descripcion": "Puede revisar y aprobar preguntas creadas por otros",
+      "activo": true
+    }
+  ],
+  "count": 3
+}
+
+================================================================================
+PASO 6: CREAR RANGOS DE EDAD
+================================================================================
+
+6.1. Crear Rango "Niños"
+-------------------------
+POST http://localhost:4000/api/rangos-edad
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_rango": "Niños",
+  "edad_minima": 6,
+  "edad_maxima": 12
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675dddddabcd5678ef901237",
+    "nombre_rango": "Niños",
+    "edad_minima": 6,
+    "edad_maxima": 12,
+    "activo": true,
+    "fecha_creacion": "2024-12-10T15:33:00.000Z"
+  },
+  "message": "Rango de edad creado exitosamente"
+}
+
+Guardar: {{id_rango_ninos}} = 675dddddabcd5678ef901237
+
+6.2. Crear Rango "Adolescentes"
+--------------------------------
+POST http://localhost:4000/api/rangos-edad
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_rango": "Adolescentes",
+  "edad_minima": 13,
+  "edad_maxima": 17
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675deeeeabcd5678ef901238",
+    "nombre_rango": "Adolescentes",
+    "edad_minima": 13,
+    "edad_maxima": 17,
+    "activo": true,
+    "fecha_creacion": "2024-12-10T15:34:00.000Z"
+  },
+  "message": "Rango de edad creado exitosamente"
+}
+
+Guardar: {{id_rango_adolescentes}} = 675deeeeabcd5678ef901238
+
+6.3. Crear Rango "Adultos"
+---------------------------
+POST http://localhost:4000/api/rangos-edad
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_rango": "Adultos",
+  "edad_minima": 18,
+  "edad_maxima": 100
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675dffffabcd5678ef901239",
+    "nombre_rango": "Adultos",
+    "edad_minima": 18,
+    "edad_maxima": 100,
+    "activo": true,
+    "fecha_creacion": "2024-12-10T15:35:00.000Z"
+  },
+  "message": "Rango de edad creado exitosamente"
+}
+
+Guardar: {{id_rango_adultos}} = 675dffffabcd5678ef901239
+
+6.4. Listar Todos los Rangos de Edad
+-------------------------------------
+GET http://localhost:4000/api/rangos-edad
+Authorization: Bearer {{token}}
+
+================================================================================
+PASO 7: CREAR CATEGORÍAS Y SUBCATEGORÍAS
+================================================================================
+
+7.1. Crear Categoría "Matemáticas"
+-----------------------------------
+POST http://localhost:4000/api/categorias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_categoria": "Matemáticas"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675e0000abcd5678ef90123a",
+    "nombre_categoria": "Matemáticas",
+    "activo": true,
+    "fecha_creacion": "2024-12-10T15:36:00.000Z"
+  },
+  "message": "Categoría creada exitosamente"
+}
+
+Guardar: {{id_categoria_matematicas}} = 675e0000abcd5678ef90123a
+
+7.2. Crear Categoría "Programación"
+------------------------------------
+POST http://localhost:4000/api/categorias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_categoria": "Programación"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675e1111abcd5678ef90123b",
+    "nombre_categoria": "Programación",
+    "activo": true,
+    "fecha_creacion": "2024-12-10T15:37:00.000Z"
+  },
+  "message": "Categoría creada exitosamente"
+}
+
+Guardar: {{id_categoria_programacion}} = 675e1111abcd5678ef90123b
+
+7.3. Listar Todas las Categorías
+---------------------------------
+GET http://localhost:4000/api/categorias
+Authorization: Bearer {{token}}
+
+7.4. Crear Subcategoría "Álgebra" (en Matemáticas)
+---------------------------------------------------
+POST http://localhost:4000/api/subcategorias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_categoria": "675e0000abcd5678ef90123a",
+  "nombre_subcategoria": "Álgebra",
+  "descripcion": "Ecuaciones, expresiones algebraicas y funciones"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675e2222abcd5678ef90123c",
+    "id_categoria": "675e0000abcd5678ef90123a",
+    "nombre_subcategoria": "Álgebra",
+    "descripcion": "Ecuaciones, expresiones algebraicas y funciones",
+    "activo": true,
+    "fecha_creacion": "2024-12-10T15:38:00.000Z"
+  },
+  "message": "Subcategoría creada exitosamente"
+}
+
+Guardar: {{id_subcategoria_algebra}} = 675e2222abcd5678ef90123c
+
+7.5. Crear Subcategoría "JavaScript" (en Programación)
+-------------------------------------------------------
+POST http://localhost:4000/api/subcategorias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_categoria": "675e1111abcd5678ef90123b",
+  "nombre_subcategoria": "JavaScript",
+  "descripcion": "Fundamentos de JavaScript y ES6+"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675e3333abcd5678ef90123d",
+    "id_categoria": "675e1111abcd5678ef90123b",
+    "nombre_subcategoria": "JavaScript",
+    "descripcion": "Fundamentos de JavaScript y ES6+",
+    "activo": true,
+    "fecha_creacion": "2024-12-10T15:39:00.000Z"
+  },
+  "message": "Subcategoría creada exitosamente"
+}
+
+Guardar: {{id_subcategoria_javascript}} = 675e3333abcd5678ef90123d
+
+7.6. Listar Todas las Subcategorías
+------------------------------------
+GET http://localhost:4000/api/subcategorias
+Authorization: Bearer {{token}}
+
+7.7. Listar Subcategorías de Matemáticas
+-----------------------------------------
+GET http://localhost:4000/api/subcategorias/categoria/{{id_categoria_matematicas}}
+Authorization: Bearer {{token}}
+
+================================================================================
+PASO 8: CREAR NIVELES DE DIFICULTAD
+================================================================================
+
+8.1. Crear Nivel "Fácil"
+-------------------------
+POST http://localhost:4000/api/niveles-dificultad
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nivel": "facil",
+  "descripcion": "Preguntas básicas para principiantes"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675e4444abcd5678ef90123e",
+    "nivel": "facil",
+    "descripcion": "Preguntas básicas para principiantes",
+    "activo": true,
+    "fecha_creacion": "2024-12-10T15:40:00.000Z"
+  },
+  "message": "Nivel de dificultad creado exitosamente"
+}
+
+Guardar: {{id_dificultad_facil}} = 675e4444abcd5678ef90123e
+
+8.2. Crear Nivel "Medio"
+-------------------------
+POST http://localhost:4000/api/niveles-dificultad
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nivel": "medio",
+  "descripcion": "Preguntas de complejidad intermedia"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675e5555abcd5678ef90123f",
+    "nivel": "medio",
+    "descripcion": "Preguntas de complejidad intermedia",
+    "activo": true,
+    "fecha_creacion": "2024-12-10T15:41:00.000Z"
+  },
+  "message": "Nivel de dificultad creado exitosamente"
+}
+
+Guardar: {{id_dificultad_medio}} = 675e5555abcd5678ef90123f
+
+8.3. Crear Nivel "Difícil"
+---------------------------
+POST http://localhost:4000/api/niveles-dificultad
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nivel": "dificil",
+  "descripcion": "Preguntas avanzadas y complejas"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675e6666abcd5678ef901240",
+    "nivel": "dificil",
+    "descripcion": "Preguntas avanzadas y complejas",
+    "activo": true,
+    "fecha_creacion": "2024-12-10T15:42:00.000Z"
+  },
+  "message": "Nivel de dificultad creado exitosamente"
+}
+
+Guardar: {{id_dificultad_dificil}} = 675e6666abcd5678ef901240
+
+8.4. Listar Todos los Niveles de Dificultad
+--------------------------------------------
+GET http://localhost:4000/api/niveles-dificultad
+Authorization: Bearer {{token}}
+
+================================================================================
+PASO 9: CREAR ESTADOS DE PREGUNTA
+================================================================================
+
+9.1. Crear Estado "Borrador"
+-----------------------------
+POST http://localhost:4000/api/estados-pregunta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_estado": "borrador",
+  "descripcion": "Pregunta en proceso de creación",
+  "orden": 1
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675e7777abcd5678ef901241",
+    "nombre_estado": "borrador",
+    "descripcion": "Pregunta en proceso de creación",
+    "orden": 1,
+    "fecha_creacion": "2024-12-10T15:43:00.000Z"
+  },
+  "message": "Estado de pregunta creado exitosamente"
+}
+
+Guardar: {{id_estado_borrador}} = 675e7777abcd5678ef901241
+
+9.2. Crear Estado "En Revisión"
+--------------------------------
+POST http://localhost:4000/api/estados-pregunta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_estado": "revision",
+  "descripcion": "Pregunta esperando aprobación",
+  "orden": 2
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675e8888abcd5678ef901242",
+    "nombre_estado": "revision",
+    "descripcion": "Pregunta esperando aprobación",
+    "orden": 2,
+    "fecha_creacion": "2024-12-10T15:44:00.000Z"
+  },
+  "message": "Estado de pregunta creado exitosamente"
+}
+
+Guardar: {{id_estado_revision}} = 675e8888abcd5678ef901242
+
+9.3. Crear Estado "Publicada"
+------------------------------
+POST http://localhost:4000/api/estados-pregunta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_estado": "publicada",
+  "descripcion": "Pregunta aprobada y lista para usar",
+  "orden": 3
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675e9999abcd5678ef901243",
+    "nombre_estado": "publicada",
+    "descripcion": "Pregunta aprobada y lista para usar",
+    "orden": 3,
+    "fecha_creacion": "2024-12-10T15:45:00.000Z"
+  },
+  "message": "Estado de pregunta creado exitosamente"
+}
+
+Guardar: {{id_estado_publicada}} = 675e9999abcd5678ef901243
+
+9.4. Crear Estado "Rechazada"
+------------------------------
+POST http://localhost:4000/api/estados-pregunta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_estado": "rechazada",
+  "descripcion": "Pregunta rechazada por revisores",
+  "orden": 4
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675eaaaaabcd5678ef901244",
+    "nombre_estado": "rechazada",
+    "descripcion": "Pregunta rechazada por revisores",
+    "orden": 4,
+    "fecha_creacion": "2024-12-10T15:46:00.000Z"
+  },
+  "message": "Estado de pregunta creado exitosamente"
+}
+
+Guardar: {{id_estado_rechazada}} = 675eaaaaabcd5678ef901244
+
+9.5. Listar Todos los Estados
+------------------------------
+GET http://localhost:4000/api/estados-pregunta
+Authorization: Bearer {{token}}
+
+================================================================================
+PASO 10: CREAR CICLOS ACADÉMICOS
+================================================================================
+
+10.1. Crear Ciclo "2024-1"
+---------------------------
+POST http://localhost:4000/api/ciclos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_ciclo": "2024-1",
+  "descripcion": "Primer ciclo académico 2024",
+  "fecha_inicio": "2024-03-01T00:00:00.000Z",
+  "fecha_fin": "2024-07-31T23:59:59.000Z"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675ebbbbabcd5678ef901245",
+    "nombre_ciclo": "2024-1",
+    "descripcion": "Primer ciclo académico 2024",
+    "fecha_inicio": "2024-03-01T00:00:00.000Z",
+    "fecha_fin": "2024-07-31T23:59:59.000Z",
+    "activo": true,
+    "fecha_creacion": "2024-12-10T15:47:00.000Z"
+  },
+  "message": "Ciclo creado exitosamente"
+}
+
+Guardar: {{id_ciclo_2024_1}} = 675ebbbbabcd5678ef901245
+
+10.2. Crear Ciclo "2024-2"
+---------------------------
+POST http://localhost:4000/api/ciclos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_ciclo": "2024-2",
+  "descripcion": "Segundo ciclo académico 2024",
+  "fecha_inicio": "2024-08-01T00:00:00.000Z",
+  "fecha_fin": "2024-12-31T23:59:59.000Z"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675eccccabcd5678ef901246",
+    "nombre_ciclo": "2024-2",
+    "descripcion": "Segundo ciclo académico 2024",
+    "fecha_inicio": "2024-08-01T00:00:00.000Z",
+    "fecha_fin": "2024-12-31T23:59:59.000Z",
+    "activo": true,
+    "fecha_creacion": "2024-12-10T15:48:00.000Z"
+  },
+  "message": "Ciclo creado exitosamente"
+}
+
+Guardar: {{id_ciclo_2024_2}} = 675eccccabcd5678ef901246
+
+10.3. Listar Todos los Ciclos
+------------------------------
+GET http://localhost:4000/api/ciclos
+Authorization: Bearer {{token}}
+
+================================================================================
+PASO 11: CREAR CONTENIDOS MULTIMEDIA
+================================================================================
+
+11.1. Crear Contenido de Imagen
+--------------------------------
+POST http://localhost:4000/api/contenidos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "tipo_contenido": "imagen",
+  "url_contenido": "https://example.com/imagen-matematica.jpg",
+  "nombre_archivo": "ecuacion-cuadratica.jpg",
+  "tamanio_bytes": 150000,
+  "mime_type": "image/jpeg"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675edddabcd5678ef901247",
+    "tipo_contenido": "imagen",
+    "url_contenido": "https://example.com/imagen-matematica.jpg",
+    "nombre_archivo": "ecuacion-cuadratica.jpg",
+    "tamanio_bytes": 150000,
+    "mime_type": "image/jpeg",
+    "fecha_subida": "2024-12-10T15:49:00.000Z"
+  },
+  "message": "Contenido creado exitosamente"
+}
+
+Guardar: {{id_contenido_imagen}} = 675edddabcd5678ef901247
+
+11.2. Crear Contenido de Video
+-------------------------------
+POST http://localhost:4000/api/contenidos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "tipo_contenido": "video",
+  "url_contenido": "https://example.com/tutorial-javascript.mp4",
+  "nombre_archivo": "intro-js.mp4",
+  "tamanio_bytes": 5000000,
+  "mime_type": "video/mp4"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675eeeeabcd5678ef901248",
+    "tipo_contenido": "video",
+    "url_contenido": "https://example.com/tutorial-javascript.mp4",
+    "nombre_archivo": "intro-js.mp4",
+    "tamanio_bytes": 5000000,
+    "mime_type": "video/mp4",
+    "fecha_subida": "2024-12-10T15:50:00.000Z"
+  },
+  "message": "Contenido creado exitosamente"
+}
+
+Guardar: {{id_contenido_video}} = 675eeeeabcd5678ef901248
+
+11.3. Listar Todos los Contenidos
+----------------------------------
+GET http://localhost:4000/api/contenidos
+Authorization: Bearer {{token}}
+
+================================================================================
+PASO 12: CREAR PREGUNTAS DE DIFERENTES TIPOS
+================================================================================
+
+12.1. Crear Pregunta de Selección Múltiple
+-------------------------------------------
+POST http://localhost:4000/api/preguntas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_subcategoria": "675e2222abcd5678ef90123c",
+  "id_rango_edad": "675deeeeabcd5678ef901238",
+  "id_dificultad": "675e4444abcd5678ef90123e",
+  "id_estado": "675e7777abcd5678ef901241",
+  "tipo_pregunta": "seleccion_multiple",
+  "titulo_pregunta": "¿Cuál es el resultado de 2 + 2?",
+  "puntos_recomendados": 5,
+  "tiempo_estimado": 60,
+  "explicacion": "Operación básica de suma"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675effffabcd5678ef901249",
+    "id_subcategoria": "675e2222abcd5678ef90123c",
+    "id_rango_edad": "675deeeeabcd5678ef901238",
+    "id_dificultad": "675e4444abcd5678ef90123e",
+    "id_estado": "675e7777abcd5678ef901241",
+    "tipo_pregunta": "seleccion_multiple",
+    "titulo_pregunta": "¿Cuál es el resultado de 2 + 2?",
+    "puntos_recomendados": 5,
+    "tiempo_estimado": 60,
+    "explicacion": "Operación básica de suma",
+    "activa": true,
+    "fecha_creacion": "2024-12-10T15:51:00.000Z"
+  },
+  "message": "Pregunta creada exitosamente"
+}
+
+Guardar: {{id_pregunta_seleccion}} = 675effffabcd5678ef901249
+
+12.2. Crear Pregunta Verdadero/Falso
+-------------------------------------
+POST http://localhost:4000/api/preguntas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_subcategoria": "675e3333abcd5678ef90123d",
+  "id_rango_edad": "675dffffabcd5678ef901239",
+  "id_dificultad": "675e4444abcd5678ef90123e",
+  "id_estado": "675e7777abcd5678ef901241",
+  "tipo_pregunta": "verdadero_falso",
+  "titulo_pregunta": "JavaScript es un lenguaje de programación tipado",
+  "puntos_recomendados": 3
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675f0000abcd5678ef90124a",
+    "id_subcategoria": "675e3333abcd5678ef90123d",
+    "id_rango_edad": "675dffffabcd5678ef901239",
+    "id_dificultad": "675e4444abcd5678ef90123e",
+    "id_estado": "675e7777abcd5678ef901241",
+    "tipo_pregunta": "verdadero_falso",
+    "titulo_pregunta": "JavaScript es un lenguaje de programación tipado",
+    "puntos_recomendados": 3,
+    "activa": true,
+    "fecha_creacion": "2024-12-10T15:52:00.000Z"
+  },
+  "message": "Pregunta creada exitosamente"
+}
+
+Guardar: {{id_pregunta_vf}} = 675f0000abcd5678ef90124a
+
+12.3. Crear Pregunta de Desarrollo
+-----------------------------------
+POST http://localhost:4000/api/preguntas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_subcategoria": "675e3333abcd5678ef90123d",
+  "id_rango_edad": "675dffffabcd5678ef901239",
+  "id_dificultad": "675e5555abcd5678ef90123f",
+  "id_estado": "675e7777abcd5678ef901241",
+  "tipo_pregunta": "desarrollo",
+  "titulo_pregunta": "Explica qué es el hoisting en JavaScript",
+  "puntos_recomendados": 15,
+  "tiempo_estimado": 300
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675f1111abcd5678ef90124b",
+    "id_subcategoria": "675e3333abcd5678ef90123d",
+    "id_rango_edad": "675dffffabcd5678ef901239",
+    "id_dificultad": "675e5555abcd5678ef90123f",
+    "id_estado": "675e7777abcd5678ef901241",
+    "tipo_pregunta": "desarrollo",
+    "titulo_pregunta": "Explica qué es el hoisting en JavaScript",
+    "puntos_recomendados": 15,
+    "tiempo_estimado": 300,
+    "activa": true,
+    "fecha_creacion": "2024-12-10T15:53:00.000Z"
+  },
+  "message": "Pregunta creada exitosamente"
+}
+
+Guardar: {{id_pregunta_desarrollo}} = 675f1111abcd5678ef90124b
+
+12.4. Crear Pregunta de Emparejamiento
+---------------------------------------
+POST http://localhost:4000/api/preguntas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_subcategoria": "675e3333abcd5678ef90123d",
+  "id_rango_edad": "675dffffabcd5678ef901239",
+  "id_dificultad": "675e5555abcd5678ef90123f",
+  "id_estado": "675e7777abcd5678ef901241",
+  "tipo_pregunta": "emparejamiento",
+  "titulo_pregunta": "Empareja cada método de array con su función",
+  "puntos_recomendados": 10
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675f2222abcd5678ef90124c",
+    "id_subcategoria": "675e3333abcd5678ef90123d",
+    "id_rango_edad": "675dffffabcd5678ef901239",
+    "id_dificultad": "675e5555abcd5678ef90123f",
+    "id_estado": "675e7777abcd5678ef901241",
+    "tipo_pregunta": "emparejamiento",
+    "titulo_pregunta": "Empareja cada método de array con su función",
+    "puntos_recomendados": 10,
+    "activa": true,
+    "fecha_creacion": "2024-12-10T15:54:00.000Z"
+  },
+  "message": "Pregunta creada exitosamente"
+}
+
+Guardar: {{id_pregunta_emparejamiento}} = 675f2222abcd5678ef90124c
+
+12.5. Listar Todas las Preguntas
+---------------------------------
+GET http://localhost:4000/api/preguntas
+Authorization: Bearer {{token}}
+
+================================================================================
+11. PREGUNTAS
+================================================================================
+
+
+
+================================================================================
+PASO 13: AGREGAR OPCIONES A PREGUNTA DE SELECCIÓN MÚLTIPLE
+================================================================================
+
+13.1. Agregar Opción Correcta
+------------------------------
+POST http://localhost:4000/api/opciones-pregunta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675effffabcd5678ef901249",
+  "texto_opcion": "4",
+  "es_correcta": true,
+  "orden": 1
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675f3333abcd5678ef90124d",
+    "id_pregunta": "675effffabcd5678ef901249",
+    "texto_opcion": "4",
+    "es_correcta": true,
+    "orden": 1,
+    "fecha_creacion": "2024-12-10T15:55:00.000Z"
+  },
+  "message": "Opción creada exitosamente"
+}
+
+13.2. Agregar Opción Incorrecta 1
+----------------------------------
+POST http://localhost:4000/api/opciones-pregunta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675effffabcd5678ef901249",
+  "texto_opcion": "3",
+  "es_correcta": false,
+  "orden": 2
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675f4444abcd5678ef90124e",
+    "id_pregunta": "675effffabcd5678ef901249",
+    "texto_opcion": "3",
+    "es_correcta": false,
+    "orden": 2,
+    "fecha_creacion": "2024-12-10T15:56:00.000Z"
+  },
+  "message": "Opción creada exitosamente"
+}
+
+13.3. Agregar Opción Incorrecta 2
+----------------------------------
+POST http://localhost:4000/api/opciones-pregunta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675effffabcd5678ef901249",
+  "texto_opcion": "5",
+  "es_correcta": false,
+  "orden": 3
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675f5555abcd5678ef90124f",
+    "id_pregunta": "675effffabcd5678ef901249",
+    "texto_opcion": "5",
+    "es_correcta": false,
+    "orden": 3,
+    "fecha_creacion": "2024-12-10T15:57:00.000Z"
+  },
+  "message": "Opción creada exitosamente"
+}
+
+13.4. Listar Opciones de la Pregunta
+-------------------------------------
+GET http://localhost:4000/api/opciones-pregunta/pregunta/{{id_pregunta_seleccion}}
+Authorization: Bearer {{token}}
+
+================================================================================
+PASO 14: AGREGAR OPCIONES A PREGUNTA VERDADERO/FALSO
+================================================================================
+
+14.1. Agregar Opción "Verdadero"
+---------------------------------
+POST http://localhost:4000/api/opciones-pregunta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675f0000abcd5678ef90124a",
+  "texto_opcion": "Verdadero",
+  "es_correcta": false,
+  "orden": 1
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675f6666abcd5678ef901250",
+    "id_pregunta": "675f0000abcd5678ef90124a",
+    "texto_opcion": "Verdadero",
+    "es_correcta": false,
+    "orden": 1,
+    "fecha_creacion": "2024-12-10T15:58:00.000Z"
+  },
+  "message": "Opción creada exitosamente"
+}
+
+14.2. Agregar Opción "Falso" (Correcta)
+----------------------------------------
+POST http://localhost:4000/api/opciones-pregunta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675f0000abcd5678ef90124a",
+  "texto_opcion": "Falso",
+  "es_correcta": true,
+  "orden": 2
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675f7777abcd5678ef901251",
+    "id_pregunta": "675f0000abcd5678ef90124a",
+    "texto_opcion": "Falso",
+    "es_correcta": true,
+    "orden": 2,
+    "fecha_creacion": "2024-12-10T15:59:00.000Z"
+  },
+  "message": "Opción creada exitosamente"
+}
+
+================================================================================
+PASO 15: AGREGAR PARES A PREGUNTA DE EMPAREJAMIENTO
+================================================================================
+
+15.1. Agregar Par 1
+-------------------
+POST http://localhost:4000/api/pares-emparejamiento
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675f2222abcd5678ef90124c",
+  "texto_pregunta": "map()",
+  "texto_respuesta": "Transforma cada elemento del array",
+  "orden": 1
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675f8888abcd5678ef901252",
+    "id_pregunta": "675f2222abcd5678ef90124c",
+    "texto_pregunta": "map()",
+    "texto_respuesta": "Transforma cada elemento del array",
+    "orden": 1,
+    "fecha_creacion": "2024-12-10T16:00:00.000Z"
+  },
+  "message": "Par de emparejamiento creado exitosamente"
+}
+
+15.2. Agregar Par 2
+-------------------
+POST http://localhost:4000/api/pares-emparejamiento
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675f2222abcd5678ef90124c",
+  "texto_pregunta": "filter()",
+  "texto_respuesta": "Filtra elementos según una condición",
+  "orden": 2
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675f9999abcd5678ef901253",
+    "id_pregunta": "675f2222abcd5678ef90124c",
+    "texto_pregunta": "filter()",
+    "texto_respuesta": "Filtra elementos según una condición",
+    "orden": 2,
+    "fecha_creacion": "2024-12-10T16:01:00.000Z"
+  },
+  "message": "Par de emparejamiento creado exitosamente"
+}
+
+15.3. Listar Pares de la Pregunta
+----------------------------------
+GET http://localhost:4000/api/pares-emparejamiento/pregunta/{{id_pregunta_emparejamiento}}
+Authorization: Bearer {{token}}
+
+================================================================================
+PASO 16: AGREGAR RESPUESTA MODELO A PREGUNTA DE DESARROLLO
+================================================================================
+
+16.1. Crear Respuesta Modelo
+-----------------------------
+POST http://localhost:4000/api/respuestas-modelo
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675f1111abcd5678ef90124b",
+  "respuesta_texto": "El hoisting es un comportamiento de JavaScript donde las declaraciones de variables y funciones se mueven al inicio del ámbito antes de la ejecución del código.",
+  "palabras_clave": "hoisting, declaraciones, scope, ámbito, ejecución, var, let, const"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675faaaaabcd5678ef901254",
+    "id_pregunta": "675f1111abcd5678ef90124b",
+    "respuesta_texto": "El hoisting es un comportamiento de JavaScript donde las declaraciones de variables y funciones se mueven al inicio del ámbito antes de la ejecución del código.",
+    "palabras_clave": "hoisting, declaraciones, scope, ámbito, ejecución, var, let, const",
+    "fecha_creacion": "2024-12-10T16:02:00.000Z"
+  },
+  "message": "Respuesta modelo creada exitosamente"
+}
+
+Guardar: {{id_respuesta_modelo}} = 675faaaaabcd5678ef901254
+
+================================================================================
+PASO 17: CAMBIAR ESTADO DE PREGUNTAS A PUBLICADA
+================================================================================
+
+17.1. Actualizar Pregunta de Selección Múltiple
+------------------------------------------------
+PUT http://localhost:4000/api/preguntas/675effffabcd5678ef901249
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_estado": "675e9999abcd5678ef901243"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675effffabcd5678ef901249",
+    "id_estado": "675e9999abcd5678ef901243",
+    "titulo_pregunta": "¿Cuál es el resultado de 2 + 2?",
+    "tipo_pregunta": "seleccion_multiple",
+    "activa": true,
+    "fecha_actualizacion": "2024-12-10T16:03:00.000Z"
+  },
+  "message": "Pregunta actualizada exitosamente"
+}
+
+17.2. Actualizar Pregunta Verdadero/Falso
+------------------------------------------
+PUT http://localhost:4000/api/preguntas/675f0000abcd5678ef90124a
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_estado": "675e9999abcd5678ef901243"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675f0000abcd5678ef90124a",
+    "id_estado": "675e9999abcd5678ef901243",
+    "titulo_pregunta": "JavaScript es un lenguaje de programación tipado",
+    "tipo_pregunta": "verdadero_falso",
+    "activa": true,
+    "fecha_actualizacion": "2024-12-10T16:04:00.000Z"
+  },
+  "message": "Pregunta actualizada exitosamente"
+}
+
+17.3. Actualizar Pregunta de Emparejamiento
+--------------------------------------------
+PUT http://localhost:4000/api/preguntas/675f2222abcd5678ef90124c
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_estado": "675e9999abcd5678ef901243"
+}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675f2222abcd5678ef90124c",
+    "id_estado": "675e9999abcd5678ef901243",
+    "titulo_pregunta": "Empareja cada método de array con su función",
+    "tipo_pregunta": "emparejamiento",
+    "activa": true,
+    "fecha_actualizacion": "2024-12-10T16:05:00.000Z"
+  },
+  "message": "Pregunta actualizada exitosamente"
+}
+
+================================================================================
+PASO 18: PRUEBAS DE ACTUALIZACIÓN Y CONSULTAS
+================================================================================
+
+18.1. Obtener una Pregunta Específica por ID
+---------------------------------------------
+GET http://localhost:4000/api/preguntas/{{id_pregunta_seleccion}}
+Authorization: Bearer {{token}}
+
+18.2. Filtrar Preguntas Publicadas
+-----------------------------------
+GET http://localhost:4000/api/preguntas?activa=true
+Authorization: Bearer {{token}}
+
+18.3. Obtener Categoría con ID Específico
+------------------------------------------
+GET http://localhost:4000/api/categorias/{{id_categoria_programacion}}
+Authorization: Bearer {{token}}
+
+================================================================================
+PASO 19: PRUEBAS DE OPERACIONES DE DESACTIVACIÓN/ELIMINACIÓN
+================================================================================
+
+19.1. Desactivar un Rango de Edad
+----------------------------------
+PATCH http://localhost:4000/api/rangos-edad/675dddddabcd5678ef901237/desactivar
+Authorization: Bearer {{token}}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675dddddabcd5678ef901237",
+    "nombre_rango": "Niños",
+    "activo": false,
+    "fecha_actualizacion": "2024-12-10T16:06:00.000Z"
+  },
+  "message": "Rango de edad desactivado exitosamente"
+}
+
+19.2. Verificar que se Desactivó
+---------------------------------
+GET http://localhost:4000/api/rangos-edad/675dddddabcd5678ef901237
+Authorization: Bearer {{token}}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "data": {
+    "_id": "675dddddabcd5678ef901237",
+    "nombre_rango": "Niños",
+    "edad_minima": 6,
+    "edad_maxima": 12,
+    "activo": false,
+    "fecha_creacion": "2024-12-10T15:33:00.000Z",
+    "fecha_actualizacion": "2024-12-10T16:06:00.000Z"
+  }
+}
+
+19.3. Eliminar un Contenido (ejemplo)
+--------------------------------------
+DELETE http://localhost:4000/api/contenidos/675edddabcd5678ef901247
+Authorization: Bearer {{token}}
+
+Ejemplo de Respuesta:
+{
+  "success": true,
+  "message": "Contenido eliminado exitosamente"
+}
+
+================================================================================
+PASO 20: VERIFICACIÓN FINAL - LISTAR TODOS LOS RECURSOS
+================================================================================
+
+20.1. Listar Privilegios
+-------------------------
+GET http://localhost:4000/api/privilegios
+Authorization: Bearer {{token}}
+
+20.2. Listar Rangos de Edad
+----------------------------
+GET http://localhost:4000/api/rangos-edad
+Authorization: Bearer {{token}}
+
+20.3. Listar Categorías
+-----------------------
+GET http://localhost:4000/api/categorias
+Authorization: Bearer {{token}}
+
+20.4. Listar Subcategorías
+---------------------------
+GET http://localhost:4000/api/subcategorias
+Authorization: Bearer {{token}}
+
+20.5. Listar Niveles de Dificultad
+-----------------------------------
+GET http://localhost:4000/api/niveles-dificultad
+Authorization: Bearer {{token}}
+
+20.6. Listar Estados de Pregunta
+---------------------------------
+GET http://localhost:4000/api/estados-pregunta
+Authorization: Bearer {{token}}
+
+20.7. Listar Ciclos
+-------------------
+GET http://localhost:4000/api/ciclos
+Authorization: Bearer {{token}}
+
+20.8. Listar Preguntas
+----------------------
+GET http://localhost:4000/api/preguntas
+Authorization: Bearer {{token}}
+
+20.9. Verificar Perfil de Usuario
+----------------------------------
+GET http://localhost:4000/api/auth/me
+Authorization: Bearer {{token}}
+
+================================================================================
+RESUMEN DE PRUEBAS COMPLETADAS
+================================================================================
+
+✓ Paso 1-3:  Registro, Login y Autenticación
+✓ Paso 4-5:  Privilegios del sistema
+✓ Paso 6:    Rangos de edad (Niños, Adolescentes, Adultos)
+✓ Paso 7:    Categorías y Subcategorías
+✓ Paso 8:    Niveles de dificultad (Fácil, Medio, Difícil)
+✓ Paso 9:    Estados de pregunta (Borrador, Revisión, Publicada, Rechazada)
+✓ Paso 10:   Ciclos académicos
+✓ Paso 11:   Contenidos multimedia
+✓ Paso 12:   Creación de preguntas (4 tipos diferentes)
+✓ Paso 13:   Opciones para selección múltiple
+✓ Paso 14:   Opciones para verdadero/falso
+✓ Paso 15:   Pares para emparejamiento
+✓ Paso 16:   Respuesta modelo para desarrollo
+✓ Paso 17:   Cambio de estado a publicada
+✓ Paso 18:   Consultas y filtros
+✓ Paso 19:   Desactivación y eliminación
+✓ Paso 20:   Verificación final de todos los recursos
+
+================================================================================
+NOTAS IMPORTANTES
+================================================================================
+
+1. AUTENTICACIÓN:
+   - El token expira después de cierto tiempo
+   - Si recibes error 401, vuelve a hacer login
+
+2. IDs:
+   - Reemplaza {{id_*}} con los IDs reales que recibes en las respuestas
+   - Los IDs son ObjectIds de MongoDB (24 caracteres hexadecimales)
+
+3. ORDEN DE EJECUCIÓN:
+   - IMPORTANTE: Seguir el orden secuencial de los pasos
+   - Cada paso depende de los IDs generados en pasos anteriores
+
+4. VALIDACIONES:
+   - Preguntas verdadero/falso: solo 2 opciones
+   - Preguntas selección múltiple: mínimo 2 opciones
+   - Preguntas emparejamiento: mínimo 2 pares
+   - Solo preguntas publicadas pueden usarse en exámenes
+
+5. BASE URL:
+   - HTTP: http://localhost:4000
+   - HTTPS: https://localhost:4001
+   - HTTP/2: https://localhost:4002
+
+================================================================================
+FIN DEL DOCUMENTO - TODAS LAS PRUEBAS FASE 1
+================================================================================
