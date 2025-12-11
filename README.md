@@ -1,6 +1,52 @@
 # PW2 Node.js Project
 
-Proyecto backend desarrollado con Node.js, Express, TypeScript y MongoDB Atlas para un sistema de exámenes educativos.
+Backend completo con Node.js, Express, TypeScript y MongoDB Atlas para sistema de exámenes educativos. Incluye servidores HTTP, HTTPS y HTTP/2 simultáneos.
+
+---
+
+## 👥 Equipo
+
+- Castro Tejada Steven Lisandro
+- Soliz Alcocer Leandro Wilson
+
+---
+
+## 📚 Documentación (Ubicados en docs)
+
+- 📦 **[INSTALLATION.md](./INSTALLATION.md)** - Guía de instalación rápida
+- ⚙️ **[CONFIGURATION.md](./CONFIGURATION.md)** - Configuración detallada (MongoDB, Gmail, variables de entorno)
+- 🧪 **[docs/PRUEBAS.md](./docs/PRUEBAS.md)** - Guía completa de endpoints y testing
+
+---
+
+## 🚀 Inicio Rápido
+
+```bash
+# 1. Clonar repositorio
+git clone https://github.com/SteveCasTo/pw2-nodejs-first.git
+cd pw2-nodejs-first
+
+# 2. Ejecutar instalador (Linux/Mac)
+chmod +x install.sh
+./install.sh
+
+# 3. Configurar variables de entorno
+cd backend
+nano .env  # Ver CONFIGURATION.md para guía completa
+
+# 4. Cargar datos de prueba
+npm run seed
+
+# 5. Iniciar servidor
+npm run dev
+```
+
+**Servidores disponibles:**
+- 🌐 HTTP: `http://localhost:3000`
+- 🔒 HTTPS: `https://localhost:3001`
+- ⚡ HTTP/2: `https://localhost:3002`
+
+---
 
 ## 🚀 Tecnologías
 
@@ -106,8 +152,6 @@ cd backend
 npm run dev
 ```
 
-El servidor estará disponible en **http://localhost:4000**
-
 ### Desarrollo con Docker
 
 ```bash
@@ -134,135 +178,14 @@ npm run dev          # Inicia servidor con nodemon y hot-reload
 npm run build        # Compila TypeScript a JavaScript
 npm start            # Inicia servidor compilado
 
-# Code Quality
+# Calidad de Código
 npm run lint         # Ejecuta ESLint
 npm run lint:fix     # Corrige errores de ESLint automáticamente
 npm run format       # Formatea código con Prettier
 npm run format:check # Verifica formateo sin modificar
 ```
 
-## 🔧 Configuración
-
-### Variables de Entorno
-
-Archivo `.env`:
-
-```env
-NODE_ENV=development
-PORT=4000
-MONGO_URI=mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority
-CORS_ORIGIN=http://localhost:3000
-```
-
-### TypeScript Path Aliases
-
-El proyecto usa path aliases para imports más limpios:
-
-```typescript
-import { connectDB } from '@config/database';
-import { RangoEdad } from '@models/rangoEdad.model';
-import { rangoEdadService } from '@services/rangoEdad.service';
-import { errorHandler } from '@middlewares/errorHandler';
-```
-
-## 🐳 Docker
-
-### Servicios en Docker Compose
-
-- **mongodb**: Base de datos MongoDB local (puerto 27017) - para desarrollo sin Atlas
-- **backend**: API de Node.js (puerto 4000)
-
-**Nota**: Para producción se recomienda usar MongoDB Atlas en lugar del contenedor local.
-
-## 📚 API Endpoints
-
-### Rangos de Edad (Ejemplo CRUD)
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/rangos-edad` | Obtener todos los rangos de edad |
-| GET | `/api/rangos-edad/:id` | Obtener un rango por ID |
-| POST | `/api/rangos-edad` | Crear nuevo rango de edad |
-| PUT | `/api/rangos-edad/:id` | Actualizar rango existente |
-| DELETE | `/api/rangos-edad/:id` | Eliminar rango de edad |
-
-#### Ejemplo de Request (POST)
-
-```json
-{
-  "nombre_rango": "Adolescentes",
-  "edad_minima": 13,
-  "edad_maxima": 17,
-  "activo": true
-}
-```
-
-### Testing con Postman
-
-1. Importa la colección de Postman (si está disponible)
-2. Configura la variable `baseUrl` a `http://localhost:4000`
-3. Prueba los endpoints de CRUD
-
-## 📚 Funcionalidades Implementadas
-
-- [x] Conexión a MongoDB Atlas
-- [x] Estructura MVC completa y modular
-- [x] 22 modelos Mongoose con esquemas completos
-- [x] CRUD completo de Rangos de Edad (ejemplo funcional)
-- [x] Middleware global de manejo de errores
-- [x] Configuración Docker para desarrollo
-- [x] TypeScript con strict mode
-- [x] ESLint + Prettier configurados
-- [x] Path aliases para imports limpios
-
-## 🚧 Próximos Pasos
-
-- [ ] Implementar autenticación JWT
-- [ ] Agregar validación de datos con Zod
-- [ ] Implementar testing con Jest
-- [ ] Desarrollar frontend con React
-- [ ] Agregar más CRUDs para otras entidades
-- [ ] Implementar paginación y filtros
-- [ ] Configurar CI/CD
-- [ ] Documentación con Swagger/OpenAPI
-
 ## 🤝 Contribuir
 
 1. **Branch naming**: `feature/nombre-feature`, `fix/nombre-fix`
 2. **Code style**: El código debe pasar ESLint y Prettier
-3. **Pull Requests**: Describe claramente los cambios realizados
-4. **Testing**: Asegúrate de probar tu código antes de hacer push
-
-## 👥 Equipo
-
-- [Añadir nombres del equipo]
-
-## 📄 Licencia
-
-ISC
-
----
-
-## 🆘 Troubleshooting
-
-### Error de conexión a MongoDB
-- Verifica que tu MongoDB Atlas URI sea correcta
-- Asegúrate de que tu IP esté en la whitelist de Atlas
-- Verifica usuario y contraseña
-
-### Puerto 4000 en uso
-```bash
-# Windows
-netstat -ano | findstr :4000
-
-# Cambiar puerto en .env
-PORT=5000
-```
-
-### Errores de TypeScript
-```bash
-# Limpiar y reconstruir
-rm -rf dist node_modules
-npm install
-npm run build
-```

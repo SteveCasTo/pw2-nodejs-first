@@ -109,36 +109,90 @@ if [ -f ".env" ]; then
         echo "   Manteniendo .env existente"
     else
         cp .env.example .env
-        echo -e "${GREEN}✓${NC} .env actualizado"
+        echo -e "${GREEN}✓${NC} .env actualizado desde .env.example"
+        echo -e "${CYAN}→${NC} Configura tus credenciales en backend/.env"
+        echo "   Ver guía completa: CONFIGURATION.md"
     fi
 else
     cp .env.example .env
-    echo -e "${GREEN}✓${NC} Archivo .env creado"
+    echo -e "${GREEN}✓${NC} Archivo .env creado desde .env.example"
+    echo ""
+    echo -e "${CYAN}${BOLD}⚠️  IMPORTANTE: Debes configurar las variables de entorno${NC}"
+    echo ""
+    echo -e "${YELLOW}Variables que DEBES modificar:${NC}"
+    echo "   📊 MONGO_URI    - Tu connection string de MongoDB Atlas"
+    echo "   🔐 JWT_SECRET   - Clave secreta para tokens (genera una aleatoria)"
+    echo "   📧 EMAIL_USER   - Tu correo de Gmail"
+    echo "   📧 EMAIL_PASSWORD - Contraseña de aplicación de Gmail"
+    echo ""
+    echo -e "${CYAN}Guía completa paso a paso:${NC}"
+    echo "   cat ../CONFIGURATION.md"
+    echo ""
+    echo -e "${CYAN}Enlaces rápidos:${NC}"
+    echo "   MongoDB Atlas: https://www.mongodb.com/cloud/atlas/register"
+    echo "   Gmail App Passwords: https://myaccount.google.com/apppasswords"
+    echo ""
 fi
 
 echo ""
 
-echo -e "${BOLD}${BLUE}[4/5] Verificando certificados SSL...${NC}"
+echo -e "${BOLD}${BLUE}[4/5] Generando certificados SSL...${NC}"
 echo ""
 
-if [ "$OPENSSL_AVAILABLE" = true ]; then
-    mkdir -p certs
-    
-    if [ -f "certs/key.pem" ] && [ -f "certs/cert.pem" ]; then
-        echo -e "${GREEN}✓${NC} Certificados SSL existentes"
+mkdir -p certs
+
+if [ -f "certs/key.pem" ] && [ -f "certs/cert.pem" ]; then
+    echo -e "${YELLOW}⚠${NC}  Los certificados SSL ya existen"
+    read -p "   ¿Regenerar certificados? (y/N): " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        if [ "$OPENSSL_AVAILABLE" = true ]; then
+            echo "🔐 Generando nuevos certificados SSL..."
+            cd certs
+            openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365 -nodes \
+                -subj "/C=XX/ST=Dev/L=Local/O=DevTeam/OU=Development/CN=localhost" 2>/dev/null
+            cd ..
+            echo -e "${GREEN}✓${NC} Certificados SSL regenerados (válidos por 365 días)"
+        else
+            echo -e "${RED}❌ ERROR: OpenSSL no está disponible${NC}"
+            echo "   Instala OpenSSL para generar certificados"
+            exit 1
+        fi
     else
-        echo "🔐 Generando certificados SSL..."
-        cd certs
-        openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365 -nodes \
-            -subj "/C=XX/ST=Dev/L=Local/O=DevTeam/OU=Development/CN=localhost" 2>/dev/null
-        cd ..
-        echo -e "${GREEN}✓${NC} Certificados SSL generados"
+        echo "   Manteniendo certificados existentes"
     fi
 else
-    if [ -f "certs/key.pem" ] && [ -f "certs/cert.pem" ]; then
-        echo -e "${GREEN}✓${NC} Certificados SSL existentes"
+    if [ "$OPENSSL_AVAILABLE" = false ]; then
+        echo -e "${RED}❌ ERROR: OpenSSL no está instalado${NC}"
+        echo ""
+        echo "Los certificados SSL son obligatorios para HTTPS y HTTP/2"
+        echo ""
+        echo "Instala OpenSSL:"
+        echo "   Ubuntu/Debian: sudo apt-get install openssl"
+        echo "   Fedora/RHEL:   sudo dnf install openssl"
+        echo "   MacOS:         brew install openssl"
+        echo ""
+        exit 1
+    fi
+    
+    echo "🔐 Generando certificados SSL autofirmados..."
+    cd certs
+    openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -sha256 -days 365 -nodes \
+        -subj "/C=XX/ST=Dev/L=Local/O=DevTeam/OU=Development/CN=localhost" 2>/dev/null
+    
+    if [ $? -eq 0 ]; then
+        cd ..
+        echo -e "${GREEN}✓${NC} Certificados SSL generados correctamente"
+        echo "   📄 backend/certs/key.pem  (clave privada)"
+        echo "   📄 backend/certs/cert.pem (certificado público)"
+        echo "   ⏰ Válidos por 365 días"
+        echo ""
+        echo -e "${YELLOW}Nota:${NC} Los certificados autofirmados mostrarán advertencia en el navegador."
+        echo "      Esto es normal en desarrollo. Acepta la advertencia para continuar."
     else
-        echo -e "${YELLOW}⚠${NC}  Los certificados deberían estar incluidos en el repositorio"
+        cd ..
+        echo -e "${RED}❌ ERROR: Falló la generación de certificados${NC}"
+        exit 1
     fi
 fi
 
@@ -175,9 +229,29 @@ echo -e "${GREEN}║            ✅  INSTALACIÓN EXITOSA                       
 echo -e "${GREEN}╚═══════════════════════════════════════════════════════════╝${NC}"
 echo ""
 
-echo -e "${BOLD}Próximos pasos:${NC}"
+echo -e "${BOLD}${CYAN}⚠️  IMPORTANTE: Configura tus credenciales antes de continuar${NC}"
 echo ""
-echo -e "${CYAN}1. Cargar datos iniciales:${NC}"
+echo -e "${YELLOW}Edita el archivo backend/.env con tus datos reales:${NC}"
+echo ""
+echo "   📊 MONGO_URI    → Connection string de MongoDB Atlas"
+echo "   🔐 JWT_SECRET   → Clave secreta aleatoria (64+ caracteres)"
+echo "   📧 EMAIL_USER   → Tu correo de Gmail"
+echo "   📧 EMAIL_PASSWORD → Contraseña de aplicación de Gmail"
+echo ""
+echo -e "${BOLD}${CYAN}📖 Guía completa de configuración:${NC}"
+echo "   cat CONFIGURATION.md"
+echo ""
+echo -e "${BOLD}${CYAN}🔗 Enlaces rápidos:${NC}"
+echo "   • MongoDB Atlas: ${BLUE}https://www.mongodb.com/cloud/atlas/register${NC}"
+echo "   • Gmail App Passwords: ${BLUE}https://myaccount.google.com/apppasswords${NC}"
+echo "   • Generador JWT Secret: ${BLUE}https://randomkeygen.com/${NC}"
+echo ""
+echo -e "${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo ""
+
+echo -e "${BOLD}Después de configurar .env:${NC}"
+echo ""
+echo -e "${CYAN}1. Cargar datos de prueba:${NC}"
 echo "   cd backend"
 echo "   npm run seed"
 echo ""
@@ -187,18 +261,21 @@ echo ""
 
 echo -e "${BOLD}Servidores disponibles:${NC}"
 echo -e "   ${GREEN}→${NC} HTTP:   http://localhost:3000"
-echo -e "   ${GREEN}→${NC} HTTPS:  https://localhost:3001"
-echo -e "   ${GREEN}→${NC} HTTP/2: https://localhost:3002"
+echo -e "   ${GREEN}→${NC} HTTPS:  https://localhost:3001  ${YELLOW}(certificado autofirmado)${NC}"
+echo -e "   ${GREEN}→${NC} HTTP/2: https://localhost:3002  ${YELLOW}(certificado autofirmado)${NC}"
 echo ""
 
-echo -e "${BOLD}Usuarios de prueba:${NC}"
+echo -e "${BOLD}Usuarios de prueba (después de npm run seed):${NC}"
 echo "   Superadmin:  admin@sistema.com       / Admin123!@#"
 echo "   Editor:      editor@sistema.com      / Editor123!@#"
 echo "   Organizador: organizador@sistema.com / Organizador123!@#"
 echo "   Estudiante:  estudiante@sistema.com  / Estudiante123!@#"
 echo ""
 
-echo -e "${YELLOW}Para probar endpoints: cat docs/PRUEBAS.md${NC}"
+echo -e "${BOLD}📚 Documentación:${NC}"
+echo "   • Instalación:    INSTALLATION.md"
+echo "   • Configuración:  CONFIGURATION.md"
+echo "   • Testing:        docs/PRUEBAS.md"
 echo ""
 
 exit 0
