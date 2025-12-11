@@ -4,14 +4,26 @@
 
 ## 🔧 Prerrequisitos
 
-- **Node.js** >= 20.x
+- **Node.js** 20.x - 22.x LTS (requerido)
 - **npm** >= 10.x
 - **Git**
+
+> ⚠️ **IMPORTANTE**: Este proyecto requiere Node.js 20-22 debido a dependencias nativas (spdy). Node.js 23+ no es compatible.
+
+### Instalar Node.js 20 LTS con nvm (recomendado)
+
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+source ~/.bashrc
+nvm install 20
+nvm use 20
+nvm alias default 20
+```
 
 Verificar instalación:
 
 ```bash
-node --version
+node --version  # Debe mostrar v20.x.x
 npm --version
 git --version
 ```

@@ -28,7 +28,27 @@ fi
 NODE_VERSION=$(node --version | cut -d'v' -f2 | cut -d'.' -f1)
 if [ "$NODE_VERSION" -lt 20 ]; then
     echo -e "${RED}❌ ERROR: Se requiere Node.js >= 20.x${NC}"
+    echo -e "${YELLOW}   Instala Node.js 20 LTS con nvm:${NC}"
+    echo "   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash"
+    echo "   source ~/.bashrc && nvm install 20 && nvm use 20"
     exit 1
+fi
+
+if [ "$NODE_VERSION" -gt 22 ]; then
+    echo -e "${YELLOW}⚠  ADVERTENCIA: Node.js v${NODE_VERSION} detectado${NC}"
+    echo -e "${YELLOW}   Este proyecto requiere Node.js 20-22 debido a dependencias nativas${NC}"
+    echo -e "${YELLOW}   Algunas dependencias (como spdy) pueden no ser compatibles con Node.js 23+${NC}"
+    echo ""
+    echo -e "${CYAN}   Usa Node.js 20 o 22 LTS (recomendado):${NC}"
+    echo "   curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash"
+    echo "   source ~/.bashrc && nvm install 20 && nvm use 20"
+    echo ""
+    read -p "   ¿Continuar de todas formas? (y/N): " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo -e "${YELLOW}Instalación cancelada. Por favor usa Node.js 20-22 LTS${NC}"
+        exit 1
+    fi
 fi
 
 echo -e "${GREEN}✓${NC} Node.js $(node --version)"
