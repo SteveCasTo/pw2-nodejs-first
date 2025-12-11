@@ -1,0 +1,810 @@
+================================================================================
+POSTMAN REQUESTS - PROYECTO pw2-nodejs-first
+================================================================================
+Base URL: http://localhost:3000
+Todas las rutas (excepto /api/auth) requieren autenticación con Bearer Token
+================================================================================
+
+================================================================================
+1. AUTENTICACIÓN
+================================================================================
+
+1.1. REGISTRAR USUARIO
+-----------------------
+POST http://localhost:3000/api/auth/register
+Content-Type: application/json
+
+Body:
+{
+  "correo_electronico": "admin@example.com",
+  "password": "Password123!",
+  "nombre": "Administrador Principal"
+}
+
+1.2. LOGIN
+----------
+POST http://localhost:3000/api/auth/login
+Content-Type: application/json
+
+Body:
+{
+  "correo_electronico": "admin@example.com",
+  "password": "Password123!"
+}
+
+Respuesta contiene: { "token": "..." }
+Copiar el token para usarlo en las siguientes peticiones.
+
+================================================================================
+2. PRIVILEGIOS
+================================================================================
+
+2.1. LISTAR TODOS LOS PRIVILEGIOS
+----------------------------------
+GET http://localhost:3000/api/privilegios
+Authorization: Bearer {{token}}
+
+2.2. OBTENER PRIVILEGIO POR ID
+-------------------------------
+GET http://localhost:3000/api/privilegios/{{id_privilegio}}
+Authorization: Bearer {{token}}
+
+2.3. CREAR PRIVILEGIO (superadmin)
+-----------------------------------
+POST http://localhost:3000/api/privilegios
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_privilegio": "editor",
+  "descripcion": "Puede crear y editar preguntas"
+}
+
+2.4. ACTUALIZAR PRIVILEGIO (superadmin)
+----------------------------------------
+PUT http://localhost:3000/api/privilegios/{{id_privilegio}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_privilegio": "editor_avanzado",
+  "descripcion": "Editor con permisos adicionales"
+}
+
+2.5. DESACTIVAR PRIVILEGIO (superadmin)
+----------------------------------------
+PATCH http://localhost:3000/api/privilegios/{{id_privilegio}}/desactivar
+Authorization: Bearer {{token}}
+
+2.6. ELIMINAR PRIVILEGIO (superadmin)
+--------------------------------------
+DELETE http://localhost:3000/api/privilegios/{{id_privilegio}}
+Authorization: Bearer {{token}}
+
+================================================================================
+3. USUARIO-PRIVILEGIOS
+================================================================================
+
+3.1. LISTAR TODOS LOS USUARIO-PRIVILEGIOS
+------------------------------------------
+GET http://localhost:3000/api/usuario-privilegios
+Authorization: Bearer {{token}}
+
+3.2. OBTENER USUARIO-PRIVILEGIO POR ID
+---------------------------------------
+GET http://localhost:3000/api/usuario-privilegios/{{id}}
+Authorization: Bearer {{token}}
+
+3.3. ASIGNAR PRIVILEGIO A USUARIO (superadmin)
+-----------------------------------------------
+POST http://localhost:3000/api/usuario-privilegios
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_usuario": "675daaaaabcd5678ef901234",
+  "id_privilegio": "675dbbbbabcd5678ef901234"
+}
+
+3.4. ACTUALIZAR ASIGNACIÓN (superadmin)
+----------------------------------------
+PUT http://localhost:3000/api/usuario-privilegios/{{id}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_privilegio": "675dccccabcd5678ef901234"
+}
+
+3.5. ELIMINAR ASIGNACIÓN (superadmin)
+--------------------------------------
+DELETE http://localhost:3000/api/usuario-privilegios/{{id}}
+Authorization: Bearer {{token}}
+
+================================================================================
+4. RANGOS DE EDAD
+================================================================================
+
+4.1. LISTAR TODOS LOS RANGOS DE EDAD
+-------------------------------------
+GET http://localhost:3000/api/rangos-edad
+Authorization: Bearer {{token}}
+
+4.2. OBTENER RANGO DE EDAD POR ID
+----------------------------------
+GET http://localhost:3000/api/rangos-edad/{{id_rango}}
+Authorization: Bearer {{token}}
+
+4.3. CREAR RANGO DE EDAD (editor/superadmin)
+---------------------------------------------
+POST http://localhost:3000/api/rangos-edad
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_rango": "Niños",
+  "edad_minima": 6,
+  "edad_maxima": 12
+}
+
+4.4. ACTUALIZAR RANGO DE EDAD (editor/superadmin)
+--------------------------------------------------
+PUT http://localhost:3000/api/rangos-edad/{{id_rango}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_rango": "Niños Pequeños",
+  "edad_minima": 6,
+  "edad_maxima": 10
+}
+
+4.5. DESACTIVAR RANGO DE EDAD (editor/superadmin)
+--------------------------------------------------
+PATCH http://localhost:3000/api/rangos-edad/{{id_rango}}/desactivar
+Authorization: Bearer {{token}}
+
+4.6. ELIMINAR RANGO DE EDAD (editor/superadmin)
+------------------------------------------------
+DELETE http://localhost:3000/api/rangos-edad/{{id_rango}}
+Authorization: Bearer {{token}}
+
+================================================================================
+5. CATEGORÍAS
+================================================================================
+
+5.1. LISTAR TODAS LAS CATEGORÍAS
+---------------------------------
+GET http://localhost:3000/api/categorias
+Authorization: Bearer {{token}}
+
+5.2. OBTENER CATEGORÍA POR ID
+------------------------------
+GET http://localhost:3000/api/categorias/{{id_categoria}}
+Authorization: Bearer {{token}}
+
+5.3. CREAR CATEGORÍA (editor/superadmin)
+-----------------------------------------
+POST http://localhost:3000/api/categorias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_categoria": "Matemáticas"
+}
+
+5.4. ACTUALIZAR CATEGORÍA (editor/superadmin)
+----------------------------------------------
+PUT http://localhost:3000/api/categorias/{{id_categoria}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_categoria": "Matemáticas Avanzadas"
+}
+
+5.5. DESACTIVAR CATEGORÍA (editor/superadmin)
+----------------------------------------------
+PATCH http://localhost:3000/api/categorias/{{id_categoria}}/desactivar
+Authorization: Bearer {{token}}
+
+5.6. ELIMINAR CATEGORÍA (editor/superadmin)
+--------------------------------------------
+DELETE http://localhost:3000/api/categorias/{{id_categoria}}
+Authorization: Bearer {{token}}
+
+================================================================================
+6. SUBCATEGORÍAS
+================================================================================
+
+6.1. LISTAR TODAS LAS SUBCATEGORÍAS
+------------------------------------
+GET http://localhost:3000/api/subcategorias
+Authorization: Bearer {{token}}
+
+6.2. OBTENER SUBCATEGORÍA POR ID
+---------------------------------
+GET http://localhost:3000/api/subcategorias/{{id_subcategoria}}
+Authorization: Bearer {{token}}
+
+6.3. CREAR SUBCATEGORÍA (editor/superadmin)
+--------------------------------------------
+POST http://localhost:3000/api/subcategorias
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_categoria": "675daaaaabcd5678ef901234",
+  "nombre_subcategoria": "Álgebra",
+  "descripcion": "Ecuaciones, expresiones algebraicas y funciones"
+}
+
+6.4. ACTUALIZAR SUBCATEGORÍA (editor/superadmin)
+-------------------------------------------------
+PUT http://localhost:3000/api/subcategorias/{{id_subcategoria}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_subcategoria": "Álgebra Básica",
+  "descripcion": "Conceptos fundamentales de álgebra"
+}
+
+6.5. DESACTIVAR SUBCATEGORÍA (editor/superadmin)
+-------------------------------------------------
+PATCH http://localhost:3000/api/subcategorias/{{id_subcategoria}}/desactivar
+Authorization: Bearer {{token}}
+
+6.6. ELIMINAR SUBCATEGORÍA (editor/superadmin)
+-----------------------------------------------
+DELETE http://localhost:3000/api/subcategorias/{{id_subcategoria}}
+Authorization: Bearer {{token}}
+
+================================================================================
+7. NIVELES DE DIFICULTAD
+================================================================================
+
+7.1. LISTAR TODOS LOS NIVELES DE DIFICULTAD
+--------------------------------------------
+GET http://localhost:3000/api/niveles-dificultad
+Authorization: Bearer {{token}}
+
+7.2. OBTENER NIVEL DE DIFICULTAD POR ID
+----------------------------------------
+GET http://localhost:3000/api/niveles-dificultad/{{id_dificultad}}
+Authorization: Bearer {{token}}
+
+7.3. CREAR NIVEL DE DIFICULTAD (editor/superadmin)
+---------------------------------------------------
+POST http://localhost:3000/api/niveles-dificultad
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nivel": "facil",
+  "descripcion": "Preguntas para principiantes"
+}
+
+Valores permitidos para "nivel": "facil", "medio", "dificil"
+
+7.4. ACTUALIZAR NIVEL DE DIFICULTAD (editor/superadmin)
+--------------------------------------------------------
+PUT http://localhost:3000/api/niveles-dificultad/{{id_dificultad}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "descripcion": "Preguntas de nivel básico"
+}
+
+7.5. DESACTIVAR NIVEL DE DIFICULTAD (editor/superadmin)
+--------------------------------------------------------
+PATCH http://localhost:3000/api/niveles-dificultad/{{id_dificultad}}/desactivar
+Authorization: Bearer {{token}}
+
+7.6. ELIMINAR NIVEL DE DIFICULTAD (editor/superadmin)
+------------------------------------------------------
+DELETE http://localhost:3000/api/niveles-dificultad/{{id_dificultad}}
+Authorization: Bearer {{token}}
+
+================================================================================
+8. ESTADOS DE PREGUNTA
+================================================================================
+
+8.1. LISTAR TODOS LOS ESTADOS DE PREGUNTA
+------------------------------------------
+GET http://localhost:3000/api/estados-pregunta
+Authorization: Bearer {{token}}
+
+8.2. OBTENER ESTADO DE PREGUNTA POR ID
+---------------------------------------
+GET http://localhost:3000/api/estados-pregunta/{{id_estado}}
+Authorization: Bearer {{token}}
+
+8.3. CREAR ESTADO DE PREGUNTA (editor/superadmin)
+--------------------------------------------------
+POST http://localhost:3000/api/estados-pregunta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_estado": "borrador",
+  "descripcion": "Pregunta en proceso de creación",
+  "orden": 1
+}
+
+Valores permitidos para "nombre_estado": 
+"borrador", "revision", "publicada", "rechazada", "archivada"
+
+8.4. ACTUALIZAR ESTADO DE PREGUNTA (editor/superadmin)
+-------------------------------------------------------
+PUT http://localhost:3000/api/estados-pregunta/{{id_estado}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "descripcion": "Pregunta en borrador inicial",
+  "orden": 1
+}
+
+8.5. ELIMINAR ESTADO DE PREGUNTA (editor/superadmin)
+-----------------------------------------------------
+DELETE http://localhost:3000/api/estados-pregunta/{{id_estado}}
+Authorization: Bearer {{token}}
+
+================================================================================
+9. CICLOS
+================================================================================
+
+9.1. LISTAR TODOS LOS CICLOS
+-----------------------------
+GET http://localhost:3000/api/ciclos
+Authorization: Bearer {{token}}
+
+9.2. OBTENER CICLO POR ID
+--------------------------
+GET http://localhost:3000/api/ciclos/{{id_ciclo}}
+Authorization: Bearer {{token}}
+
+9.3. CREAR CICLO (editor/superadmin)
+-------------------------------------
+POST http://localhost:3000/api/ciclos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_ciclo": "2024-1",
+  "descripcion": "Primer ciclo académico 2024",
+  "fecha_inicio": "2024-03-01T00:00:00.000Z",
+  "fecha_fin": "2024-07-31T23:59:59.000Z"
+}
+
+9.4. ACTUALIZAR CICLO (editor/superadmin)
+------------------------------------------
+PUT http://localhost:3000/api/ciclos/{{id_ciclo}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_ciclo": "2024-1 (Extendido)",
+  "fecha_fin": "2024-08-15T23:59:59.000Z"
+}
+
+9.5. DESACTIVAR CICLO (editor/superadmin)
+------------------------------------------
+PATCH http://localhost:3000/api/ciclos/{{id_ciclo}}/desactivar
+Authorization: Bearer {{token}}
+
+9.6. ELIMINAR CICLO (editor/superadmin)
+----------------------------------------
+DELETE http://localhost:3000/api/ciclos/{{id_ciclo}}
+Authorization: Bearer {{token}}
+
+================================================================================
+10. CONTENIDOS
+================================================================================
+
+10.1. LISTAR TODOS LOS CONTENIDOS
+----------------------------------
+GET http://localhost:3000/api/contenidos
+Authorization: Bearer {{token}}
+
+10.2. OBTENER CONTENIDO POR ID
+-------------------------------
+GET http://localhost:3000/api/contenidos/{{id_contenido}}
+Authorization: Bearer {{token}}
+
+10.3. CREAR CONTENIDO (editor/superadmin)
+------------------------------------------
+POST http://localhost:3000/api/contenidos
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "tipo_contenido": "imagen",
+  "url_contenido": "https://example.com/imagen.jpg",
+  "nombre_archivo": "imagen.jpg",
+  "tamanio_bytes": 150000,
+  "mime_type": "image/jpeg"
+}
+
+Valores permitidos para "tipo_contenido": 
+"texto", "imagen", "audio", "video", "documento", "otro"
+
+10.4. ACTUALIZAR CONTENIDO (editor/superadmin)
+-----------------------------------------------
+PUT http://localhost:3000/api/contenidos/{{id_contenido}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "nombre_archivo": "imagen_actualizada.jpg"
+}
+
+10.5. ELIMINAR CONTENIDO (editor/superadmin)
+---------------------------------------------
+DELETE http://localhost:3000/api/contenidos/{{id_contenido}}
+Authorization: Bearer {{token}}
+
+================================================================================
+11. PREGUNTAS
+================================================================================
+
+11.1. LISTAR TODAS LAS PREGUNTAS
+---------------------------------
+GET http://localhost:3000/api/preguntas
+Authorization: Bearer {{token}}
+
+11.2. LISTAR PREGUNTAS CON FILTROS
+-----------------------------------
+GET http://localhost:3000/api/preguntas?tipo_pregunta=seleccion_multiple&activa=true
+Authorization: Bearer {{token}}
+
+Parámetros de query disponibles:
+- tipo_pregunta: seleccion_multiple, verdadero_falso, desarrollo, respuesta_corta, emparejamiento
+- id_subcategoria: ObjectId
+- id_dificultad: ObjectId
+- id_estado: ObjectId
+- activa: true/false
+
+11.3. OBTENER PREGUNTA POR ID
+------------------------------
+GET http://localhost:3000/api/preguntas/{{id_pregunta}}
+Authorization: Bearer {{token}}
+
+11.4. CREAR PREGUNTA - SELECCIÓN MÚLTIPLE (editor/superadmin)
+--------------------------------------------------------------
+POST http://localhost:3000/api/preguntas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_subcategoria": "675daaaaabcd5678ef901234",
+  "id_rango_edad": "675dbbbbabcd5678ef901234",
+  "id_dificultad": "675dccccabcd5678ef901234",
+  "id_estado": "675dddddabcd5678ef901234",
+  "tipo_pregunta": "seleccion_multiple",
+  "titulo_pregunta": "¿Cuál es el resultado de 2 + 2?",
+  "puntos_recomendados": 5,
+  "tiempo_estimado": 60,
+  "explicacion": "Operación básica de suma"
+}
+
+11.5. CREAR PREGUNTA - VERDADERO/FALSO (editor/superadmin)
+-----------------------------------------------------------
+POST http://localhost:3000/api/preguntas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_subcategoria": "675daaaaabcd5678ef901234",
+  "id_rango_edad": "675dbbbbabcd5678ef901234",
+  "id_dificultad": "675dccccabcd5678ef901234",
+  "id_estado": "675dddddabcd5678ef901234",
+  "tipo_pregunta": "verdadero_falso",
+  "titulo_pregunta": "La Tierra es plana",
+  "puntos_recomendados": 2
+}
+
+11.6. CREAR PREGUNTA - DESARROLLO (editor/superadmin)
+------------------------------------------------------
+POST http://localhost:3000/api/preguntas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_subcategoria": "675daaaaabcd5678ef901234",
+  "id_rango_edad": "675dbbbbabcd5678ef901234",
+  "id_dificultad": "675dccccabcd5678ef901234",
+  "id_estado": "675dddddabcd5678ef901234",
+  "tipo_pregunta": "desarrollo",
+  "titulo_pregunta": "Explica el concepto de polimorfismo en POO",
+  "puntos_recomendados": 15
+}
+
+11.7. CREAR PREGUNTA - EMPAREJAMIENTO (editor/superadmin)
+----------------------------------------------------------
+POST http://localhost:3000/api/preguntas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_subcategoria": "675daaaaabcd5678ef901234",
+  "id_rango_edad": "675dbbbbabcd5678ef901234",
+  "id_dificultad": "675dccccabcd5678ef901234",
+  "id_estado": "675dddddabcd5678ef901234",
+  "tipo_pregunta": "emparejamiento",
+  "titulo_pregunta": "Empareja cada país con su capital",
+  "puntos_recomendados": 10
+}
+
+11.8. ACTUALIZAR PREGUNTA (editor/superadmin)
+----------------------------------------------
+PUT http://localhost:3000/api/preguntas/{{id_pregunta}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "titulo_pregunta": "¿Cuál es el resultado de 2 + 2? (actualizado)",
+  "puntos_recomendados": 6
+}
+
+11.9. DESACTIVAR PREGUNTA (editor/superadmin)
+----------------------------------------------
+PATCH http://localhost:3000/api/preguntas/{{id_pregunta}}/desactivar
+Authorization: Bearer {{token}}
+
+11.10. ELIMINAR PREGUNTA (editor/superadmin)
+---------------------------------------------
+DELETE http://localhost:3000/api/preguntas/{{id_pregunta}}
+Authorization: Bearer {{token}}
+
+================================================================================
+12. OPCIONES DE PREGUNTA (para selección múltiple y verdadero/falso)
+================================================================================
+
+12.1. LISTAR TODAS LAS OPCIONES
+--------------------------------
+GET http://localhost:3000/api/opciones-pregunta
+Authorization: Bearer {{token}}
+
+12.2. OBTENER OPCIÓN POR ID
+----------------------------
+GET http://localhost:3000/api/opciones-pregunta/{{id_opcion}}
+Authorization: Bearer {{token}}
+
+12.3. LISTAR OPCIONES DE UNA PREGUNTA ESPECÍFICA
+-------------------------------------------------
+GET http://localhost:3000/api/opciones-pregunta/pregunta/{{id_pregunta}}
+Authorization: Bearer {{token}}
+
+12.4. CREAR OPCIÓN (editor/superadmin)
+---------------------------------------
+POST http://localhost:3000/api/opciones-pregunta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675daaaaabcd5678ef901234",
+  "texto_opcion": "4",
+  "es_correcta": true,
+  "orden": 1
+}
+
+12.5. CREAR OPCIÓN CON CONTENIDO (editor/superadmin)
+-----------------------------------------------------
+POST http://localhost:3000/api/opciones-pregunta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675daaaaabcd5678ef901234",
+  "id_contenido_opcion": "675deeeeabcd5678ef901234",
+  "es_correcta": false,
+  "orden": 2
+}
+
+12.6. ACTUALIZAR OPCIÓN (editor/superadmin)
+--------------------------------------------
+PUT http://localhost:3000/api/opciones-pregunta/{{id_opcion}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "texto_opcion": "Cuatro (4)",
+  "es_correcta": true
+}
+
+12.7. ELIMINAR OPCIÓN (editor/superadmin)
+------------------------------------------
+DELETE http://localhost:3000/api/opciones-pregunta/{{id_opcion}}
+Authorization: Bearer {{token}}
+
+================================================================================
+13. PARES DE EMPAREJAMIENTO (para preguntas de emparejamiento)
+================================================================================
+
+13.1. LISTAR TODOS LOS PARES
+-----------------------------
+GET http://localhost:3000/api/pares-emparejamiento
+Authorization: Bearer {{token}}
+
+13.2. OBTENER PAR POR ID
+-------------------------
+GET http://localhost:3000/api/pares-emparejamiento/{{id_par}}
+Authorization: Bearer {{token}}
+
+13.3. LISTAR PARES DE UNA PREGUNTA ESPECÍFICA
+----------------------------------------------
+GET http://localhost:3000/api/pares-emparejamiento/pregunta/{{id_pregunta}}
+Authorization: Bearer {{token}}
+
+13.4. CREAR PAR CON TEXTO (editor/superadmin)
+----------------------------------------------
+POST http://localhost:3000/api/pares-emparejamiento
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675daaaaabcd5678ef901234",
+  "texto_pregunta": "Francia",
+  "texto_respuesta": "París",
+  "orden": 1
+}
+
+13.5. CREAR PAR CON CONTENIDO (editor/superadmin)
+--------------------------------------------------
+POST http://localhost:3000/api/pares-emparejamiento
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675daaaaabcd5678ef901234",
+  "id_contenido_pregunta": "675deeeeabcd5678ef901234",
+  "texto_respuesta": "La Torre Eiffel",
+  "orden": 2
+}
+
+13.6. ACTUALIZAR PAR (editor/superadmin)
+-----------------------------------------
+PUT http://localhost:3000/api/pares-emparejamiento/{{id_par}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "texto_pregunta": "República Francesa",
+  "texto_respuesta": "París (City of Light)"
+}
+
+13.7. ELIMINAR PAR (editor/superadmin)
+---------------------------------------
+DELETE http://localhost:3000/api/pares-emparejamiento/{{id_par}}
+Authorization: Bearer {{token}}
+
+================================================================================
+14. RESPUESTAS MODELO (para preguntas de desarrollo y respuesta corta)
+================================================================================
+
+14.1. LISTAR TODAS LAS RESPUESTAS MODELO
+-----------------------------------------
+GET http://localhost:3000/api/respuestas-modelo
+Authorization: Bearer {{token}}
+
+14.2. OBTENER RESPUESTA MODELO POR ID
+--------------------------------------
+GET http://localhost:3000/api/respuestas-modelo/{{id_respuesta}}
+Authorization: Bearer {{token}}
+
+14.3. OBTENER RESPUESTA MODELO DE UNA PREGUNTA
+-----------------------------------------------
+GET http://localhost:3000/api/respuestas-modelo/pregunta/{{id_pregunta}}
+Authorization: Bearer {{token}}
+
+14.4. CREAR RESPUESTA MODELO CON TEXTO Y PALABRAS CLAVE (editor/superadmin)
+----------------------------------------------------------------------------
+POST http://localhost:3000/api/respuestas-modelo
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675daaaaabcd5678ef901234",
+  "respuesta_texto": "El polimorfismo es la capacidad de un objeto de tomar múltiples formas. En POO, permite que objetos de diferentes clases respondan al mismo mensaje de manera diferente.",
+  "palabras_clave": "polimorfismo, múltiples formas, herencia, sobrescritura, métodos"
+}
+
+14.5. CREAR RESPUESTA MODELO SOLO CON PALABRAS CLAVE (editor/superadmin)
+-------------------------------------------------------------------------
+POST http://localhost:3000/api/respuestas-modelo
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675daaaaabcd5678ef901235",
+  "palabras_clave": "París, Paris, capital, Francia"
+}
+
+14.6. ACTUALIZAR RESPUESTA MODELO (editor/superadmin)
+------------------------------------------------------
+PUT http://localhost:3000/api/respuestas-modelo/{{id_respuesta}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "respuesta_texto": "Texto actualizado de la respuesta modelo",
+  "palabras_clave": "nuevas, palabras, clave"
+}
+
+14.7. ELIMINAR RESPUESTA MODELO (editor/superadmin)
+----------------------------------------------------
+DELETE http://localhost:3000/api/respuestas-modelo/{{id_respuesta}}
+Authorization: Bearer {{token}}
+
+================================================================================
+NOTAS IMPORTANTES
+================================================================================
+
+1. AUTENTICACIÓN:
+   - Primero hacer login para obtener el token
+   - Usar el token en el header: Authorization: Bearer {{token}}
+   - Reemplazar {{token}} con el token real recibido del login
+
+2. IDs DE OBJETOS:
+   - Todos los {{id_*}} deben ser reemplazados con ObjectIds válidos de MongoDB
+   - Formato: 24 caracteres hexadecimales (ej: 675daaaaabcd5678ef901234)
+
+3. PERMISOS:
+   - Algunas rutas requieren roles específicos (editor, superadmin)
+   - Si recibes error 403, verifica que tu usuario tenga los privilegios necesarios
+
+4. VALIDACIONES:
+   - Las preguntas de tipo "verdadero_falso" solo pueden tener 2 opciones
+   - Las preguntas de tipo "seleccion_multiple" deben tener mínimo 2 opciones
+   - Las preguntas de tipo "emparejamiento" deben tener mínimo 2 pares
+   - Solo puede haber 1 respuesta modelo por pregunta
+   - No se pueden modificar componentes de preguntas publicadas
+
+5. FILTROS:
+   - Muchos endpoints GET aceptan parámetros de query para filtrar resultados
+   - Usar formato: ?parametro1=valor1&parametro2=valor2
+
+6. FECHAS:
+   - Usar formato ISO 8601: "2024-03-01T00:00:00.000Z"
+
+7. HEALTH CHECK:
+   - GET http://localhost:3000/health (no requiere autenticación)
+
+================================================================================
+FIN DEL DOCUMENTO
+================================================================================
