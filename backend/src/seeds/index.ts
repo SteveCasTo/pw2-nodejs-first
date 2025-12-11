@@ -12,6 +12,18 @@ import { RangoEdad } from '../models/rangoEdad.model';
 import { Categoria } from '../models/categoria.model';
 import { Subcategoria } from '../models/subcategoria.model';
 import { NivelDificultad } from '../models/nivelDificultad.model';
+import { EstadoPregunta } from '../models/estadoPregunta.model';
+import { Contenido } from '../models/contenido.model';
+import { Pregunta } from '../models/pregunta.model';
+import { OpcionPregunta } from '../models/opcionPregunta.model';
+import { ParEmparejamiento } from '../models/parEmparejamiento.model';
+import { RespuestaModelo } from '../models/respuestaModelo.model';
+import { Examen } from '../models/examen.model';
+import { ExamenPregunta } from '../models/examenPregunta.model';
+import { IntentoExamen } from '../models/intentoExamen.model';
+import { RespuestaSeleccion } from '../models/respuestaSeleccion.model';
+import { RespuestaDesarrollo } from '../models/respuestaDesarrollo.model';
+import { RevisionPregunta } from '../models/revisionPregunta.model';
 
 const seedDatabase = async () => {
   try {
@@ -343,25 +355,339 @@ const seedDatabase = async () => {
       },
     ];
 
+    const ciclos = [];
     for (const cicloData of ciclosData) {
       const existing = await Ciclo.findOne({
         nombre_ciclo: cicloData.nombre_ciclo,
       });
       if (!existing) {
-        await Ciclo.create(cicloData);
+        const ciclo = await Ciclo.create(cicloData);
+        ciclos.push(ciclo);
         console.warn(`${cicloData.nombre_ciclo}: Creado`);
       } else {
+        ciclos.push(existing);
         console.warn(`${cicloData.nombre_ciclo}: Ya existe`);
       }
     }
 
+    console.warn('\nCreando estados de pregunta...');
+    const estadosData = [
+      { nombre_estado: 'borrador', descripcion: 'Pregunta en borrador', orden: 1 },
+      { nombre_estado: 'revision', descripcion: 'Pregunta en revisión', orden: 2 },
+      { nombre_estado: 'publicada', descripcion: 'Pregunta publicada', orden: 3 },
+      { nombre_estado: 'rechazada', descripcion: 'Pregunta rechazada', orden: 4 },
+      { nombre_estado: 'archivada', descripcion: 'Pregunta archivada', orden: 5 },
+    ];
+
+    const estados = [];
+    for (const estadoData of estadosData) {
+      const existing = await EstadoPregunta.findOne({
+        nombre_estado: estadoData.nombre_estado,
+      });
+      if (!existing) {
+        const estado = await EstadoPregunta.create(estadoData);
+        estados.push(estado);
+        console.warn(`${estadoData.nombre_estado}: Creado`);
+      } else {
+        estados.push(existing);
+        console.warn(`${estadoData.nombre_estado}: Ya existe`);
+      }
+    }
+
+    console.warn('\nCreando contenido...');
+    const contenidosData = [
+      {
+        tipo_contenido: 'imagen',
+        url_contenido: 'https://example.com/images/math-problem.png',
+        nombre_archivo: 'math-problem.png',
+        tamanio_bytes: 52480,
+        mime_type: 'image/png',
+        subido_por: editorUser._id,
+      },
+      {
+        tipo_contenido: 'video',
+        url_contenido: 'https://example.com/videos/science-experiment.mp4',
+        nombre_archivo: 'science-experiment.mp4',
+        tamanio_bytes: 2048000,
+        mime_type: 'video/mp4',
+        subido_por: editorUser._id,
+      },
+      {
+        tipo_contenido: 'texto',
+        url_contenido: 'https://example.com/docs/instructions.txt',
+        nombre_archivo: 'instructions.txt',
+        tamanio_bytes: 1024,
+        mime_type: 'text/plain',
+        subido_por: adminUser._id,
+      },
+    ];
+
+    const contenidos = [];
+    for (const contenidoData of contenidosData) {
+      const contenido = await Contenido.create(contenidoData);
+      contenidos.push(contenido);
+      console.warn(`${contenidoData.nombre_archivo}: Creado`);
+    }
+
+    console.warn('\nCreando preguntas...');
+    const matematicasSub = await Subcategoria.findOne({ nombre_subcategoria: 'Suma y Resta' });
+    const cienciasSub = await Subcategoria.findOne({ nombre_subcategoria: 'Biología' });
+    const rango6_8 = await RangoEdad.findOne({ nombre_rango: '6-8 años' });
+    const rango9_12 = await RangoEdad.findOne({ nombre_rango: '9-12 años' });
+    const facilDif = await NivelDificultad.findOne({ nivel: 'Fácil' });
+    const intermediateDif = await NivelDificultad.findOne({ nivel: 'Intermedio' });
+    const publicadaEstado = estados.find(e => e.nombre_estado === 'publicada');
+
+    const preguntasData = [
+      {
+        id_subcategoria: matematicasSub?._id,
+        id_rango_edad: rango6_8?._id,
+        id_dificultad: facilDif?._id,
+        id_estado: publicadaEstado?._id,
+        tipo_pregunta: 'seleccion_multiple',
+        titulo_pregunta: '¿Cuánto es 5 + 3?',
+        puntos_recomendados: 1,
+        tiempo_estimado: 60,
+        creado_por: editorUser._id,
+      },
+      {
+        id_subcategoria: matematicasSub?._id,
+        id_rango_edad: rango6_8?._id,
+        id_dificultad: facilDif?._id,
+        id_estado: publicadaEstado?._id,
+        tipo_pregunta: 'verdadero_falso',
+        titulo_pregunta: '10 - 4 es igual a 6',
+        puntos_recomendados: 1,
+        tiempo_estimado: 30,
+        creado_por: editorUser._id,
+      },
+      {
+        id_subcategoria: cienciasSub?._id,
+        id_rango_edad: rango9_12?._id,
+        id_dificultad: intermediateDif?._id,
+        id_estado: publicadaEstado?._id,
+        tipo_pregunta: 'desarrollo',
+        titulo_pregunta: 'Explica el proceso de fotosíntesis en las plantas',
+        puntos_recomendados: 5,
+        tiempo_estimado: 300,
+        id_contenido_pregunta: contenidos[1]?._id,
+        creado_por: editorUser._id,
+      },
+      {
+        id_subcategoria: cienciasSub?._id,
+        id_rango_edad: rango9_12?._id,
+        id_dificultad: facilDif?._id,
+        id_estado: publicadaEstado?._id,
+        tipo_pregunta: 'emparejamiento',
+        titulo_pregunta: 'Relaciona el animal con su hábitat',
+        puntos_recomendados: 3,
+        tiempo_estimado: 120,
+        creado_por: editorUser._id,
+      },
+    ];
+
+    const preguntas = [];
+    for (const preguntaData of preguntasData) {
+      const pregunta = await Pregunta.create(preguntaData);
+      preguntas.push(pregunta);
+      console.warn(`Pregunta "${preguntaData.titulo_pregunta}": Creada`);
+    }
+
+    console.warn('\nCreando opciones de preguntas...');
+    const opcionesData = [
+      { id_pregunta: preguntas[0]!._id, texto_opcion: '8', es_correcta: true, orden: 1 },
+      { id_pregunta: preguntas[0]!._id, texto_opcion: '7', es_correcta: false, orden: 2 },
+      { id_pregunta: preguntas[0]!._id, texto_opcion: '9', es_correcta: false, orden: 3 },
+      { id_pregunta: preguntas[0]!._id, texto_opcion: '6', es_correcta: false, orden: 4 },
+      { id_pregunta: preguntas[1]!._id, texto_opcion: 'Verdadero', es_correcta: true, orden: 1 },
+      { id_pregunta: preguntas[1]!._id, texto_opcion: 'Falso', es_correcta: false, orden: 2 },
+    ];
+
+    const opciones = [];
+    for (const opcionData of opcionesData) {
+      const opcion = await OpcionPregunta.create(opcionData);
+      opciones.push(opcion);
+    }
+    console.warn(`${opcionesData.length} opciones creadas`);
+
+    console.warn('\nCreando pares de emparejamiento...');
+    const paresData = [
+      { id_pregunta: preguntas[3]!._id, elemento_izquierdo: 'Pez', elemento_derecho: 'Agua', orden: 1 },
+      { id_pregunta: preguntas[3]!._id, elemento_izquierdo: 'Águila', elemento_derecho: 'Cielo', orden: 2 },
+      { id_pregunta: preguntas[3]!._id, elemento_izquierdo: 'Oso', elemento_derecho: 'Bosque', orden: 3 },
+    ];
+
+    for (const parData of paresData) {
+      await ParEmparejamiento.create(parData);
+    }
+    console.warn(`${paresData.length} pares de emparejamiento creados`);
+
+    console.warn('\nCreando respuestas modelo...');
+    const respuestasModeloData = [
+      {
+        id_pregunta: preguntas[2]!._id,
+        texto_respuesta: 'La fotosíntesis es el proceso mediante el cual las plantas convierten la luz solar, agua y dióxido de carbono en oxígeno y glucosa. Este proceso ocurre principalmente en las hojas, específicamente en los cloroplastos que contienen clorofila.',
+        puntos_asignados: 5,
+      },
+    ];
+
+    for (const respuestaData of respuestasModeloData) {
+      await RespuestaModelo.create(respuestaData);
+    }
+    console.warn('Respuestas modelo creadas');
+
+    console.warn('\nCreando exámenes...');
+    const examenesData = [
+      {
+        titulo: 'Examen de Matemáticas Básicas',
+        descripcion: 'Examen de suma y resta para nivel inicial',
+        id_ciclo: ciclos[0]!._id,
+        fecha_inicio: new Date('2025-02-01'),
+        fecha_fin: new Date('2025-02-28'),
+        duracion_minutos: 30,
+        intentos_permitidos: 2,
+        calificacion_minima: 60,
+        mostrar_resultados: true,
+        aleatorizar_preguntas: false,
+        aleatorizar_opciones: false,
+        activo: true,
+        creado_por: editorUser._id,
+      },
+      {
+        titulo: 'Examen de Ciencias Naturales',
+        descripcion: 'Examen sobre biología y naturaleza',
+        id_ciclo: ciclos[0]!._id,
+        fecha_inicio: new Date('2025-03-01'),
+        fecha_fin: new Date('2025-03-31'),
+        duracion_minutos: 60,
+        intentos_permitidos: 1,
+        calificacion_minima: 70,
+        mostrar_resultados: true,
+        aleatorizar_preguntas: true,
+        aleatorizar_opciones: true,
+        activo: true,
+        creado_por: editorUser._id,
+      },
+    ];
+
+    const examenes = [];
+    for (const examenData of examenesData) {
+      const examen = await Examen.create(examenData);
+      examenes.push(examen);
+      console.warn(`Examen "${examenData.titulo}": Creado`);
+    }
+
+    console.warn('\nAsignando preguntas a exámenes...');
+    const examenPreguntasData = [
+      { id_examen: examenes[0]!._id, id_pregunta: preguntas[0]!._id, orden: 1, puntos: 1 },
+      { id_examen: examenes[0]!._id, id_pregunta: preguntas[1]!._id, orden: 2, puntos: 1 },
+      { id_examen: examenes[1]!._id, id_pregunta: preguntas[2]!._id, orden: 1, puntos: 5 },
+      { id_examen: examenes[1]!._id, id_pregunta: preguntas[3]!._id, orden: 2, puntos: 3 },
+    ];
+
+    const examenPreguntas = [];
+    for (const epData of examenPreguntasData) {
+      const ep = await ExamenPregunta.create(epData);
+      examenPreguntas.push(ep);
+    }
+    console.warn(`${examenPreguntasData.length} preguntas asignadas a exámenes`);
+
+    console.warn('\nCreando intentos de examen...');
+    const intentosData = [
+      {
+        id_examen: examenes[0]!._id,
+        id_usuario: estudianteUser._id,
+        numero_intento: 1,
+        fecha_inicio: new Date('2025-02-05T10:00:00'),
+        fecha_finalizacion: new Date('2025-02-05T10:25:00'),
+        calificacion: 85,
+        puntos_obtenidos: 17,
+        puntos_totales: 20,
+        completado: true,
+      },
+      {
+        id_examen: examenes[1]!._id,
+        id_usuario: estudianteUser._id,
+        numero_intento: 1,
+        fecha_inicio: new Date('2025-03-05T14:00:00'),
+        completado: false,
+      },
+    ];
+
+    const intentos = [];
+    for (const intentoData of intentosData) {
+      const intento = await IntentoExamen.create(intentoData);
+      intentos.push(intento);
+    }
+    console.warn(`${intentosData.length} intentos de examen creados`);
+
+    console.warn('\nCreando respuestas de estudiantes...');
+    // Respuesta de selección múltiple
+    await RespuestaSeleccion.create({
+      id_intento: intentos[0]!._id,
+      id_examen_pregunta: examenPreguntas[0]!._id,
+      id_opcion_seleccionada: opciones[0]!._id,
+      puntos_obtenidos: 1,
+      es_correcta: true,
+    });
+
+    // Respuesta verdadero/falso
+    await RespuestaSeleccion.create({
+      id_intento: intentos[0]!._id,
+      id_examen_pregunta: examenPreguntas[1]!._id,
+      id_opcion_seleccionada: opciones[4]!._id,
+      puntos_obtenidos: 1,
+      es_correcta: true,
+    });
+
+    // Respuesta de desarrollo
+    await RespuestaDesarrollo.create({
+      id_intento: intentos[1]!._id,
+      id_examen_pregunta: examenPreguntas[2]!._id,
+      respuesta_texto: 'Las plantas usan la luz del sol para convertir agua y CO2 en azúcar y oxígeno.',
+      puntos_obtenidos: 3,
+      calificada: true,
+      calificada_por: editorUser._id,
+      comentario_calificador: 'Buena respuesta pero falta más detalle sobre los cloroplastos.',
+    });
+
+    console.warn('Respuestas de estudiantes creadas');
+
+    console.warn('\nCreando revisiones de preguntas...');
+    await RevisionPregunta.create({
+      id_pregunta: preguntas[0]!._id,
+      id_revisor: adminUser._id,
+      voto: 'positivo',
+      comentario: 'Pregunta aprobada. Claridad y opciones correctas.',
+      fecha_revision: new Date(),
+    });
+
+    console.warn('Revisiones de preguntas creadas');
+
     console.warn('\nSEED COMPLETADO EXITOSAMENTE');
-    console.warn('\nCREDENCIALES DE USUARIOS:');
-    console.warn('─'.repeat(50));
+    console.warn('\n' + '═'.repeat(60));
+    console.warn('CREDENCIALES DE USUARIOS:');
+    console.warn('─'.repeat(60));
     console.warn(`Superadmin: ${adminEmail} / ${adminPassword}`);
     console.warn(`Editor:     ${editorEmail} / ${editorPassword}`);
     console.warn(`Organizador: ${organizadorEmail} / ${organizadorPassword}`);
     console.warn(`Estudiante: ${estudianteEmail} / ${estudiantePassword}`);
+    console.warn('═'.repeat(60));
+    console.warn('\nRESUMEN DE DATOS CREADOS:');
+    console.warn('─'.repeat(60));
+    console.warn(`✅ ${privilegiosData.length} Privilegios`);
+    console.warn(`✅ 4 Usuarios con privilegios asignados`);
+    console.warn(`✅ ${rangosData.length} Rangos de edad`);
+    console.warn(`✅ ${categoriasData.length} Categorías`);
+    console.warn(`✅ ${ciclosData.length} Ciclos académicos`);
+    console.warn(`✅ ${estadosData.length} Estados de pregunta`);
+    console.warn(`✅ ${contenidosData.length} Archivos de contenido`);
+    console.warn(`✅ ${preguntasData.length} Preguntas (con opciones y pares)`);
+    console.warn(`✅ ${examenesData.length} Exámenes con preguntas asignadas`);
+    console.warn(`✅ ${intentosData.length} Intentos de examen`);
+    console.warn(`✅ Respuestas de estudiantes (selección, desarrollo)`);
+    console.warn(`✅ Revisiones de preguntas`);
+    console.warn('═'.repeat(60));
   } catch (error) {
     console.error('\nError durante el seed:', error);
     process.exit(1);
