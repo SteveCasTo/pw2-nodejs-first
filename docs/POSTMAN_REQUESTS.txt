@@ -772,6 +772,269 @@ DELETE http://localhost:3000/api/respuestas-modelo/{{id_respuesta}}
 Authorization: Bearer {{token}}
 
 ================================================================================
+15. REVISIONES DE PREGUNTAS (sistema de aprobación por pares)
+================================================================================
+
+15.1. LISTAR TODAS LAS REVISIONES
+----------------------------------
+GET http://localhost:3000/api/revisiones-pregunta
+Authorization: Bearer {{token}}
+
+15.2. OBTENER REVISIÓN POR ID
+------------------------------
+GET http://localhost:3000/api/revisiones-pregunta/{{id_revision}}
+Authorization: Bearer {{token}}
+
+15.3. OBTENER REVISIONES DE UNA PREGUNTA
+-----------------------------------------
+GET http://localhost:3000/api/revisiones-pregunta/pregunta/{{id_pregunta}}
+Authorization: Bearer {{token}}
+
+15.4. OBTENER REVISIONES REALIZADAS POR UN REVISOR
+---------------------------------------------------
+GET http://localhost:3000/api/revisiones-pregunta/revisor/{{id_revisor}}
+Authorization: Bearer {{token}}
+
+15.5. OBTENER ESTADÍSTICAS DE REVISIÓN DE UNA PREGUNTA
+-------------------------------------------------------
+GET http://localhost:3000/api/revisiones-pregunta/pregunta/{{id_pregunta}}/estadisticas
+Authorization: Bearer {{token}}
+
+15.6. CREAR REVISIÓN - APROBAR (revisor/superadmin)
+----------------------------------------------------
+POST http://localhost:3000/api/revisiones-pregunta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675daaaaabcd5678ef901234",
+  "voto": "aprobar",
+  "comentarios": "Excelente pregunta, bien redactada y con opciones claras. Aprobada."
+}
+
+15.7. CREAR REVISIÓN - RECHAZAR CON COMENTARIO (revisor/superadmin)
+--------------------------------------------------------------------
+POST http://localhost:3000/api/revisiones-pregunta
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_pregunta": "675daaaaabcd5678ef901234",
+  "voto": "rechazar",
+  "comentarios": "La redacción de la pregunta es ambigua. Sugiero reformular la opción 2 para mayor claridad."
+}
+
+15.8. ACTUALIZAR REVISIÓN (revisor/superadmin)
+-----------------------------------------------
+PUT http://localhost:3000/api/revisiones-pregunta/{{id_revision}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "voto": "aprobar",
+  "comentarios": "Después de la corrección, la pregunta está lista para ser publicada."
+}
+
+15.9. ELIMINAR REVISIÓN (revisor/superadmin)
+---------------------------------------------
+DELETE http://localhost:3000/api/revisiones-pregunta/{{id_revision}}
+Authorization: Bearer {{token}}
+
+================================================================================
+16. EXÁMENES
+================================================================================
+
+16.1. LISTAR TODOS LOS EXÁMENES
+--------------------------------
+GET http://localhost:3000/api/examenes
+Authorization: Bearer {{token}}
+
+16.2. OBTENER EXAMEN POR ID
+----------------------------
+GET http://localhost:3000/api/examenes/{{id_examen}}
+Authorization: Bearer {{token}}
+
+16.3. OBTENER EXÁMENES DE UN CICLO
+-----------------------------------
+GET http://localhost:3000/api/examenes/ciclo/{{id_ciclo}}
+Authorization: Bearer {{token}}
+
+16.4. OBTENER EXÁMENES POR CATEGORÍA
+-------------------------------------
+GET http://localhost:3000/api/examenes/categoria/{{id_categoria}}
+Authorization: Bearer {{token}}
+
+16.5. OBTENER EXÁMENES ACTIVOS
+-------------------------------
+GET http://localhost:3000/api/examenes/activos
+Authorization: Bearer {{token}}
+
+16.6. OBTENER ESTADÍSTICAS DE EXAMEN
+-------------------------------------
+GET http://localhost:3000/api/examenes/{{id_examen}}/estadisticas
+Authorization: Bearer {{token}}
+
+16.7. CREAR EXAMEN (editor/superadmin)
+---------------------------------------
+POST http://localhost:3000/api/examenes
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "titulo": "Examen Final de Programación Web",
+  "descripcion": "Examen que cubre todos los temas del curso: HTML, CSS, JavaScript, Node.js y Express",
+  "id_ciclo": "675daaaaabcd5678ef901234",
+  "id_categoria": "675dbbbbbcd5678ef901234",
+  "fecha_inicio": "2024-12-15T08:00:00.000Z",
+  "fecha_fin": "2024-12-15T10:00:00.000Z",
+  "duracion_minutos": 120,
+  "intentos_permitidos": 1,
+  "mostrar_resultados_inmediatos": false,
+  "barajar_preguntas": true,
+  "barajar_opciones": true,
+  "requiere_camara": true,
+  "nota_minima_aprobacion": 70.0,
+  "activo": true
+}
+
+16.8. ACTUALIZAR EXAMEN (editor/superadmin)
+--------------------------------------------
+PUT http://localhost:3000/api/examenes/{{id_examen}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "titulo": "Examen Final de Programación Web - Actualizado",
+  "duracion_minutos": 150,
+  "intentos_permitidos": 2,
+  "nota_minima_aprobacion": 65.0
+}
+
+16.9. DESACTIVAR EXAMEN (editor/superadmin)
+--------------------------------------------
+PATCH http://localhost:3000/api/examenes/{{id_examen}}/desactivar
+Authorization: Bearer {{token}}
+
+16.10. ACTIVAR EXAMEN (editor/superadmin)
+------------------------------------------
+PATCH http://localhost:3000/api/examenes/{{id_examen}}/activar
+Authorization: Bearer {{token}}
+
+16.11. ELIMINAR EXAMEN (editor/superadmin)
+-------------------------------------------
+DELETE http://localhost:3000/api/examenes/{{id_examen}}
+Authorization: Bearer {{token}}
+
+================================================================================
+17. EXÁMENES-PREGUNTAS (asociación de preguntas a exámenes)
+================================================================================
+
+17.1. LISTAR TODAS LAS ASOCIACIONES EXAMEN-PREGUNTA
+----------------------------------------------------
+GET http://localhost:3000/api/examenes-preguntas
+Authorization: Bearer {{token}}
+
+17.2. OBTENER ASOCIACIÓN POR ID
+--------------------------------
+GET http://localhost:3000/api/examenes-preguntas/{{id}}
+Authorization: Bearer {{token}}
+
+17.3. OBTENER PREGUNTAS DE UN EXAMEN
+-------------------------------------
+GET http://localhost:3000/api/examenes-preguntas/examen/{{id_examen}}
+Authorization: Bearer {{token}}
+
+17.4. OBTENER PUNTAJE TOTAL DEL EXAMEN
+---------------------------------------
+GET http://localhost:3000/api/examenes-preguntas/examen/{{id_examen}}/puntaje
+Authorization: Bearer {{token}}
+
+17.5. AGREGAR PREGUNTA A EXAMEN - CON PUNTOS RECOMENDADOS (editor/superadmin)
+------------------------------------------------------------------------------
+POST http://localhost:3000/api/examenes-preguntas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_examen": "675daaaaabcd5678ef901234",
+  "id_pregunta": "675dbbbbbcd5678ef901235",
+  "orden_definido": 1,
+  "usar_puntos_recomendados": true,
+  "obligatoria": true
+}
+
+17.6. AGREGAR PREGUNTA A EXAMEN - CON PUNTOS PERSONALIZADOS (editor/superadmin)
+--------------------------------------------------------------------------------
+POST http://localhost:3000/api/examenes-preguntas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_examen": "675daaaaabcd5678ef901234",
+  "id_pregunta": "675dbbbbbcd5678ef901236",
+  "orden_definido": 2,
+  "puntos_asignados": 15.0,
+  "usar_puntos_recomendados": false,
+  "obligatoria": true
+}
+
+17.7. AGREGAR PREGUNTA OPCIONAL SIN ORDEN (editor/superadmin)
+--------------------------------------------------------------
+POST http://localhost:3000/api/examenes-preguntas
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "id_examen": "675daaaaabcd5678ef901234",
+  "id_pregunta": "675dbbbbbcd5678ef901237",
+  "usar_puntos_recomendados": true,
+  "obligatoria": false
+}
+
+17.8. ACTUALIZAR CONFIGURACIÓN DE PREGUNTA EN EXAMEN (editor/superadmin)
+-------------------------------------------------------------------------
+PUT http://localhost:3000/api/examenes-preguntas/{{id}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "orden_definido": 3,
+  "puntos_asignados": 20.0,
+  "usar_puntos_recomendados": false,
+  "obligatoria": true
+}
+
+17.9. ELIMINAR PREGUNTA DE EXAMEN (editor/superadmin)
+------------------------------------------------------
+DELETE http://localhost:3000/api/examenes-preguntas/{{id}}
+Authorization: Bearer {{token}}
+
+17.10. REORDENAR PREGUNTAS DE UN EXAMEN (editor/superadmin)
+------------------------------------------------------------
+PATCH http://localhost:3000/api/examenes-preguntas/examen/{{id_examen}}/reordenar
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+Body:
+{
+  "ordenamiento": [
+    { "id": "675dccccccd5678ef901238", "orden": 1 },
+    { "id": "675dccccccd5678ef901239", "orden": 2 },
+    { "id": "675dccccccd5678ef90123a", "orden": 3 },
+    { "id": "675dccccccd5678ef90123b", "orden": 4 }
+  ]
+}
+
+================================================================================
 NOTAS IMPORTANTES
 ================================================================================
 
@@ -794,6 +1057,11 @@ NOTAS IMPORTANTES
    - Las preguntas de tipo "emparejamiento" deben tener mínimo 2 pares
    - Solo puede haber 1 respuesta modelo por pregunta
    - No se pueden modificar componentes de preguntas publicadas
+   - Solo preguntas en estado "publicada" pueden agregarse a exámenes
+   - No se pueden modificar/eliminar preguntas de exámenes que tienen intentos
+   - Los revisores no pueden revisar sus propias preguntas
+   - Cada revisor solo puede votar una vez por pregunta
+   - El estado de pregunta cambia automáticamente basado en votos de revisión
 
 5. FILTROS:
    - Muchos endpoints GET aceptan parámetros de query para filtrar resultados
