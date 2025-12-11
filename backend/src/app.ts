@@ -16,6 +16,7 @@ import contenidoRoutes from '@routes/contenido.routes';
 import preguntaRoutes from '@routes/pregunta.routes';
 import opcionPreguntaRoutes from '@routes/opcionPregunta.routes';
 import parEmparejamientoRoutes from '@routes/parEmparejamiento.routes';
+import respuestaModeloRoutes from '@routes/respuestaModelo.routes';
 import config from '@config/constants';
 
 const app: Application = express();
@@ -72,11 +73,12 @@ app.use('/api/privilegios', privilegioRoutes);
 app.use('/api/usuario-privilegios', usuarioPrivilegioRoutes);
 app.use('/api/ciclos', cicloRoutes);
 app.use('/api/estados-pregunta', estadoPreguntaRoutes);
-app.use('/api/contenidos', contenidoRoutes);
 app.use('/api/preguntas', preguntaRoutes);
 app.use('/api/opciones-pregunta', opcionPreguntaRoutes);
 app.use('/api/pares-emparejamiento', parEmparejamientoRoutes);
+app.use('/api/respuestas-modelo', respuestaModeloRoutes);
 
+app.use(notFound);
 app.use(notFound);
 
 app.use(errorHandler);
