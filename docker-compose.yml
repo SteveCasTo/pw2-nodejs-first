@@ -25,13 +25,16 @@ services:
     container_name: pw2-backend
     restart: unless-stopped
     env_file:
-      - ./backend/.env.docker
+      - ./backend/.env
     ports:
-      - '4000:4000'
+      - '3000:3000'
+      - '3001:3001'
+      - '3002:3002'
     volumes:
       - ./backend/src:/app/src
       - ./backend/package.json:/app/package.json
       - ./backend/tsconfig.json:/app/tsconfig.json
+      - ./backend/certs:/app/certs:ro
       - /app/node_modules
     networks:
       - pw2-network
