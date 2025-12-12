@@ -137,6 +137,17 @@ const CategoriasPage = () => {
     setSubcategoriaFormData({ nombre_subcategoria: '', descripcion: '', activo: true });
   };
 
+  const handleDeleteSubcategoria = async (subcategoriaId: string) => {
+    if (!window.confirm('¿Estás seguro de eliminar esta subcategoría?')) return;
+    try {
+      await subcategoriaService.delete(subcategoriaId);
+      fetchCategorias();
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || 'Error al eliminar subcategoría');
+    }
+  };
+
   const toggleSubcategorias = (categoriaId: string) => {
     setExpandedCategories(prev => {
       const newSet = new Set(prev);
@@ -418,13 +429,25 @@ const CategoriasPage = () => {
                                 className="flex items-center justify-between bg-white/5 px-3 py-2 rounded-lg border border-white/10"
                               >
                                 <span className="text-white/80 text-sm">{sub.nombre_subcategoria}</span>
-                                <span className={`px-2 py-0.5 rounded-full text-xs ${
-                                  sub.activo 
-                                    ? 'bg-green-500/20 text-green-300' 
-                                    : 'bg-red-500/20 text-red-300'
-                                }`}>
-                                  {sub.activo ? '✓' : '✗'}
-                                </span>
+                                <div className="flex items-center gap-2">
+                                  <span className={`px-2 py-0.5 rounded-full text-xs ${
+                                    sub.activo 
+                                      ? 'bg-green-500/20 text-green-300' 
+                                      : 'bg-red-500/20 text-red-300'
+                                  }`}>
+                                    {sub.activo ? '✓' : '✗'}
+                                  </span>
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleDeleteSubcategoria(sub._id);
+                                    }}
+                                    className="px-2 py-1 bg-red-500/20 hover:bg-red-500/40 text-red-200 rounded text-xs transition-all border border-red-400/30"
+                                    title="Eliminar subcategoría"
+                                  >
+                                    Eliminar
+                                  </button>
+                                </div>
                               </div>
                             ))}
                           </div>

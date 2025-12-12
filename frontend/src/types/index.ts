@@ -145,6 +145,7 @@ export interface UsuarioAdmin {
   genero?: 'masculino' | 'femenino' | 'otro' | 'prefiero_no_decir';
   fecha_registro: string;
   activo: boolean;
+  privilegios?: UserPrivilege[];
 }
 
 // Dashboard Card types

@@ -125,6 +125,11 @@ export const usuarioService = {
     return response.data;
   },
 
+  create: async (data: { nombre: string; correo_electronico: string }): Promise<ApiResponse<UsuarioAdmin>> => {
+    const response = await apiClient.post('/api/usuarios', data);
+    return response.data;
+  },
+
   update: async (id: string, data: Partial<UsuarioAdmin>): Promise<ApiResponse<UsuarioAdmin>> => {
     const response = await apiClient.put(`/api/usuarios/${id}`, data);
     return response.data;
