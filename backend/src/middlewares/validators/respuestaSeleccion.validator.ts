@@ -45,15 +45,11 @@ export const respuestaSeleccionValidators = {
       .withMessage('Los puntos obtenidos deben ser mayores o iguales a 0'),
   ],
 
-  getById: [
-    param('id').isMongoId().withMessage('ID de respuesta inválido'),
-  ],
+  getById: [param('id').isMongoId().withMessage('ID de respuesta inválido')],
 
   getByIntento: [
     param('idIntento').isMongoId().withMessage('ID de intento inválido'),
   ],
 
-  delete: [
-    param('id').isMongoId().withMessage('ID de respuesta inválido'),
-  ],
+  delete: [param('id').isMongoId().withMessage('ID de respuesta inválido')],
 };

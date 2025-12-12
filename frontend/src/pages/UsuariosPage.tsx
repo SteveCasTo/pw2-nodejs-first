@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -21,11 +21,7 @@ const UsuariosPage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  useEffect(() => {
-    fetchUsuarios();
-  }, []);
-
-  const fetchUsuarios = async () => {
+  const fetchUsuarios = useCallback(async () => {
     try {
       const response = await usuarioService.getAll();
       setUsuarios(response.data);
@@ -34,7 +30,12 @@ const UsuariosPage = () => {
       const error = err as { response?: { data?: { message?: string } } };
       setError(error.response?.data?.message || 'Error al cargar usuarios');
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchUsuarios();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -313,7 +314,7 @@ const UsuariosPage = () => {
                 ).length;
                 
                 const descripcionMap: Record<string, string> = {
-                  superadmin: 'Administrador con acceso total al sistema',
+                  superadmin: 'Acceso total al sistema',
                   editor: 'Puede crear y editar contenido',
                   organizador: 'Puede organizar eventos y actividades',
                   estudiante: 'Usuario estudiante con acceso básico'

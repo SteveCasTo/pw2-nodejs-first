@@ -46,7 +46,9 @@ export const intentoExamenController = {
 
   getByExamen: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const intentos = await IntentoExamen.find({ id_examen: req.params.idExamen })
+      const intentos = await IntentoExamen.find({
+        id_examen: req.params.idExamen,
+      })
         .populate('id_usuario', 'nombre correo_electronico')
         .sort({ fecha_inicio: -1 });
 
@@ -61,7 +63,9 @@ export const intentoExamenController = {
 
   getByUsuario: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const intentos = await IntentoExamen.find({ id_usuario: req.params.idUsuario })
+      const intentos = await IntentoExamen.find({
+        id_usuario: req.params.idUsuario,
+      })
         .populate('id_examen', 'titulo descripcion')
         .sort({ fecha_inicio: -1 });
 
@@ -144,34 +148,36 @@ export const intentoExamenController = {
       let puntosTotales = 0;
 
       // Obtener todas las respuestas de selección
-      const respuestasSeleccion = await RespuestaSeleccion.find({ id_intento: intento._id });
+      const respuestasSeleccion = await RespuestaSeleccion.find({
+        id_intento: intento._id,
+      });
       for (const respuesta of respuestasSeleccion) {
         puntosObtenidos += respuesta.puntos_obtenidos || 0;
         puntosTotales += respuesta.puntos_obtenidos || 0; // Aquí deberías obtener los puntos de la pregunta
       }
 
       // Obtener respuestas de desarrollo calificadas
-      const respuestasDesarrollo = await RespuestaDesarrollo.find({ 
+      const respuestasDesarrollo = await RespuestaDesarrollo.find({
         id_intento: intento._id,
-        calificada: true 
+        calificada: true,
       });
       for (const respuesta of respuestasDesarrollo) {
         puntosObtenidos += respuesta.puntos_obtenidos || 0;
       }
 
       // Verificar si hay respuestas de desarrollo pendientes
-      const respuestasDesarrolloPendientes = await RespuestaDesarrollo.find({ 
+      const respuestasDesarrolloPendientes = await RespuestaDesarrollo.find({
         id_intento: intento._id,
-        calificada: false 
+        calificada: false,
       });
-      
+
       if (respuestasDesarrolloPendientes.length > 0) {
         intento.requiere_revision_manual = true;
       }
 
       intento.puntos_obtenidos = puntosObtenidos;
       intento.puntos_totales = puntosTotales;
-      
+
       // Calcular calificación (porcentaje)
       if (puntosTotales > 0) {
         intento.calificacion = (puntosObtenidos / puntosTotales) * 100;
@@ -191,7 +197,9 @@ export const intentoExamenController = {
 
   delete: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const intentoEliminado = await IntentoExamen.findByIdAndDelete(req.params.id);
+      const intentoEliminado = await IntentoExamen.findByIdAndDelete(
+        req.params.id
+      );
 
       if (!intentoEliminado) {
         res.status(404).json({

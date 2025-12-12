@@ -15,9 +15,7 @@ const usuarioController = {
       res.status(500).json({
         success: false,
         error:
-          error instanceof Error
-            ? error.message
-            : 'Error al obtener usuarios',
+          error instanceof Error ? error.message : 'Error al obtener usuarios',
       });
     }
   },

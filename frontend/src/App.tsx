@@ -6,6 +6,7 @@ import DashboardPage from './pages/DashboardPage';
 import CategoriasPage from './pages/CategoriasPage';
 import CiclosPage from './pages/CiclosPage';
 import UsuariosPage from './pages/UsuariosPage';
+import PreguntasPage from './pages/PreguntasPage';
 import ExamenesPage from './pages/ExamenesPage';
 import GestionarPreguntasPage from './pages/GestionarPreguntasPage';
 import ResolverExamenPage from './pages/ResolverExamenPage';
@@ -43,15 +44,7 @@ function App() {
             path="/preguntas"
             element={
               <ProtectedRoute>
-                <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-500 to-pink-500">
-                  <div className="text-center text-white">
-                    <h1 className="text-4xl font-bold mb-4">Módulo de Preguntas</h1>
-                    <p className="text-xl">En desarrollo...</p>
-                    <a href="/dashboard" className="mt-4 inline-block px-6 py-3 bg-white/20 hover:bg-white/30 rounded-lg">
-                      Volver al Dashboard
-                    </a>
-                  </div>
-                </div>
+                <PreguntasPage />
               </ProtectedRoute>
             }
           />
@@ -108,22 +101,6 @@ function App() {
             element={
               <ProtectedRoute>
                 <CiclosPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/contenidos"
-            element={
-              <ProtectedRoute>
-                <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-teal-500 to-cyan-500">
-                  <div className="text-center text-white">
-                    <h1 className="text-4xl font-bold mb-4">Módulo de Contenidos</h1>
-                    <p className="text-xl">En desarrollo...</p>
-                    <a href="/dashboard" className="mt-4 inline-block px-6 py-3 bg-white/20 hover:bg-white/30 rounded-lg">
-                      Volver al Dashboard
-                    </a>
-                  </div>
-                </div>
               </ProtectedRoute>
             }
           />

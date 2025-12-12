@@ -18,7 +18,9 @@ export const respuestaDesarrolloValidators = {
       .notEmpty()
       .withMessage('El texto de respuesta es requerido')
       .isLength({ min: 1, max: 10000 })
-      .withMessage('El texto de respuesta debe tener entre 1 y 10000 caracteres'),
+      .withMessage(
+        'El texto de respuesta debe tener entre 1 y 10000 caracteres'
+      ),
 
     body('fecha_respuesta')
       .optional()
@@ -32,7 +34,9 @@ export const respuestaDesarrolloValidators = {
     body('respuesta_texto')
       .optional()
       .isLength({ min: 1, max: 10000 })
-      .withMessage('El texto de respuesta debe tener entre 1 y 10000 caracteres'),
+      .withMessage(
+        'El texto de respuesta debe tener entre 1 y 10000 caracteres'
+      ),
 
     body('puntos_obtenidos')
       .optional()
@@ -47,7 +51,9 @@ export const respuestaDesarrolloValidators = {
     body('comentario_calificador')
       .optional()
       .isLength({ max: 1000 })
-      .withMessage('El comentario del calificador no puede exceder 1000 caracteres'),
+      .withMessage(
+        'El comentario del calificador no puede exceder 1000 caracteres'
+      ),
   ],
 
   calificar: [
@@ -62,18 +68,16 @@ export const respuestaDesarrolloValidators = {
     body('comentario_calificador')
       .optional()
       .isLength({ max: 1000 })
-      .withMessage('El comentario del calificador no puede exceder 1000 caracteres'),
+      .withMessage(
+        'El comentario del calificador no puede exceder 1000 caracteres'
+      ),
   ],
 
-  getById: [
-    param('id').isMongoId().withMessage('ID de respuesta inválido'),
-  ],
+  getById: [param('id').isMongoId().withMessage('ID de respuesta inválido')],
 
   getByIntento: [
     param('idIntento').isMongoId().withMessage('ID de intento inválido'),
   ],
 
-  delete: [
-    param('id').isMongoId().withMessage('ID de respuesta inválido'),
-  ],
+  delete: [param('id').isMongoId().withMessage('ID de respuesta inválido')],
 };

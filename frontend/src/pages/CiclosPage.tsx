@@ -48,7 +48,7 @@ const CiclosPage = () => {
       }
 
       // Preparar datos para enviar
-      const dataToSend: any = {
+      const dataToSend: Record<string, unknown> = {
         nombre_ciclo: formData.nombre_ciclo,
         fecha_inicio: formData.fecha_inicio,
         fecha_fin: formData.fecha_fin,

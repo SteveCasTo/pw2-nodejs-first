@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { RespuestaDesarrollo } from '@models/respuestaDesarrollo.model';
 import { ExamenPregunta } from '@models/examenPregunta.model';
+import mongoose from 'mongoose';
 
 export const respuestaDesarrolloController = {
   getAll: async (_req: Request, res: Response, next: NextFunction) => {
@@ -46,7 +47,9 @@ export const respuestaDesarrolloController = {
 
   getByIntento: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const respuestas = await RespuestaDesarrollo.find({ id_intento: req.params.idIntento })
+      const respuestas = await RespuestaDesarrollo.find({
+        id_intento: req.params.idIntento,
+      })
         .populate('id_examen_pregunta')
         .populate('calificada_por', 'nombre correo_electronico')
         .sort({ fecha_respuesta: 1 });
@@ -60,7 +63,11 @@ export const respuestaDesarrolloController = {
     }
   },
 
-  getPendientesCalificacion: async (_req: Request, res: Response, next: NextFunction) => {
+  getPendientesCalificacion: async (
+    _req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
     try {
       const respuestas = await RespuestaDesarrollo.find({ calificada: false })
         .populate('id_intento')
@@ -94,7 +101,7 @@ export const respuestaDesarrolloController = {
   calificar: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { puntos_obtenidos, comentario_calificador } = req.body;
-      const userId = (req as any).user?._id;
+      const userId = (req as Request & { user?: { _id: string } }).user?._id;
 
       const respuesta = await RespuestaDesarrollo.findById(req.params.id);
 
@@ -115,7 +122,9 @@ export const respuestaDesarrolloController = {
       }
 
       // Obtener puntos máximos de la pregunta
-      const examenPregunta = await ExamenPregunta.findById(respuesta.id_examen_pregunta);
+      const examenPregunta = await ExamenPregunta.findById(
+        respuesta.id_examen_pregunta
+      );
       if (!examenPregunta) {
         res.status(404).json({
           success: false,
@@ -135,7 +144,9 @@ export const respuestaDesarrolloController = {
       respuesta.puntos_obtenidos = puntos_obtenidos;
       respuesta.comentario_calificador = comentario_calificador;
       respuesta.calificada = true;
-      respuesta.calificada_por = userId;
+      respuesta.calificada_por = userId
+        ? new mongoose.Types.ObjectId(userId)
+        : undefined;
       respuesta.fecha_calificacion = new Date();
 
       await respuesta.save();
@@ -178,7 +189,9 @@ export const respuestaDesarrolloController = {
 
   delete: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const respuestaEliminada = await RespuestaDesarrollo.findByIdAndDelete(req.params.id);
+      const respuestaEliminada = await RespuestaDesarrollo.findByIdAndDelete(
+        req.params.id
+      );
 
       if (!respuestaEliminada) {
         res.status(404).json({

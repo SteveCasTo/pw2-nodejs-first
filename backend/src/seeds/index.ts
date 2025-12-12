@@ -40,7 +40,7 @@ const seedDatabase = async () => {
     const privilegiosData = [
       {
         nombre_privilegio: 'superadmin',
-        descripcion: 'Administrador con acceso total al sistema',
+        descripcion: 'Acceso total al sistema',
       },
       {
         nombre_privilegio: 'editor',

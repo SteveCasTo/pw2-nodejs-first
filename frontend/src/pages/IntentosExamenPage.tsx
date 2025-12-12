@@ -28,6 +28,7 @@ const IntentosExamenPage = () => {
       return;
     }
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [examenId]);
 
   const fetchData = async () => {
@@ -62,23 +63,27 @@ const IntentosExamenPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex items-center justify-center">
-        <div className="text-white text-2xl">Cargando...</div>
+      <div className="fixed inset-0 w-screen h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-400 mb-4"></div>
+          <div className="text-white text-2xl font-semibold">Cargando...</div>
+        </div>
       </div>
     );
   }
 
   if (!examen) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex items-center justify-center">
+      <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex items-center justify-center">
         <div className="text-white text-2xl">Examen no encontrado</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
-      <div className="container mx-auto px-4 py-8">
+    <div className="fixed inset-0 w-screen h-screen overflow-y-auto bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
+      <div className="relative z-10 w-full flex flex-col">
+        <div className="flex-1 px-8 py-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -239,6 +244,7 @@ const IntentosExamenPage = () => {
               </motion.div>
             ))
           )}
+        </div>
         </div>
       </div>
     </div>

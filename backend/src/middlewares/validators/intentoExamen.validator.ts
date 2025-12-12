@@ -72,7 +72,9 @@ export const intentoExamenValidators = {
     body('fecha_finalizacion')
       .optional()
       .isISO8601()
-      .withMessage('La fecha de finalización debe tener formato ISO 8601 válido'),
+      .withMessage(
+        'La fecha de finalización debe tener formato ISO 8601 válido'
+      ),
 
     body('completado')
       .optional()
@@ -85,9 +87,7 @@ export const intentoExamenValidators = {
       .withMessage('requiere_revision_manual debe ser un valor booleano'),
   ],
 
-  getById: [
-    param('id').isMongoId().withMessage('ID de intento inválido'),
-  ],
+  getById: [param('id').isMongoId().withMessage('ID de intento inválido')],
 
   getByExamen: [
     param('idExamen').isMongoId().withMessage('ID de examen inválido'),
@@ -97,11 +97,7 @@ export const intentoExamenValidators = {
     param('idUsuario').isMongoId().withMessage('ID de usuario inválido'),
   ],
 
-  delete: [
-    param('id').isMongoId().withMessage('ID de intento inválido'),
-  ],
+  delete: [param('id').isMongoId().withMessage('ID de intento inválido')],
 
-  finalizar: [
-    param('id').isMongoId().withMessage('ID de intento inválido'),
-  ],
+  finalizar: [param('id').isMongoId().withMessage('ID de intento inválido')],
 };

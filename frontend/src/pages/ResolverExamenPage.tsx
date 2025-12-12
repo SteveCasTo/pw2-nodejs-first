@@ -52,6 +52,7 @@ const ResolverExamenPage = () => {
 
   useEffect(() => {
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [examenId]);
 
   useEffect(() => {
@@ -70,6 +71,7 @@ const ResolverExamenPage = () => {
 
       return () => clearInterval(timer);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tiempoRestante, examenFinalizado]);
 
   useEffect(() => {
@@ -77,6 +79,7 @@ const ResolverExamenPage = () => {
     if (examenPreguntas.length > 0 && preguntaActualIndex < examenPreguntas.length) {
       cargarDatosPregunta();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [preguntaActualIndex, examenPreguntas]);
 
   const fetchData = async () => {
@@ -88,7 +91,7 @@ const ResolverExamenPage = () => {
       setExamen(examenResponse.data);
 
       // Cargar preguntas del examen
-      let preguntasResponse = await examenPreguntaService.getByExamen(examenId!);
+      const preguntasResponse = await examenPreguntaService.getByExamen(examenId!);
       let preguntas = preguntasResponse.data;
 
       // Aleatorizar preguntas si está configurado

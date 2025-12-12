@@ -6,6 +6,7 @@ import type {
   Examen, 
   IntentoExamen,
   ExamenPregunta,
+  Pregunta,
   RespuestaSeleccion,
   RespuestaDesarrollo,
   RespuestaEmparejamiento,
@@ -53,6 +54,7 @@ const CalificarExamenPage = () => {
       return;
     }
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [intentoId]);
 
   const fetchData = async () => {
@@ -66,7 +68,7 @@ const CalificarExamenPage = () => {
       // Cargar examen
       const examenId = typeof intentoResponse.data.id_examen === 'string' 
         ? intentoResponse.data.id_examen 
-        : (intentoResponse.data.id_examen as any)._id;
+        : (intentoResponse.data.id_examen as { _id: string })._id;
       
       const examenResponse = await examenService.getById(examenId);
       setExamen(examenResponse.data);
@@ -152,15 +154,18 @@ const CalificarExamenPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-900 flex items-center justify-center">
-        <div className="text-white text-2xl">Cargando...</div>
+      <div className="fixed inset-0 w-screen h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-400 mb-4"></div>
+          <div className="text-white text-2xl font-semibold">Cargando...</div>
+        </div>
       </div>
     );
   }
 
   if (!intento || !examen) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-900 flex items-center justify-center">
+      <div className="fixed inset-0 w-screen h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-900 flex items-center justify-center">
         <div className="text-white text-2xl">Intento no encontrado</div>
       </div>
     );
@@ -170,8 +175,9 @@ const CalificarExamenPage = () => {
   const calificacionPorcentaje = puntosTotales > 0 ? (puntosObtenidos / puntosTotales) * 100 : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-900">
-      <div className="container mx-auto px-4 py-8">
+    <div className="fixed inset-0 w-screen h-screen overflow-y-auto bg-gradient-to-br from-gray-900 via-indigo-900 to-gray-900">
+      <div className="relative z-10 w-full flex flex-col">
+        <div className="flex-1 px-8 py-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -279,6 +285,7 @@ const CalificarExamenPage = () => {
             );
           })}
         </div>
+        </div>
       </div>
     </div>
   );
@@ -299,7 +306,21 @@ const PreguntaRespuesta = ({
   comentarioInput,
   setComentarioInput,
   handleCalificarDesarrollo
-}: any) => {
+}: {
+  numero: number;
+  examenPregunta: ExamenPregunta;
+  pregunta: Pregunta;
+  respuestasSeleccion: RespuestaSeleccion[];
+  respuestasDesarrollo: RespuestaDesarrollo[];
+  respuestasEmparejamiento: RespuestaEmparejamiento[];
+  calificando: string | null;
+  setCalificando: (id: string | null) => void;
+  puntosInput: string;
+  setPuntosInput: (value: string) => void;
+  comentarioInput: string;
+  setComentarioInput: (value: string) => void;
+  handleCalificarDesarrollo: (id: string) => void;
+}) => {
   const [opciones, setOpciones] = useState<OpcionPregunta[]>([]);
   const [pares, setPares] = useState<ParEmparejamiento[]>([]);
 

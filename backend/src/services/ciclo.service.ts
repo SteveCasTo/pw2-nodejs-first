@@ -66,11 +66,17 @@ const cicloService = {
     const overlappingCiclo = await Ciclo.findOne({
       $or: [
         // El nuevo ciclo empieza dentro de un ciclo existente
-        { fecha_inicio: { $lte: fecha_inicio }, fecha_fin: { $gt: fecha_inicio } },
+        {
+          fecha_inicio: { $lte: fecha_inicio },
+          fecha_fin: { $gt: fecha_inicio },
+        },
         // El nuevo ciclo termina dentro de un ciclo existente
         { fecha_inicio: { $lt: fecha_fin }, fecha_fin: { $gte: fecha_fin } },
         // El nuevo ciclo contiene completamente un ciclo existente
-        { fecha_inicio: { $gte: fecha_inicio }, fecha_fin: { $lte: fecha_fin } },
+        {
+          fecha_inicio: { $gte: fecha_inicio },
+          fecha_fin: { $lte: fecha_fin },
+        },
       ],
     });
 
@@ -126,9 +132,18 @@ const cicloService = {
       const overlappingCiclo = await Ciclo.findOne({
         _id: { $ne: id },
         $or: [
-          { fecha_inicio: { $lte: finalFechaInicio }, fecha_fin: { $gt: finalFechaInicio } },
-          { fecha_inicio: { $lt: finalFechaFin }, fecha_fin: { $gte: finalFechaFin } },
-          { fecha_inicio: { $gte: finalFechaInicio }, fecha_fin: { $lte: finalFechaFin } },
+          {
+            fecha_inicio: { $lte: finalFechaInicio },
+            fecha_fin: { $gt: finalFechaInicio },
+          },
+          {
+            fecha_inicio: { $lt: finalFechaFin },
+            fecha_fin: { $gte: finalFechaFin },
+          },
+          {
+            fecha_inicio: { $gte: finalFechaInicio },
+            fecha_fin: { $lte: finalFechaFin },
+          },
         ],
       });
 

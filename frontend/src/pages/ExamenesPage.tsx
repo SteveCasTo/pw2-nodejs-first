@@ -40,6 +40,7 @@ const ExamenesPage = () => {
     if (canEdit) {
       fetchCiclos();
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetchExamenes = async () => {
@@ -73,9 +74,13 @@ const ExamenesPage = () => {
         return;
       }
 
-      const dataToSend: any = {
+      if (ciclos.length > 0 && !formData.id_ciclo) {
+        setError('Debes seleccionar un ciclo');
+        return;
+      }
+
+      const dataToSend: Record<string, unknown> = {
         titulo: formData.titulo,
-        id_ciclo: formData.id_ciclo,
         fecha_inicio: formData.fecha_inicio,
         fecha_fin: formData.fecha_fin,
         intentos_permitidos: parseInt(formData.intentos_permitidos) || 1,
@@ -84,6 +89,11 @@ const ExamenesPage = () => {
         aleatorizar_opciones: formData.aleatorizar_opciones,
         activo: formData.activo,
       };
+
+      // Solo agregar id_ciclo si hay ciclos disponibles y se seleccionó uno
+      if (formData.id_ciclo) {
+        dataToSend.id_ciclo = formData.id_ciclo;
+      }
 
       if (formData.descripcion) {
         dataToSend.descripcion = formData.descripcion;
@@ -326,12 +336,12 @@ const ExamenesPage = () => {
 
                       <div className="col-span-2">
                         <label className="block text-sm font-medium text-white/90 mb-2">
-                          Ciclo
+                          Ciclo {ciclos.length === 0 && <span className="text-yellow-300 text-xs">(No hay ciclos disponibles)</span>}
                         </label>
                         <select
                           value={formData.id_ciclo}
                           onChange={(e) => setFormData({ ...formData, id_ciclo: e.target.value })}
-                          required
+                          required={ciclos.length > 0}
                           className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
                         >
                           <option value="">Seleccionar ciclo</option>
@@ -341,6 +351,11 @@ const ExamenesPage = () => {
                             </option>
                           ))}
                         </select>
+                        {ciclos.length === 0 && (
+                          <p className="text-yellow-300 text-xs mt-1">
+                            Debes crear al menos un ciclo activo para asignar el examen. Ve a la sección de Ciclos.
+                          </p>
+                        )}
                       </div>
 
                       <div>
@@ -491,8 +506,8 @@ const ExamenesPage = () => {
             {/* Exámenes Grid */}
             {isLoading ? (
               <div className="text-center py-20">
-                <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-white/20 border-t-white"></div>
-                <p className="text-white/70 mt-4">Cargando exámenes...</p>
+                <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-400"></div>
+                <p className="text-white text-xl font-semibold mt-6">Cargando exámenes...</p>
               </div>
             ) : examenes.length === 0 ? (
               <div className="text-center py-20">

@@ -45,7 +45,9 @@ export const respuestaEmparejamientoController = {
 
   getByIntento: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const respuestas = await RespuestaEmparejamiento.find({ id_intento: req.params.idIntento })
+      const respuestas = await RespuestaEmparejamiento.find({
+        id_intento: req.params.idIntento,
+      })
         .populate('id_examen_pregunta')
         .populate('id_par')
         .sort({ fecha_respuesta: 1 });
@@ -78,11 +80,12 @@ export const respuestaEmparejamientoController = {
 
   update: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const respuestaActualizada = await RespuestaEmparejamiento.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true, runValidators: true }
-      );
+      const respuestaActualizada =
+        await RespuestaEmparejamiento.findByIdAndUpdate(
+          req.params.id,
+          req.body,
+          { new: true, runValidators: true }
+        );
 
       if (!respuestaActualizada) {
         res.status(404).json({
@@ -104,7 +107,8 @@ export const respuestaEmparejamientoController = {
 
   delete: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const respuestaEliminada = await RespuestaEmparejamiento.findByIdAndDelete(req.params.id);
+      const respuestaEliminada =
+        await RespuestaEmparejamiento.findByIdAndDelete(req.params.id);
 
       if (!respuestaEliminada) {
         res.status(404).json({

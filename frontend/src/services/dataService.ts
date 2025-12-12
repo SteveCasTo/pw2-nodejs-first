@@ -431,7 +431,7 @@ export const examenPreguntaService = {
   },
 
   updateOrden: async (examenId: string, ordenData: Array<{id: string; orden: number}>): Promise<ApiResponse<void>> => {
-    const response = await apiClient.patch(`/api/examenes-preguntas/examen/${examenId}/orden`, { orden: ordenData });
+    const response = await apiClient.patch(`/api/examenes-preguntas/examen/${examenId}/reordenar`, { ordenamiento: ordenData });
     return response.data;
   },
 };

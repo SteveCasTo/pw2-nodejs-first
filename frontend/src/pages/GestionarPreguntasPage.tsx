@@ -1,28 +1,16 @@
 import { useState, useEffect } from 'react';
-import type { FormEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import type { 
   Examen, 
   ExamenPregunta, 
-  Pregunta, 
-  Subcategoria,
-  NivelDificultad,
-  RangoEdad,
-  EstadoPregunta
+  Pregunta
 } from '../types';
 import { 
   examenService,
   examenPreguntaService,
-  preguntaService,
-  opcionPreguntaService,
-  parEmparejamientoService,
-  respuestaModeloService,
-  subcategoriaService,
-  nivelDificultadService,
-  rangoEdadService,
-  estadoPreguntaService
+  preguntaService
 } from '../services/dataService';
 
 const GestionarPreguntasPage = () => {
@@ -36,43 +24,10 @@ const GestionarPreguntasPage = () => {
   const [error, setError] = useState('');
   
   // Modales
-  const [showCrearPregunta, setShowCrearPregunta] = useState(false);
   const [showAgregarExistente, setShowAgregarExistente] = useState(false);
   
-  // Datos para crear pregunta
-  const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
-  const [nivelesDificultad, setNivelesDificultad] = useState<NivelDificultad[]>([]);
-  const [rangosEdad, setRangosEdad] = useState<RangoEdad[]>([]);
-  const [estadosPregunta, setEstadosPregunta] = useState<EstadoPregunta[]>([]);
+  // Datos para agregar pregunta existente
   const [preguntasDisponibles, setPreguntasDisponibles] = useState<Pregunta[]>([]);
-
-  // Form data para nueva pregunta
-  const [nuevaPregunta, setNuevaPregunta] = useState({
-    id_subcategoria: '',
-    id_rango_edad: '',
-    id_dificultad: '',
-    id_estado: '',
-    tipo_pregunta: 'seleccion_multiple' as 'seleccion_multiple' | 'verdadero_falso' | 'desarrollo' | 'respuesta_corta' | 'emparejamiento',
-    titulo_pregunta: '',
-    puntos_recomendados: 1,
-    tiempo_estimado: 0,
-    explicacion: '',
-  });
-
-  // Opciones para preguntas de selección múltiple
-  const [opciones, setOpciones] = useState<Array<{ texto: string; es_correcta: boolean }>>([
-    { texto: '', es_correcta: false },
-    { texto: '', es_correcta: false },
-  ]);
-
-  // Pares para preguntas de emparejamiento
-  const [pares, setPares] = useState<Array<{ pregunta: string; respuesta: string }>>([
-    { pregunta: '', respuesta: '' },
-    { pregunta: '', respuesta: '' },
-  ]);
-
-  // Respuesta modelo para preguntas de desarrollo
-  const [respuestaModelo, setRespuestaModelo] = useState('');
 
   // Verificar privilegios - Solo editor y superadmin pueden crear/editar preguntas según backend
   const userPrivileges = user?.privilegios?.map(p => p.id_privilegio.nombre_privilegio || p.id_privilegio.nombre) || [];
@@ -84,6 +39,7 @@ const GestionarPreguntasPage = () => {
       return;
     }
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [examenId]);
 
   const fetchData = async () => {
@@ -92,10 +48,6 @@ const GestionarPreguntasPage = () => {
       await Promise.all([
         fetchExamen(),
         fetchExamenPreguntas(),
-        fetchSubcategorias(),
-        fetchNivelesDificultad(),
-        fetchRangosEdad(),
-        fetchEstadosPregunta(),
       ]);
       setError('');
     } catch (err: unknown) {
@@ -118,99 +70,20 @@ const GestionarPreguntasPage = () => {
     setExamenPreguntas(response.data);
   };
 
-  const fetchSubcategorias = async () => {
-    const response = await subcategoriaService.getAll();
-    setSubcategorias(response.data);
-  };
-
-  const fetchNivelesDificultad = async () => {
-    const response = await nivelDificultadService.getAll();
-    setNivelesDificultad(response.data);
-  };
-
-  const fetchRangosEdad = async () => {
-    const response = await rangoEdadService.getAll();
-    setRangosEdad(response.data);
-  };
-
-  const fetchEstadosPregunta = async () => {
-    const response = await estadoPreguntaService.getAll();
-    setEstadosPregunta(response.data);
-  };
-
   const fetchPreguntasDisponibles = async () => {
     const response = await preguntaService.getAll();
     // Filtrar preguntas que no estén ya en el examen
     const preguntasEnExamen = examenPreguntas.map(ep => 
       typeof ep.id_pregunta === 'object' ? ep.id_pregunta._id : ep.id_pregunta
     );
-    const disponibles = response.data.filter(p => !preguntasEnExamen.includes(p._id));
+    // Filtrar solo preguntas publicadas y que no estén en el examen
+    const disponibles = response.data.filter(p => {
+      const estadoPregunta = typeof p.id_estado === 'object' ? p.id_estado : null;
+      const esPublicada = estadoPregunta?.nombre_estado?.toLowerCase() === 'publicada' || 
+                          estadoPregunta?.nombre_estado?.toLowerCase() === 'publicado';
+      return !preguntasEnExamen.includes(p._id) && esPublicada;
+    });
     setPreguntasDisponibles(disponibles);
-  };
-
-  const handleCrearPregunta = async (e: FormEvent) => {
-    e.preventDefault();
-    try {
-      // 1. Crear la pregunta
-      const preguntaResponse = await preguntaService.create({
-        ...nuevaPregunta,
-        activa: true,
-      });
-
-      const preguntaId = preguntaResponse.data._id;
-
-      // 2. Crear opciones/pares/respuesta modelo según el tipo
-      if (nuevaPregunta.tipo_pregunta === 'seleccion_multiple' || nuevaPregunta.tipo_pregunta === 'verdadero_falso') {
-        // Crear opciones
-        for (let i = 0; i < opciones.length; i++) {
-          if (opciones[i].texto.trim()) {
-            await opcionPreguntaService.create({
-              id_pregunta: preguntaId,
-              texto_opcion: opciones[i].texto,
-              es_correcta: opciones[i].es_correcta,
-              orden: i + 1,
-            });
-          }
-        }
-      } else if (nuevaPregunta.tipo_pregunta === 'emparejamiento') {
-        // Crear pares
-        for (let i = 0; i < pares.length; i++) {
-          if (pares[i].pregunta.trim() && pares[i].respuesta.trim()) {
-            await parEmparejamientoService.create({
-              id_pregunta: preguntaId,
-              texto_pregunta: pares[i].pregunta,
-              texto_respuesta: pares[i].respuesta,
-              orden: i + 1,
-            });
-          }
-        }
-      } else if ((nuevaPregunta.tipo_pregunta === 'desarrollo' || nuevaPregunta.tipo_pregunta === 'respuesta_corta') && respuestaModelo.trim()) {
-        // Crear respuesta modelo
-        await respuestaModeloService.create({
-          id_pregunta: preguntaId,
-          respuesta_texto: respuestaModelo,
-        });
-      }
-
-      // 3. Agregar pregunta al examen
-      await examenPreguntaService.create({
-        id_examen: examenId!,
-        id_pregunta: preguntaId,
-        orden_definido: examenPreguntas.length + 1,
-        puntos_asignados: nuevaPregunta.puntos_recomendados,
-        usar_puntos_recomendados: true,
-        obligatoria: true,
-      });
-
-      // Resetear formulario
-      resetFormularioPregunta();
-      setShowCrearPregunta(false);
-      await fetchExamenPreguntas();
-      setError('');
-    } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      setError(error.response?.data?.message || 'Error al crear pregunta');
-    }
   };
 
   const handleAgregarPreguntaExistente = async (preguntaId: string) => {
@@ -270,47 +143,6 @@ const GestionarPreguntasPage = () => {
     }
   };
 
-  const resetFormularioPregunta = () => {
-    setNuevaPregunta({
-      id_subcategoria: '',
-      id_rango_edad: '',
-      id_dificultad: '',
-      id_estado: estadosPregunta.find(e => e.nombre_estado === 'Borrador')?._id || '',
-      tipo_pregunta: 'seleccion_multiple',
-      titulo_pregunta: '',
-      puntos_recomendados: 1,
-      tiempo_estimado: 0,
-      explicacion: '',
-    });
-    setOpciones([
-      { texto: '', es_correcta: false },
-      { texto: '', es_correcta: false },
-    ]);
-    setPares([
-      { pregunta: '', respuesta: '' },
-      { pregunta: '', respuesta: '' },
-    ]);
-    setRespuestaModelo('');
-  };
-
-  const agregarOpcion = () => {
-    setOpciones([...opciones, { texto: '', es_correcta: false }]);
-  };
-
-  const eliminarOpcion = (index: number) => {
-    if (opciones.length <= 2) return;
-    setOpciones(opciones.filter((_, i) => i !== index));
-  };
-
-  const agregarPar = () => {
-    setPares([...pares, { pregunta: '', respuesta: '' }]);
-  };
-
-  const eliminarPar = (index: number) => {
-    if (pares.length <= 2) return;
-    setPares(pares.filter((_, i) => i !== index));
-  };
-
   const getTipoPreguntaLabel = (tipo: string) => {
     const labels: Record<string, string> = {
       seleccion_multiple: '📝 Selección Múltiple',
@@ -324,23 +156,27 @@ const GestionarPreguntasPage = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex items-center justify-center">
-        <div className="text-white text-2xl">Cargando...</div>
+      <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-400 mb-4"></div>
+          <div className="text-white text-2xl font-semibold">Cargando...</div>
+        </div>
       </div>
     );
   }
 
   if (!examen) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex items-center justify-center">
+      <div className="fixed inset-0 bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900 flex items-center justify-center">
         <div className="text-white text-2xl">Examen no encontrado</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
-      <div className="container mx-auto px-4 py-8">
+    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-gradient-to-br from-gray-900 via-blue-900 to-gray-900">
+      <div className="relative z-10 w-full h-full flex flex-col overflow-y-auto">
+        <div className="flex-1 px-8 py-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -376,18 +212,6 @@ const GestionarPreguntasPage = () => {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6 flex gap-4"
         >
-          <motion.button
-            onClick={() => {
-              resetFormularioPregunta();
-              setShowCrearPregunta(true);
-            }}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className="bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white px-6 py-3 rounded-xl font-semibold transition-all shadow-lg"
-          >
-            ➕ Crear Nueva Pregunta
-          </motion.button>
-
           <motion.button
             onClick={() => {
               fetchPreguntasDisponibles();
@@ -504,338 +328,6 @@ const GestionarPreguntasPage = () => {
           )}
         </div>
 
-        {/* Modal: Crear Nueva Pregunta */}
-        <AnimatePresence>
-          {showCrearPregunta && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-              onClick={() => setShowCrearPregunta(false)}
-            >
-              <motion.div
-                initial={{ scale: 0.9, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.9, opacity: 0 }}
-                onClick={(e) => e.stopPropagation()}
-                className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-3xl p-8 max-w-4xl w-full max-h-[90vh] overflow-y-auto border border-white/20"
-                style={{
-                  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
-                }}
-              >
-                <h2 className="text-3xl font-bold text-white mb-6">Crear Nueva Pregunta</h2>
-
-                <form onSubmit={handleCrearPregunta} className="space-y-6">
-                  {/* Tipo de pregunta */}
-                  <div>
-                    <label className="block text-sm font-medium text-white/90 mb-2">
-                      Tipo de Pregunta
-                    </label>
-                    <select
-                      value={nuevaPregunta.tipo_pregunta}
-                      onChange={(e) => setNuevaPregunta({ 
-                        ...nuevaPregunta, 
-                        tipo_pregunta: e.target.value as any 
-                      })}
-                      required
-                      className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                    >
-                      <option value="seleccion_multiple" className="bg-gray-800">Selección Múltiple</option>
-                      <option value="verdadero_falso" className="bg-gray-800">Verdadero/Falso</option>
-                      <option value="desarrollo" className="bg-gray-800">Desarrollo</option>
-                      <option value="respuesta_corta" className="bg-gray-800">Respuesta Corta</option>
-                      <option value="emparejamiento" className="bg-gray-800">Emparejamiento</option>
-                    </select>
-                  </div>
-
-                  {/* Título de la pregunta */}
-                  <div>
-                    <label className="block text-sm font-medium text-white/90 mb-2">
-                      Título de la Pregunta
-                    </label>
-                    <textarea
-                      value={nuevaPregunta.titulo_pregunta}
-                      onChange={(e) => setNuevaPregunta({ ...nuevaPregunta, titulo_pregunta: e.target.value })}
-                      required
-                      className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
-                      placeholder="Escribe la pregunta..."
-                      rows={3}
-                    />
-                  </div>
-
-                  {/* Grid de campos */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-white/90 mb-2">
-                        Subcategoría
-                      </label>
-                      <select
-                        value={nuevaPregunta.id_subcategoria}
-                        onChange={(e) => setNuevaPregunta({ ...nuevaPregunta, id_subcategoria: e.target.value })}
-                        required
-                        className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                      >
-                        <option value="">Seleccionar...</option>
-                        {subcategorias.map(sub => (
-                          <option key={sub._id} value={sub._id} className="bg-gray-800">
-                            {sub.nombre_subcategoria}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-white/90 mb-2">
-                        Nivel de Dificultad
-                      </label>
-                      <select
-                        value={nuevaPregunta.id_dificultad}
-                        onChange={(e) => setNuevaPregunta({ ...nuevaPregunta, id_dificultad: e.target.value })}
-                        required
-                        className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                      >
-                        <option value="">Seleccionar...</option>
-                        {nivelesDificultad.map(nivel => (
-                          <option key={nivel._id} value={nivel._id} className="bg-gray-800">
-                            {nivel.nivel}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-white/90 mb-2">
-                        Rango de Edad
-                      </label>
-                      <select
-                        value={nuevaPregunta.id_rango_edad}
-                        onChange={(e) => setNuevaPregunta({ ...nuevaPregunta, id_rango_edad: e.target.value })}
-                        required
-                        className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                      >
-                        <option value="">Seleccionar...</option>
-                        {rangosEdad.map(rango => (
-                          <option key={rango._id} value={rango._id} className="bg-gray-800">
-                            {rango.nombre_rango} ({rango.edad_minima}-{rango.edad_maxima} años)
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-white/90 mb-2">
-                        Puntos Recomendados
-                      </label>
-                      <input
-                        type="number"
-                        value={nuevaPregunta.puntos_recomendados}
-                        onChange={(e) => setNuevaPregunta({ ...nuevaPregunta, puntos_recomendados: parseFloat(e.target.value) || 1 })}
-                        min="0"
-                        step="0.5"
-                        required
-                        className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Explicación */}
-                  <div>
-                    <label className="block text-sm font-medium text-white/90 mb-2">
-                      Explicación (opcional)
-                    </label>
-                    <textarea
-                      value={nuevaPregunta.explicacion}
-                      onChange={(e) => setNuevaPregunta({ ...nuevaPregunta, explicacion: e.target.value })}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
-                      placeholder="Explicación adicional..."
-                      rows={2}
-                    />
-                  </div>
-
-                  {/* Opciones según tipo de pregunta */}
-                  {(nuevaPregunta.tipo_pregunta === 'seleccion_multiple' || nuevaPregunta.tipo_pregunta === 'verdadero_falso') && (
-                    <div>
-                      <div className="flex justify-between items-center mb-4">
-                        <label className="block text-sm font-medium text-white/90">
-                          Opciones de Respuesta
-                        </label>
-                        {nuevaPregunta.tipo_pregunta === 'seleccion_multiple' && (
-                          <button
-                            type="button"
-                            onClick={agregarOpcion}
-                            className="text-green-300 hover:text-green-200 text-sm font-medium"
-                          >
-                            + Agregar Opción
-                          </button>
-                        )}
-                      </div>
-
-                      <div className="space-y-3">
-                        {nuevaPregunta.tipo_pregunta === 'verdadero_falso' ? (
-                          <>
-                            {['Verdadero', 'Falso'].map((texto, i) => (
-                              <div key={i} className="flex items-center gap-3 bg-white/5 p-3 rounded-lg">
-                                <input
-                                  type="radio"
-                                  name="respuesta_correcta"
-                                  checked={opciones[i]?.es_correcta || false}
-                                  onChange={() => {
-                                    const newOpciones = [
-                                      { texto: 'Verdadero', es_correcta: i === 0 },
-                                      { texto: 'Falso', es_correcta: i === 1 },
-                                    ];
-                                    setOpciones(newOpciones);
-                                  }}
-                                  className="w-4 h-4"
-                                />
-                                <span className="text-white flex-1">{texto}</span>
-                                <span className="text-xs text-white/60">
-                                  {opciones[i]?.es_correcta ? '✓ Correcta' : 'Incorrecta'}
-                                </span>
-                              </div>
-                            ))}
-                          </>
-                        ) : (
-                          opciones.map((opcion, index) => (
-                            <div key={index} className="flex items-center gap-3">
-                              <input
-                                type="checkbox"
-                                checked={opcion.es_correcta}
-                                onChange={(e) => {
-                                  const newOpciones = [...opciones];
-                                  newOpciones[index].es_correcta = e.target.checked;
-                                  setOpciones(newOpciones);
-                                }}
-                                className="w-4 h-4"
-                              />
-                              <input
-                                type="text"
-                                value={opcion.texto}
-                                onChange={(e) => {
-                                  const newOpciones = [...opciones];
-                                  newOpciones[index].texto = e.target.value;
-                                  setOpciones(newOpciones);
-                                }}
-                                required
-                                className="flex-1 px-4 py-2 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
-                                placeholder={`Opción ${index + 1}`}
-                              />
-                              {opciones.length > 2 && (
-                                <button
-                                  type="button"
-                                  onClick={() => eliminarOpcion(index)}
-                                  className="text-red-300 hover:text-red-200 px-2"
-                                >
-                                  ✕
-                                </button>
-                              )}
-                            </div>
-                          ))
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {nuevaPregunta.tipo_pregunta === 'emparejamiento' && (
-                    <div>
-                      <div className="flex justify-between items-center mb-4">
-                        <label className="block text-sm font-medium text-white/90">
-                          Pares de Emparejamiento
-                        </label>
-                        <button
-                          type="button"
-                          onClick={agregarPar}
-                          className="text-green-300 hover:text-green-200 text-sm font-medium"
-                        >
-                          + Agregar Par
-                        </button>
-                      </div>
-
-                      <div className="space-y-3">
-                        {pares.map((par, index) => (
-                          <div key={index} className="flex items-center gap-3">
-                            <input
-                              type="text"
-                              value={par.pregunta}
-                              onChange={(e) => {
-                                const newPares = [...pares];
-                                newPares[index].pregunta = e.target.value;
-                                setPares(newPares);
-                              }}
-                              required
-                              className="flex-1 px-4 py-2 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
-                              placeholder="Término"
-                            />
-                            <span className="text-white/60">⟷</span>
-                            <input
-                              type="text"
-                              value={par.respuesta}
-                              onChange={(e) => {
-                                const newPares = [...pares];
-                                newPares[index].respuesta = e.target.value;
-                                setPares(newPares);
-                              }}
-                              required
-                              className="flex-1 px-4 py-2 bg-white/10 border border-white/30 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-500 transition-all"
-                              placeholder="Definición"
-                            />
-                            {pares.length > 2 && (
-                              <button
-                                type="button"
-                                onClick={() => eliminarPar(index)}
-                                className="text-red-300 hover:text-red-200 px-2"
-                              >
-                                ✕
-                              </button>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {(nuevaPregunta.tipo_pregunta === 'desarrollo' || nuevaPregunta.tipo_pregunta === 'respuesta_corta') && (
-                    <div>
-                      <label className="block text-sm font-medium text-white/90 mb-2">
-                        Respuesta Modelo (opcional)
-                      </label>
-                      <textarea
-                        value={respuestaModelo}
-                        onChange={(e) => setRespuestaModelo(e.target.value)}
-                        className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all resize-none"
-                        placeholder="Respuesta modelo o criterios de evaluación..."
-                        rows={4}
-                      />
-                    </div>
-                  )}
-
-                  {/* Botones */}
-                  <div className="flex gap-4 pt-4">
-                    <motion.button
-                      type="submit"
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-3 rounded-xl font-semibold transition-all"
-                    >
-                      Crear Pregunta
-                    </motion.button>
-                    <motion.button
-                      type="button"
-                      onClick={() => setShowCrearPregunta(false)}
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      className="flex-1 bg-white/10 hover:bg-white/20 text-white py-3 rounded-xl font-semibold transition-all border border-white/30"
-                    >
-                      Cancelar
-                    </motion.button>
-                  </div>
-                </form>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
         {/* Modal: Agregar Pregunta Existente */}
         <AnimatePresence>
           {showAgregarExistente && (
@@ -909,6 +401,7 @@ const GestionarPreguntasPage = () => {
             </motion.div>
           )}
         </AnimatePresence>
+        </div>
       </div>
     </div>
   );

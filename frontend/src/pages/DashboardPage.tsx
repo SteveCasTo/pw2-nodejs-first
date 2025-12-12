@@ -57,14 +57,6 @@ const DashboardPage = () => {
       route: '/ciclos',
       color: 'bg-gradient-to-br from-indigo-500/20 to-blue-500/20',
     },
-    {
-      id: 'contenidos',
-      title: 'Contenidos',
-      description: 'Administrar contenido educativo',
-      icon: '📖',
-      route: '/contenidos',
-      color: 'bg-gradient-to-br from-teal-500/20 to-cyan-500/20',
-    },
   ];
 
   // Obtener privilegios del usuario actual
@@ -79,10 +71,9 @@ const DashboardPage = () => {
     // SuperAdmin ve todo
     if (isSuperAdmin) return true;
     
-    // Editor ve todo excepto usuarios (ya tiene requiredPrivilege)
+    // Editor solo ve Preguntas
     if (isEditor) {
-      if (card.requiredPrivilege === 'superadmin') return false;
-      return true;
+      return card.id === 'preguntas';
     }
     
     // Organizador no ve usuarios

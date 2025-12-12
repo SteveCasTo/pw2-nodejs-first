@@ -47,7 +47,9 @@ export const respuestaSeleccionController = {
 
   getByIntento: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const respuestas = await RespuestaSeleccion.find({ id_intento: req.params.idIntento })
+      const respuestas = await RespuestaSeleccion.find({
+        id_intento: req.params.idIntento,
+      })
         .populate('id_examen_pregunta')
         .populate('id_opcion_seleccionada')
         .sort({ fecha_respuesta: 1 });
@@ -76,9 +78,11 @@ export const respuestaSeleccionController = {
       }
 
       // Obtener los puntos de la pregunta
-      const examenPregunta = await ExamenPregunta.findById(id_examen_pregunta)
-        .populate('id_pregunta');
-      
+      const examenPregunta =
+        await ExamenPregunta.findById(id_examen_pregunta).populate(
+          'id_pregunta'
+        );
+
       if (!examenPregunta) {
         res.status(404).json({
           success: false,
@@ -136,7 +140,9 @@ export const respuestaSeleccionController = {
 
   delete: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const respuestaEliminada = await RespuestaSeleccion.findByIdAndDelete(req.params.id);
+      const respuestaEliminada = await RespuestaSeleccion.findByIdAndDelete(
+        req.params.id
+      );
 
       if (!respuestaEliminada) {
         res.status(404).json({
