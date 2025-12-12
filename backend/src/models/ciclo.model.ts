@@ -16,9 +16,11 @@ const cicloSchema = new Schema<ICiclo>(
     },
     fecha_inicio: {
       type: Date,
+      required: [true, 'La fecha de inicio es requerida'],
     },
     fecha_fin: {
       type: Date,
+      required: [true, 'La fecha de fin es requerida'],
     },
     activo: {
       type: Boolean,

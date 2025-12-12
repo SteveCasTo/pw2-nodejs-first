@@ -3,9 +3,10 @@ import { Ciclo } from '@models/ciclo.model';
 interface CreateCicloData {
   nombre_ciclo: string;
   descripcion?: string;
-  fecha_inicio?: Date;
-  fecha_fin?: Date;
-  creado_por: string;
+  fecha_inicio: Date;
+  fecha_fin: Date;
+  creado_por?: string;
+  activo?: boolean;
 }
 
 interface UpdateCicloData {
@@ -14,12 +15,12 @@ interface UpdateCicloData {
   fecha_inicio?: Date;
   fecha_fin?: Date;
   actualizado_por?: string;
+  activo?: boolean;
 }
 
 const validateCicloFormat = (nombre_ciclo: string): boolean => {
-  const formato1 = /^\d{4}\/[1-2]$/;
-  const formato2 = /^(I|II|III|IV)\/\d{4}$/;
-  return formato1.test(nombre_ciclo) || formato2.test(nombre_ciclo);
+  const formato = /^[1-4]\/\d{4}$/;
+  return formato.test(nombre_ciclo);
 };
 
 const cicloService = {
@@ -48,7 +49,7 @@ const cicloService = {
 
     if (!validateCicloFormat(nombre_ciclo)) {
       throw new Error(
-        'Formato de ciclo inválido. Use formatos como: 2025/1, 2025/2, I/2025, II/2025, III/2025, IV/2025'
+        'Formato de ciclo inválido. Use el formato: ciclo/año (Ejemplo: 1/2025, 2/2025, 3/2025, 4/2025)'
       );
     }
 
@@ -57,8 +58,26 @@ const cicloService = {
       throw new Error('Ya existe un ciclo con ese nombre');
     }
 
-    if (fecha_inicio && fecha_fin && fecha_inicio >= fecha_fin) {
+    if (fecha_inicio >= fecha_fin) {
       throw new Error('La fecha de inicio debe ser anterior a la fecha de fin');
+    }
+
+    // Validar que no haya superposición de fechas con otros ciclos
+    const overlappingCiclo = await Ciclo.findOne({
+      $or: [
+        // El nuevo ciclo empieza dentro de un ciclo existente
+        { fecha_inicio: { $lte: fecha_inicio }, fecha_fin: { $gt: fecha_inicio } },
+        // El nuevo ciclo termina dentro de un ciclo existente
+        { fecha_inicio: { $lt: fecha_fin }, fecha_fin: { $gte: fecha_fin } },
+        // El nuevo ciclo contiene completamente un ciclo existente
+        { fecha_inicio: { $gte: fecha_inicio }, fecha_fin: { $lte: fecha_fin } },
+      ],
+    });
+
+    if (overlappingCiclo) {
+      throw new Error(
+        `El rango de fechas se superpone con el ciclo "${overlappingCiclo.nombre_ciclo}" (${overlappingCiclo.fecha_inicio.toLocaleDateString()} - ${overlappingCiclo.fecha_fin.toLocaleDateString()})`
+      );
     }
 
     const ciclo = await Ciclo.create(data);
@@ -74,7 +93,7 @@ const cicloService = {
 
     if (nombre_ciclo && !validateCicloFormat(nombre_ciclo)) {
       throw new Error(
-        'Formato de ciclo inválido. Use formatos como: 2025/1, 2025/2, I/2025, II/2025, III/2025, IV/2025'
+        'Formato de ciclo inválido. Use el formato: ciclo/año (Ejemplo: 1/2025, 2/2025, 3/2025, 4/2025)'
       );
     }
 
@@ -89,8 +108,35 @@ const cicloService = {
       }
     }
 
-    if (fecha_inicio && fecha_fin && fecha_inicio >= fecha_fin) {
+    // Obtener el ciclo actual para validar fechas
+    const currentCiclo = await Ciclo.findById(id);
+    if (!currentCiclo) {
+      throw new Error('Ciclo no encontrado');
+    }
+
+    const finalFechaInicio = fecha_inicio || currentCiclo.fecha_inicio;
+    const finalFechaFin = fecha_fin || currentCiclo.fecha_fin;
+
+    if (finalFechaInicio >= finalFechaFin) {
       throw new Error('La fecha de inicio debe ser anterior a la fecha de fin');
+    }
+
+    // Validar que no haya superposición de fechas con otros ciclos (excluyendo el actual)
+    if (fecha_inicio || fecha_fin) {
+      const overlappingCiclo = await Ciclo.findOne({
+        _id: { $ne: id },
+        $or: [
+          { fecha_inicio: { $lte: finalFechaInicio }, fecha_fin: { $gt: finalFechaInicio } },
+          { fecha_inicio: { $lt: finalFechaFin }, fecha_fin: { $gte: finalFechaFin } },
+          { fecha_inicio: { $gte: finalFechaInicio }, fecha_fin: { $lte: finalFechaFin } },
+        ],
+      });
+
+      if (overlappingCiclo) {
+        throw new Error(
+          `El rango de fechas se superpone con el ciclo "${overlappingCiclo.nombre_ciclo}" (${overlappingCiclo.fecha_inicio.toLocaleDateString()} - ${overlappingCiclo.fecha_fin.toLocaleDateString()})`
+        );
+      }
     }
 
     const ciclo = await Ciclo.findByIdAndUpdate(id, data, {

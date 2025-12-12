@@ -340,14 +340,14 @@ const seedDatabase = async () => {
     console.warn('\nCreando ciclos...');
     const ciclosData = [
       {
-        nombre_ciclo: '2025/1',
+        nombre_ciclo: '1/2025',
         descripcion: 'Primer ciclo 2025',
         fecha_inicio: new Date('2025-01-15'),
         fecha_fin: new Date('2025-06-15'),
         creado_por: adminUser._id,
       },
       {
-        nombre_ciclo: '2025/2',
+        nombre_ciclo: '2/2025',
         descripcion: 'Segundo ciclo 2025',
         fecha_inicio: new Date('2025-07-15'),
         fecha_fin: new Date('2025-12-15'),

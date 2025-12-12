@@ -41,28 +41,56 @@ const CiclosPage = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
+      // Validar que las fechas estén presentes
+      if (!formData.fecha_inicio || !formData.fecha_fin) {
+        setError('Las fechas de inicio y fin son obligatorias');
+        return;
+      }
+
+      // Preparar datos para enviar
+      const dataToSend: any = {
+        nombre_ciclo: formData.nombre_ciclo,
+        fecha_inicio: formData.fecha_inicio,
+        fecha_fin: formData.fecha_fin,
+        activo: formData.activo,
+      };
+
+      if (formData.descripcion) {
+        dataToSend.descripcion = formData.descripcion;
+      }
+
       if (editingId) {
-        await cicloService.update(editingId, formData);
+        await cicloService.update(editingId, dataToSend);
       } else {
-        await cicloService.create(formData);
+        await cicloService.create(dataToSend);
       }
       setShowForm(false);
       setEditingId(null);
       setFormData({ nombre_ciclo: '', descripcion: '', fecha_inicio: '', fecha_fin: '', activo: true });
       fetchCiclos();
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      setError(error.response?.data?.message || 'Error al guardar ciclo');
+      const error = err as { response?: { data?: { message?: string; error?: string } } };
+      setError(error.response?.data?.error || error.response?.data?.message || 'Error al guardar ciclo');
     }
   };
 
   const handleEdit = (ciclo: Ciclo) => {
     setEditingId(ciclo._id);
+    
+    // Formatear fechas sin problemas de zona horaria
+    const formatDateForInput = (dateString: string) => {
+      const date = new Date(dateString);
+      const year = date.getUTCFullYear();
+      const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+      const day = String(date.getUTCDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+    
     setFormData({
       nombre_ciclo: ciclo.nombre_ciclo,
       descripcion: ciclo.descripcion || '',
-      fecha_inicio: ciclo.fecha_inicio ? new Date(ciclo.fecha_inicio).toISOString().split('T')[0] : '',
-      fecha_fin: ciclo.fecha_fin ? new Date(ciclo.fecha_fin).toISOString().split('T')[0] : '',
+      fecha_inicio: ciclo.fecha_inicio ? formatDateForInput(ciclo.fecha_inicio) : '',
+      fecha_fin: ciclo.fecha_fin ? formatDateForInput(ciclo.fecha_fin) : '',
       activo: ciclo.activo,
     });
     setShowForm(true);
@@ -88,7 +116,13 @@ const CiclosPage = () => {
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'No definida';
     const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'short', day: 'numeric' });
+    // Usar UTC para evitar problemas de zona horaria
+    return date.toLocaleDateString('es-ES', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric',
+      timeZone: 'UTC'
+    });
   };
 
   return (
@@ -116,7 +150,11 @@ const CiclosPage = () => {
           </div>
           
           <button
-            onClick={() => setShowForm(true)}
+            onClick={() => {
+              setEditingId(null);
+              setFormData({ nombre_ciclo: '', descripcion: '', fecha_inicio: '', fecha_fin: '', activo: true });
+              setShowForm(true);
+            }}
             className="px-6 py-2.5 bg-gradient-to-r from-indigo-500 to-blue-500 hover:from-indigo-600 hover:to-blue-600 text-white rounded-xl font-medium shadow-lg transition-all"
           >
             + Nuevo Ciclo
@@ -126,16 +164,6 @@ const CiclosPage = () => {
         {/* Content */}
         <div className="flex-1 px-8 py-8">
           <div className="max-w-7xl mx-auto">
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-6 bg-red-500/20 border border-red-500/50 text-red-100 px-6 py-4 rounded-xl"
-              >
-                {error}
-              </motion.div>
-            )}
-
             {/* Form Modal */}
             {showForm && (
               <motion.div
@@ -153,6 +181,17 @@ const CiclosPage = () => {
                     boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'
                   }}
                 >
+                  {/* Error message inside modal */}
+                  {error && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      className="mb-6 bg-red-500/20 border border-red-500/50 text-red-100 px-4 py-3 rounded-xl text-sm"
+                    >
+                      {error}
+                    </motion.div>
+                  )}
+                  
                   <h2 className="text-3xl font-bold text-white mb-6">
                     {editingId ? 'Editar Ciclo' : 'Nuevo Ciclo'}
                   </h2>
@@ -167,8 +206,10 @@ const CiclosPage = () => {
                         value={formData.nombre_ciclo}
                         onChange={(e) => setFormData({ ...formData, nombre_ciclo: e.target.value })}
                         required
+                        pattern="^[1-4]/\d{4}$"
+                        title="El formato debe ser: ciclo/año (Ejemplo: 1/2025)"
                         className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
-                        placeholder="Ej: 2024-1"
+                        placeholder="1/2025"
                       />
                     </div>
 
@@ -194,6 +235,7 @@ const CiclosPage = () => {
                           type="date"
                           value={formData.fecha_inicio}
                           onChange={(e) => setFormData({ ...formData, fecha_inicio: e.target.value })}
+                          required
                           className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                         />
                       </div>
@@ -206,6 +248,7 @@ const CiclosPage = () => {
                           type="date"
                           value={formData.fecha_fin}
                           onChange={(e) => setFormData({ ...formData, fecha_fin: e.target.value })}
+                          required
                           className="w-full px-4 py-3 bg-white/10 border border-white/30 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all"
                         />
                       </div>
