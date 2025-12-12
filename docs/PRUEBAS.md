@@ -1,5 +1,7 @@
 # 🧪 GUÍA DE PRUEBAS - API REST
 
+> 💡 **Tip VS Code**: Presiona `Ctrl+Shift+V` (Windows/Linux) o `Cmd+Shift+V` (Mac) para ver este documento con formato preview.
+
 ## 🔐 Generar Certificados SSL (Opcional)
 
 Si necesitas regenerar los certificados SSL para HTTPS/HTTP2, ejecuta:
