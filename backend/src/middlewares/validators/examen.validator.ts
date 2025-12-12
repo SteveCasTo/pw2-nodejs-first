@@ -66,7 +66,9 @@ export const examenValidators = {
     // Validación personalizada: fecha_inicio < fecha_fin
     body('fecha_fin').custom((value, { req }) => {
       if (new Date(value) <= new Date(req.body.fecha_inicio)) {
-        throw new Error('La fecha de fin debe ser posterior a la fecha de inicio');
+        throw new Error(
+          'La fecha de fin debe ser posterior a la fecha de inicio'
+        );
       }
       return true;
     }),
@@ -87,10 +89,7 @@ export const examenValidators = {
       .isLength({ max: 255 })
       .withMessage('La descripción no puede exceder 255 caracteres'),
 
-    body('id_ciclo')
-      .optional()
-      .isMongoId()
-      .withMessage('ID de ciclo inválido'),
+    body('id_ciclo').optional().isMongoId().withMessage('ID de ciclo inválido'),
 
     body('fecha_inicio')
       .optional()

@@ -212,7 +212,9 @@ export const parEmparejamientoService = {
           texto_respuesta: data.texto_respuesta,
         }),
         ...(data.id_contenido_respuesta && {
-          id_contenido_respuesta: new Types.ObjectId(data.id_contenido_respuesta),
+          id_contenido_respuesta: new Types.ObjectId(
+            data.id_contenido_respuesta
+          ),
         }),
         ...(data.orden !== undefined && { orden: data.orden }),
       },

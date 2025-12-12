@@ -10,7 +10,10 @@ export const examenPreguntaService = {
   async getAll(): Promise<IExamenPregunta[]> {
     return await ExamenPregunta.find()
       .populate('id_examen', 'titulo fecha_inicio fecha_fin activo')
-      .populate('id_pregunta', 'titulo_pregunta tipo_pregunta puntos_recomendados')
+      .populate(
+        'id_pregunta',
+        'titulo_pregunta tipo_pregunta puntos_recomendados'
+      )
       .populate('agregada_por', 'correo_electronico nombre')
       .sort({ id_examen: 1, orden_definido: 1, fecha_agregada: 1 });
   },
@@ -18,7 +21,10 @@ export const examenPreguntaService = {
   async getById(id: string): Promise<IExamenPregunta | null> {
     return await ExamenPregunta.findById(id)
       .populate('id_examen', 'titulo fecha_inicio fecha_fin activo')
-      .populate('id_pregunta', 'titulo_pregunta tipo_pregunta puntos_recomendados')
+      .populate(
+        'id_pregunta',
+        'titulo_pregunta tipo_pregunta puntos_recomendados'
+      )
       .populate('agregada_por', 'correo_electronico nombre');
   },
 
@@ -180,7 +186,9 @@ export const examenPreguntaService = {
         ...(data.usar_puntos_recomendados !== undefined && {
           usar_puntos_recomendados: data.usar_puntos_recomendados,
         }),
-        ...(data.obligatoria !== undefined && { obligatoria: data.obligatoria }),
+        ...(data.obligatoria !== undefined && {
+          obligatoria: data.obligatoria,
+        }),
       },
       { new: true, runValidators: true }
     );
@@ -239,7 +247,7 @@ export const examenPreguntaService = {
     }
 
     // Validar que no haya órdenes duplicados
-    const ordenes = ordenamiento.map((o) => o.orden);
+    const ordenes = ordenamiento.map(o => o.orden);
     const ordenesUnicos = new Set(ordenes);
 
     if (ordenes.length !== ordenesUnicos.size) {
@@ -247,7 +255,7 @@ export const examenPreguntaService = {
     }
 
     // Actualizar cada pregunta
-    const actualizaciones = ordenamiento.map(async (item) => {
+    const actualizaciones = ordenamiento.map(async item => {
       const examenPregunta = await ExamenPregunta.findById(item.id);
       if (!examenPregunta) {
         throw new Error(`No se encontró la pregunta con ID ${item.id}`);

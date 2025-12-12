@@ -37,7 +37,7 @@ export const parEmparejamientoValidators = {
       .withMessage('El orden debe ser un número entero mayor a 0'),
 
     // Validación personalizada: debe haber texto O contenido para pregunta
-    body().custom((value) => {
+    body().custom(value => {
       if (!value.texto_pregunta && !value.id_contenido_pregunta) {
         throw new Error(
           'Debe proporcionar texto_pregunta o id_contenido_pregunta'
@@ -47,7 +47,7 @@ export const parEmparejamientoValidators = {
     }),
 
     // Validación personalizada: debe haber texto O contenido para respuesta
-    body().custom((value) => {
+    body().custom(value => {
       if (!value.texto_respuesta && !value.id_contenido_respuesta) {
         throw new Error(
           'Debe proporcionar texto_respuesta o id_contenido_respuesta'

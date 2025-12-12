@@ -31,11 +31,9 @@ export const opcionPreguntaValidators = {
       .withMessage('El orden debe ser un número entero mayor a 0'),
 
     // Validación personalizada: debe haber texto O contenido
-    body().custom((value) => {
+    body().custom(value => {
       if (!value.texto_opcion && !value.id_contenido_opcion) {
-        throw new Error(
-          'Debe proporcionar texto_opcion o id_contenido_opcion'
-        );
+        throw new Error('Debe proporcionar texto_opcion o id_contenido_opcion');
       }
       return true;
     }),

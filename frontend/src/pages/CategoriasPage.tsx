@@ -28,8 +28,9 @@ const CategoriasPage = () => {
       const response = await categoriaService.getAll();
       setCategorias(response.data);
       setError('');
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al cargar categorías');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || 'Error al cargar categorías');
     } finally {
       setIsLoading(false);
     }
@@ -47,8 +48,9 @@ const CategoriasPage = () => {
       setEditingId(null);
       setFormData({ nombre_categoria: '', activo: true });
       fetchCategorias();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al guardar categoría');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || 'Error al guardar categoría');
     }
   };
 
@@ -66,8 +68,9 @@ const CategoriasPage = () => {
     try {
       await categoriaService.delete(id);
       fetchCategorias();
-    } catch (err: any) {
-      setError(err.response?.data?.message || 'Error al eliminar categoría');
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || 'Error al eliminar categoría');
     }
   };
 
