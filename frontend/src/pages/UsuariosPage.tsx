@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import type { UsuarioAdmin, UserPrivilege } from '../types';
+import type { UsuarioAdmin } from '../types';
 import { usuarioService } from '../services/dataService';
 import { useAuth } from '../context/AuthContext';
 
@@ -64,15 +64,6 @@ const UsuariosPage = () => {
       const error = err as { response?: { data?: { message?: string; error?: string } } };
       setError(error.response?.data?.error || error.response?.data?.message || 'Error al guardar usuario');
     }
-  };
-
-  const handleEdit = (usuario: UsuarioAdmin) => {
-    setEditingId(usuario._id);
-    setFormData({
-      nombre: usuario.nombre || '',
-      correo_electronico: usuario.correo_electronico || '',
-    });
-    setShowForm(true);
   };
 
   const handleAddNew = () => {

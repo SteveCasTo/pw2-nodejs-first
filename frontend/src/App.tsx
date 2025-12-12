@@ -7,6 +7,10 @@ import CategoriasPage from './pages/CategoriasPage';
 import CiclosPage from './pages/CiclosPage';
 import UsuariosPage from './pages/UsuariosPage';
 import ExamenesPage from './pages/ExamenesPage';
+import GestionarPreguntasPage from './pages/GestionarPreguntasPage';
+import ResolverExamenPage from './pages/ResolverExamenPage';
+import CalificarExamenPage from './pages/CalificarExamenPage';
+import IntentosExamenPage from './pages/IntentosExamenPage';
 
 function App() {
   return (
@@ -56,6 +60,38 @@ function App() {
             element={
               <ProtectedRoute>
                 <ExamenesPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/examenes/:examenId/preguntas"
+            element={
+              <ProtectedRoute>
+                <GestionarPreguntasPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/examenes/:examenId/intentos"
+            element={
+              <ProtectedRoute>
+                <IntentosExamenPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/examenes/:examenId/resolver"
+            element={
+              <ProtectedRoute>
+                <ResolverExamenPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/examenes/calificar/:intentoId"
+            element={
+              <ProtectedRoute>
+                <CalificarExamenPage />
               </ProtectedRoute>
             }
           />

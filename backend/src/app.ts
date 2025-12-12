@@ -21,6 +21,10 @@ import respuestaModeloRoutes from '@routes/respuestaModelo.routes';
 import revisionPreguntaRoutes from '@routes/revisionPregunta.routes';
 import examenRoutes from '@routes/examen.routes';
 import examenPreguntaRoutes from '@routes/examenPregunta.routes';
+import intentoExamenRoutes from '@routes/intentoExamen.routes';
+import respuestaSeleccionRoutes from '@routes/respuestaSeleccion.routes';
+import respuestaDesarrolloRoutes from '@routes/respuestaDesarrollo.routes';
+import respuestaEmparejamientoRoutes from '@routes/respuestaEmparejamiento.routes';
 import config from '@config/constants';
 
 const app: Application = express();
@@ -92,6 +96,10 @@ app.use('/api/respuestas-modelo', respuestaModeloRoutes);
 app.use('/api/revisiones-pregunta', revisionPreguntaRoutes);
 app.use('/api/examenes', examenRoutes);
 app.use('/api/examenes-preguntas', examenPreguntaRoutes);
+app.use('/api/intentos-examen', intentoExamenRoutes);
+app.use('/api/respuestas-seleccion', respuestaSeleccionRoutes);
+app.use('/api/respuestas-desarrollo', respuestaDesarrolloRoutes);
+app.use('/api/respuestas-emparejamiento', respuestaEmparejamientoRoutes);
 
 app.use(notFound);
 app.use(notFound);

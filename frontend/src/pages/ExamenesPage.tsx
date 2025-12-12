@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import type { FormEvent } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import type { Examen, Ciclo } from '../types';
@@ -560,29 +560,52 @@ const ExamenesPage = () => {
 
                       {/* Botones */}
                       {canEdit ? (
-                        <div className="flex gap-2 mt-4">
-                          <motion.button
-                            onClick={() => handleEdit(examen)}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex-1 bg-blue-500/20 hover:bg-blue-500/40 text-blue-200 rounded-lg transition-all border border-blue-400/30 flex items-center justify-center text-xs font-medium py-2"
-                            title="Editar examen"
-                          >
-                            Editar
-                          </motion.button>
-                          <motion.button
-                            onClick={() => handleDelete(examen._id)}
-                            whileHover={{ scale: 1.05 }}
-                            whileTap={{ scale: 0.95 }}
-                            className="flex-1 bg-red-500/20 hover:bg-red-500/40 text-red-200 rounded-lg transition-all border border-red-400/30 flex items-center justify-center text-xs font-medium py-2"
-                            title="Eliminar examen"
-                          >
-                            Eliminar
-                          </motion.button>
+                        <div className="flex flex-col gap-2 mt-4">
+                          <div className="flex gap-2">
+                            <motion.button
+                              onClick={() => navigate(`/examenes/${examen._id}/preguntas`)}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="flex-1 bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 text-white rounded-lg transition-all flex items-center justify-center text-xs font-medium py-2 gap-1"
+                              title="Gestionar preguntas del examen"
+                            >
+                              📋 Preguntas
+                            </motion.button>
+                            <motion.button
+                              onClick={() => navigate(`/examenes/${examen._id}/intentos`)}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="flex-1 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg transition-all flex items-center justify-center text-xs font-medium py-2 gap-1"
+                              title="Ver intentos y calificar"
+                            >
+                              📊 Intentos
+                            </motion.button>
+                          </div>
+                          <div className="flex gap-2">
+                            <motion.button
+                              onClick={() => handleEdit(examen)}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="flex-1 bg-blue-500/20 hover:bg-blue-500/40 text-blue-200 rounded-lg transition-all border border-blue-400/30 flex items-center justify-center text-xs font-medium py-2"
+                              title="Editar examen"
+                            >
+                              ✏️ Editar
+                            </motion.button>
+                            <motion.button
+                              onClick={() => handleDelete(examen._id)}
+                              whileHover={{ scale: 1.05 }}
+                              whileTap={{ scale: 0.95 }}
+                              className="flex-1 bg-red-500/20 hover:bg-red-500/40 text-red-200 rounded-lg transition-all border border-red-400/30 flex items-center justify-center text-xs font-medium py-2"
+                              title="Eliminar examen"
+                            >
+                              🗑️ Eliminar
+                            </motion.button>
+                          </div>
                         </div>
                       ) : isEstudiante && status.text === 'En Curso' ? (
                         <div className="mt-4">
                           <motion.button
+                            onClick={() => navigate(`/examenes/${examen._id}/resolver`)}
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white rounded-lg transition-all flex items-center justify-center text-sm font-medium py-3"
