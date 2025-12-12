@@ -72,8 +72,8 @@ const seedDatabase = async () => {
     }
 
     console.warn('\nCreando usuario superadmin...');
-    const adminEmail = 'admin@sistema.com';
-    const adminPassword = 'Admin123!@#';
+    const adminEmail = 'leosolizgo@gmail.com';
+    const adminPassword = 'contraseña';
 
     let adminUser = await Usuario.findOne({
       correo_electronico: adminEmail,
