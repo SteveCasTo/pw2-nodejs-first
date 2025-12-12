@@ -20,9 +20,10 @@ export interface UserPrivilege {
 
 export interface Privilege {
   _id: string;
-  nombre: string;
-  descripcion: string;
-  nivel_acceso: number;
+  nombre_privilegio: string;
+  nombre?: string;
+  descripcion?: string;
+  nivel_acceso?: number;
 }
 
 // Auth types

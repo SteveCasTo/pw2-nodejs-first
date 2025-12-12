@@ -1,5 +1,6 @@
 import { Usuario } from '@models/usuario.model';
 import { UsuarioPrivilegio } from '@models/usuarioPrivilegio.model';
+import { Privilegio } from '@models/privilegio.model';
 
 const usuarioService = {
   getAll: async () => {
@@ -57,9 +58,28 @@ const usuarioService = {
       activo: true,
     });
 
-    // Retornar sin la contraseña
+    // Asignar privilegio "estudiante" por defecto
+    const privilegioEstudiante = await Privilegio.findOne({ nombre_privilegio: 'estudiante' });
+    if (privilegioEstudiante) {
+      await UsuarioPrivilegio.create({
+        id_usuario: usuario._id,
+        id_privilegio: privilegioEstudiante._id,
+        activo: true,
+      });
+    }
+
+    // Retornar usuario con privilegios
+    const privilegios = await UsuarioPrivilegio.find({
+      id_usuario: usuario._id,
+    })
+      .populate('id_privilegio', 'nombre_privilegio descripcion')
+      .select('id_privilegio activo');
+
     const { password, ...usuarioSinPassword } = usuario.toObject();
-    return usuarioSinPassword;
+    return {
+      ...usuarioSinPassword,
+      privilegios,
+    };
   },
 
   update: async (id: string, data: { nombre?: string; activo?: boolean }) => {

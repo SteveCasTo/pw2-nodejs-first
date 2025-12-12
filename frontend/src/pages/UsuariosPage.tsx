@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import type { UsuarioAdmin, UserPrivilege } from '../types';
 import { usuarioService } from '../services/dataService';
+import { useAuth } from '../context/AuthContext';
 
 const UsuariosPage = () => {
   const [usuarios, setUsuarios] = useState<UsuarioAdmin[]>([]);
@@ -18,6 +19,7 @@ const UsuariosPage = () => {
     correo_electronico: '',
   });
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   useEffect(() => {
     fetchUsuarios();
@@ -45,10 +47,22 @@ const UsuariosPage = () => {
       setShowForm(false);
       setEditingId(null);
       setFormData({ nombre: '', correo_electronico: '' });
-      fetchUsuarios();
+      setError('');
+      
+      // Refrescar lista de usuarios
+      await fetchUsuarios();
+      
+      // Actualizar la lista filtrada si el modal sigue abierto
+      if (selectedPrivilegio) {
+        const response = await usuarioService.getAll();
+        const filtered = response.data.filter(usuario => 
+          usuario.privilegios?.some(priv => priv.id_privilegio.nombre_privilegio === selectedPrivilegio)
+        );
+        setFilteredUsuarios(filtered);
+      }
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      setError(error.response?.data?.message || 'Error al guardar usuario');
+      const error = err as { response?: { data?: { message?: string; error?: string } } };
+      setError(error.response?.data?.error || error.response?.data?.message || 'Error al guardar usuario');
     }
   };
 
@@ -64,6 +78,7 @@ const UsuariosPage = () => {
   const handleAddNew = () => {
     setEditingId(null);
     setFormData({ nombre: '', correo_electronico: '' });
+    setError('');
     setShowForm(true);
   };
 
@@ -71,16 +86,29 @@ const UsuariosPage = () => {
     if (!window.confirm('¿Estás seguro de desactivar este usuario?')) return;
     try {
       await usuarioService.delete(id);
-      fetchUsuarios();
+      setError('');
+      
+      // Refrescar lista de usuarios
+      await fetchUsuarios();
+      
+      // Actualizar la lista filtrada
+      if (selectedPrivilegio) {
+        const response = await usuarioService.getAll();
+        const filtered = response.data.filter(usuario => 
+          usuario.privilegios?.some(priv => priv.id_privilegio.nombre_privilegio === selectedPrivilegio)
+        );
+        setFilteredUsuarios(filtered);
+      }
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      setError(error.response?.data?.message || 'Error al desactivar usuario');
+      const error = err as { response?: { data?: { message?: string; error?: string } } };
+      setError(error.response?.data?.error || error.response?.data?.message || 'Error al desactivar usuario');
     }
   };
 
   const handleCancel = () => {
     setShowForm(false);
     setEditingId(null);
+    setError('');
     setFormData({ nombre: '', correo_electronico: '' });
   };
 
@@ -89,7 +117,7 @@ const UsuariosPage = () => {
     
     // Filtrar usuarios que tengan ese privilegio
     const filtered = usuarios.filter(usuario => 
-      usuario.privilegios?.some(priv => priv.id_privilegio.nombre === privilegioNombre)
+      usuario.privilegios?.some(priv => priv.id_privilegio.nombre_privilegio === privilegioNombre)
     );
     setFilteredUsuarios(filtered);
     setShowModal(true);
@@ -130,16 +158,6 @@ const UsuariosPage = () => {
 
         <div className="flex-1 px-8 py-8">
           <div className="max-w-7xl mx-auto">
-            {error && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mb-6 bg-red-500/20 border border-red-500/50 text-red-100 px-6 py-4 rounded-xl"
-              >
-                {error}
-              </motion.div>
-            )}
-
             {showModal && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -155,7 +173,18 @@ const UsuariosPage = () => {
                   style={{ boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}
                 >
                   {!showForm ? (
-                    <>
+                    <>{/* Error message inside modal - usuarios list */}
+                      {error && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="mb-4 bg-red-500/20 border border-red-500/50 text-red-100 px-4 py-3 rounded-xl text-sm"
+                        >
+                          {error}
+                        </motion.div>
+                      )}
+                      
+                      
                       <div className="flex justify-between items-center mb-6">
                         <div>
                           <h2 className="text-3xl font-bold text-white">Usuarios - {selectedPrivilegio}</h2>
@@ -190,20 +219,24 @@ const UsuariosPage = () => {
                                 <p className="text-white/60 text-sm">{usuario.correo_electronico}</p>
                               </div>
                               
-                              <div className="flex gap-2">
-                                <button
-                                  onClick={() => handleEdit(usuario)}
-                                  className="px-4 py-2 bg-blue-500/20 hover:bg-blue-500/40 text-blue-200 rounded-lg transition-all border border-blue-400/30 text-sm font-medium"
-                                >
-                                  Editar
-                                </button>
-                                <button
-                                  onClick={() => handleDelete(usuario._id)}
-                                  className="px-4 py-2 bg-red-500/20 hover:bg-red-500/40 text-red-200 rounded-lg transition-all border border-red-400/30 text-sm font-medium"
-                                >
-                                  Eliminar
-                                </button>
-                              </div>
+                              <button
+                                onClick={() => handleDelete(usuario._id)}
+                                className="w-10 h-10 flex items-center justify-center bg-red-500/20 hover:bg-red-500/40 text-red-200 rounded-lg transition-all border border-red-400/30"
+                                title="Eliminar usuario"
+                              >
+                                <span className="text-xl">🗑️</span>
+                      {/* Error message inside modal - form */}
+                      {error && (
+                        <motion.div
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="mb-4 bg-red-500/20 border border-red-500/50 text-red-100 px-4 py-3 rounded-xl text-sm"
+                        >
+                          {error}
+                        </motion.div>
+                      )}
+                      
+                              </button>
                             </div>
                           ))
                         ) : (
@@ -267,49 +300,63 @@ const UsuariosPage = () => {
               </motion.div>
             )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
-              {usuarios.map((usuario, index) => {
-                const privilegioPrincipal = usuario.privilegios && usuario.privilegios.length > 0 
-                  ? usuario.privilegios[0].id_privilegio.nombre 
-                  : '';
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
+              {['superadmin', 'editor', 'organizador', 'estudiante']
+                .filter(privilegio => {
+                  // Obtener privilegios del usuario actual
+                  const userPrivileges = user?.privilegios?.map(p => p.id_privilegio.nombre_privilegio || p.id_privilegio.nombre) || [];
+                  const isSuperAdmin = userPrivileges.includes('superadmin');
+                  const isEditor = userPrivileges.includes('editor');
+                  
+                  // SuperAdmin ve todos los cards
+                  if (isSuperAdmin) return true;
+                  
+                  // Editor no ve el card de superadmin
+                  if (isEditor && privilegio === 'superadmin') return false;
+                  
+                  return true;
+                })
+                .map((privilegio, index) => {
+                const count = usuarios.filter(u => 
+                  u.privilegios?.some(p => p.id_privilegio.nombre_privilegio === privilegio)
+                ).length;
                 
+                const descripcionMap: Record<string, string> = {
+                  superadmin: 'Administrador con acceso total al sistema',
+                  editor: 'Puede crear y editar contenido',
+                  organizador: 'Puede organizar eventos y actividades',
+                  estudiante: 'Usuario estudiante con acceso básico'
+                };
+
                 return (
                   <motion.div
-                    key={usuario._id}
+                    key={privilegio}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.05 }}
-                    onClick={() => privilegioPrincipal && openModal(privilegioPrincipal)}
+                    transition={{ delay: index * 0.1 }}
+                    onClick={() => openModal(privilegio)}
                     className="bg-white/5 backdrop-blur-2xl rounded-2xl p-6 border border-white/10 hover:border-white/30 transition-all group cursor-pointer"
                     style={{ boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.3)' }}
                   >
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex-1">
-                        <h3 className="text-2xl font-bold text-white group-hover:text-orange-300 transition-colors">
-                          {usuario.nombre || 'Sin nombre'}
-                        </h3>
-                        <p className="text-white/60 text-sm mt-1">{usuario.correo_electronico}</p>
-                        
-                        <div className="mt-3 space-y-1">
-                          {usuario.privilegios && usuario.privilegios.length > 0 ? (
-                            usuario.privilegios.map((priv: UserPrivilege) => (
-                              <div key={priv._id} className="text-white/70 text-xs">
-                                • {priv.id_privilegio.descripcion || priv.id_privilegio.nombre}
-                              </div>
-                            ))
-                          ) : (
-                            <p className="text-white/50 text-xs italic">Sin privilegios asignados</p>
-                          )}
-                        </div>
+                    <div className="text-center">
+                      <div className="text-5xl mb-4">
+                        {privilegio === 'superadmin' && '👑'}
+                        {privilegio === 'editor' && '✏️'}
+                        {privilegio === 'organizador' && '📋'}
+                        {privilegio === 'estudiante' && '🎓'}
                       </div>
-                      
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        usuario.activo 
-                          ? 'bg-green-500/30 text-green-200 border border-green-400/50' 
-                          : 'bg-red-500/30 text-red-200 border border-red-400/50'
-                      }`}>
-                        {usuario.activo ? 'Activo' : 'Inactivo'}
-                      </span>
+                      <h3 className="text-2xl font-bold text-white group-hover:text-orange-300 transition-colors capitalize mb-2">
+                        {privilegio}
+                      </h3>
+                      <p className="text-white/60 text-sm mb-4">
+                        {descripcionMap[privilegio]}
+                      </p>
+                      <div className="bg-white/10 rounded-lg py-2 px-4">
+                        <p className="text-3xl font-bold text-white">{count}</p>
+                        <p className="text-white/70 text-xs">
+                          {count === 1 ? 'usuario' : 'usuarios'}
+                        </p>
+                      </div>
                     </div>
                   </motion.div>
                 );

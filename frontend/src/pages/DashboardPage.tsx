@@ -67,6 +67,38 @@ const DashboardPage = () => {
     },
   ];
 
+  // Obtener privilegios del usuario actual
+  const userPrivileges = user?.privilegios?.map(p => p.id_privilegio.nombre_privilegio || p.id_privilegio.nombre) || [];
+  const isSuperAdmin = userPrivileges.includes('superadmin');
+  const isEditor = userPrivileges.includes('editor');
+  const isOrganizador = userPrivileges.includes('organizador');
+  const isEstudiante = userPrivileges.includes('estudiante');
+
+  // Filtrar cards según privilegios
+  const filteredCards = dashboardCards.filter(card => {
+    // SuperAdmin ve todo
+    if (isSuperAdmin) return true;
+    
+    // Editor ve todo excepto usuarios (ya tiene requiredPrivilege)
+    if (isEditor) {
+      if (card.requiredPrivilege === 'superadmin') return false;
+      return true;
+    }
+    
+    // Organizador no ve usuarios
+    if (isOrganizador) {
+      if (card.id === 'usuarios') return false;
+      return true;
+    }
+    
+    // Estudiante solo ve exámenes
+    if (isEstudiante) {
+      return card.id === 'examenes';
+    }
+    
+    return false;
+  });
+
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return 'Buenos días';
@@ -196,7 +228,7 @@ const DashboardPage = () => {
 
             {/* Cards Grid - Centered */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-              {dashboardCards.map((card, index) => (
+              {filteredCards.map((card, index) => (
                 <EndpointCard key={card.id} card={card} index={index} />
               ))}
             </div>
