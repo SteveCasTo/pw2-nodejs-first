@@ -174,8 +174,7 @@ echo ""
 echo -e "${CYAN}Enlaces rápidos:${NC}"
 echo "   MongoDB Atlas: https://www.mongodb.com/cloud/atlas/register"
 echo "   Gmail App Passwords: https://myaccount.google.com/apppasswords"
-    echo ""
-fi
+echo ""
 
 echo ""
 
