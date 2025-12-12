@@ -13,11 +13,12 @@ BOLD='\033[1m'
 echo -e "${CYAN}"
 echo "╔═══════════════════════════════════════════════════════════╗"
 echo "║      PW2 NODE.JS PROJECT - INSTALADOR AUTOMÁTICO         ║"
+echo "║             Backend + Frontend (React)                    ║"
 echo "╚═══════════════════════════════════════════════════════════╝"
 echo -e "${NC}"
 echo ""
 
-echo -e "${BOLD}${BLUE}[1/5] Verificando prerrequisitos...${NC}"
+echo -e "${BOLD}${BLUE}[1/6] Verificando prerrequisitos...${NC}"
 echo ""
 
 if ! command -v node &> /dev/null; then
@@ -77,7 +78,7 @@ fi
 
 echo ""
 
-echo -e "${BOLD}${BLUE}[2/5] Instalando dependencias...${NC}"
+echo -e "${BOLD}${BLUE}[2/6] Instalando dependencias del backend...${NC}"
 echo ""
 
 cd backend
@@ -92,52 +93,96 @@ npm install --silent
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}✓ Dependencias instaladas${NC}"
 else
-    echo -e "${RED}❌ ERROR: Falló la instalación${NC}"
+    echo -e "${RED}❌ ERROR: Falló la instalación del backend${NC}"
     exit 1
 fi
 
+cd ..
+
 echo ""
 
-echo -e "${BOLD}${BLUE}[3/5] Configurando variables de entorno...${NC}"
+echo -e "${BOLD}${BLUE}[3/6] Instalando dependencias del frontend...${NC}"
 echo ""
+
+cd frontend
+
+if [ ! -f "package.json" ]; then
+    echo -e "${RED}❌ ERROR: frontend/package.json no encontrado${NC}"
+    exit 1
+fi
+
+npm install --silent
+
+if [ $? -eq 0 ]; then
+    echo -e "${GREEN}✓ Dependencias del frontend instaladas${NC}"
+else
+    echo -e "${RED}❌ ERROR: Falló la instalación del frontend${NC}"
+    exit 1
+fi
+
+cd ..
+
+echo ""
+
+echo -e "${BOLD}${BLUE}[4/6] Configurando variables de entorno...${NC}"
+echo ""
+
+cd backend
 
 if [ -f ".env" ]; then
-    echo -e "${YELLOW}⚠${NC}  El archivo .env ya existe"
+    echo -e "${YELLOW}⚠${NC}  El archivo backend/.env ya existe"
     read -p "   ¿Sobrescribir? (y/N): " -n 1 -r
     echo
     if [[ ! $REPLY =~ ^[Yy]$ ]]; then
         echo "   Manteniendo .env existente"
     else
         cp .env.example .env
-        echo -e "${GREEN}✓${NC} .env actualizado desde .env.example"
-        echo -e "${CYAN}→${NC} Configura tus credenciales en backend/.env"
-        echo "   Ver guía completa: CONFIGURATION.md"
+        echo -e "${GREEN}✓${NC} backend/.env actualizado desde .env.example"
     fi
 else
-    cp .env.example .env
-    echo -e "${GREEN}✓${NC} Archivo .env creado desde .env.example"
-    echo ""
-    echo -e "${CYAN}${BOLD}⚠️  IMPORTANTE: Debes configurar las variables de entorno${NC}"
-    echo ""
-    echo -e "${YELLOW}Variables que DEBES modificar:${NC}"
-    echo "   📊 MONGO_URI    - Tu connection string de MongoDB Atlas"
-    echo "   🔐 JWT_SECRET   - Clave secreta para tokens (genera una aleatoria)"
-    echo "   📧 EMAIL_USER   - Tu correo de Gmail"
-    echo "   📧 EMAIL_PASSWORD - Contraseña de aplicación de Gmail"
-    echo ""
-    echo -e "${CYAN}Guía completa paso a paso:${NC}"
-    echo "   cat ../docs/CONFIGURATION.md"
-    echo ""
-    echo -e "${CYAN}Enlaces rápidos:${NC}"
-    echo "   MongoDB Atlas: https://www.mongodb.com/cloud/atlas/register"
-    echo "   Gmail App Passwords: https://myaccount.google.com/apppasswords"
+    if [ -f ".env.example" ]; then
+        cp .env.example .env
+        echo -e "${GREEN}✓${NC} Archivo backend/.env creado desde .env.example"
+    else
+        echo -e "${YELLOW}⚠${NC}  .env.example no encontrado, saltando..."
+    fi
+fi
+
+cd ../frontend
+
+if [ -f ".env" ]; then
+    echo -e "${GREEN}✓${NC} frontend/.env ya existe"
+else
+    echo "VITE_API_URL=http://localhost:3000" > .env
+    echo -e "${GREEN}✓${NC} Archivo frontend/.env creado"
+fi
+
+cd ..
+
+echo ""
+echo -e "${CYAN}${BOLD}⚠️  IMPORTANTE: Configura las variables de entorno del backend${NC}"
+echo ""
+echo -e "${YELLOW}Variables que DEBES modificar en backend/.env:${NC}"
+echo "   📊 MONGO_URI      - Tu connection string de MongoDB Atlas"
+echo "   🔐 JWT_SECRET     - Clave secreta para tokens (genera una aleatoria)"
+echo "   📧 EMAIL_USER     - Tu correo de Gmail"
+echo "   📧 EMAIL_PASSWORD - Contraseña de aplicación de Gmail"
+echo ""
+echo -e "${CYAN}Guía completa paso a paso:${NC}"
+echo "   cat docs/CONFIGURATION.md"
+echo ""
+echo -e "${CYAN}Enlaces rápidos:${NC}"
+echo "   MongoDB Atlas: https://www.mongodb.com/cloud/atlas/register"
+echo "   Gmail App Passwords: https://myaccount.google.com/apppasswords"
     echo ""
 fi
 
 echo ""
 
-echo -e "${BOLD}${BLUE}[4/5] Generando certificados SSL...${NC}"
+echo -e "${BOLD}${BLUE}[5/6] Generando certificados SSL...${NC}"
 echo ""
+
+cd backend
 
 mkdir -p certs
 
@@ -186,9 +231,6 @@ else
         echo "   📄 backend/certs/key.pem  (clave privada)"
         echo "   📄 backend/certs/cert.pem (certificado público)"
         echo "   ⏰ Válidos por 365 días"
-        echo ""
-        echo -e "${YELLOW}Nota:${NC} Los certificados autofirmados mostrarán advertencia en el navegador."
-        echo "      Esto es normal en desarrollo. Acepta la advertencia para continuar."
     else
         cd ..
         echo -e "${RED}❌ ERROR: Falló la generación de certificados${NC}"
@@ -196,10 +238,14 @@ else
     fi
 fi
 
+cd ..
+
 echo ""
 
-echo -e "${BOLD}${BLUE}[5/5] Verificando estructura...${NC}"
+echo -e "${BOLD}${BLUE}[6/6] Verificando estructura...${NC}"
 echo ""
+
+cd backend
 
 REQUIRED_FILES=("package.json" "tsconfig.json" "src/server.ts" "src/app.ts")
 MISSING_FILES=()
@@ -211,9 +257,30 @@ for file in "${REQUIRED_FILES[@]}"; do
 done
 
 if [ ${#MISSING_FILES[@]} -eq 0 ]; then
-    echo -e "${GREEN}✓${NC} Estructura verificada"
+    echo -e "${GREEN}✓${NC} Estructura del backend verificada"
 else
-    echo -e "${RED}❌ Archivos faltantes:${NC}"
+    echo -e "${RED}❌ Archivos faltantes en backend:${NC}"
+    for file in "${MISSING_FILES[@]}"; do
+        echo "   - $file"
+    done
+    exit 1
+fi
+
+cd ../frontend
+
+REQUIRED_FILES=("package.json" "tsconfig.json" "vite.config.ts" "index.html" "src/main.tsx" "src/App.tsx")
+MISSING_FILES=()
+
+for file in "${REQUIRED_FILES[@]}"; do
+    if [ ! -f "$file" ]; then
+        MISSING_FILES+=("$file")
+    fi
+done
+
+if [ ${#MISSING_FILES[@]} -eq 0 ]; then
+    echo -e "${GREEN}✓${NC} Estructura del frontend verificada"
+else
+    echo -e "${RED}❌ Archivos faltantes en frontend:${NC}"
     for file in "${MISSING_FILES[@]}"; do
         echo "   - $file"
     done
@@ -249,24 +316,34 @@ echo ""
 echo -e "${BOLD}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 echo ""
 
-echo -e "${BOLD}Después de configurar .env:${NC}"
+echo -e "${BOLD}${CYAN}🚀 Después de configurar backend/.env:${NC}"
 echo ""
-echo -e "${CYAN}1. Cargar datos de prueba:${NC}"
-echo "   cd backend"
-echo "   npm run seed"
+echo -e "${CYAN}1. Cargar datos de prueba (Backend):${NC}"
+echo "   cd backend && npm run seed"
 echo ""
-echo -e "${CYAN}2. Iniciar el servidor:${NC}"
-echo "   npm run dev"
+echo -e "${CYAN}2. Iniciar el Backend:${NC}"
+echo "   cd backend && npm run dev"
+echo ""
+echo -e "${CYAN}3. Iniciar el Frontend (en otra terminal):${NC}"
+echo "   cd frontend && npm run dev"
+echo ""
+echo -e "${CYAN}4. O usar Docker Compose (todo junto):${NC}"
+echo "   docker-compose up"
 echo ""
 
-echo -e "${BOLD}Servidores disponibles:${NC}"
+echo -e "${BOLD}🌐 Servidores disponibles:${NC}"
+echo ""
+echo -e "${BOLD}Backend:${NC}"
 echo -e "   ${GREEN}→${NC} HTTP:   http://localhost:3000"
 echo -e "   ${GREEN}→${NC} HTTPS:  https://localhost:3001  ${YELLOW}(certificado autofirmado)${NC}"
 echo -e "   ${GREEN}→${NC} HTTP/2: https://localhost:3002  ${YELLOW}(certificado autofirmado)${NC}"
 echo ""
+echo -e "${BOLD}Frontend:${NC}"
+echo -e "   ${GREEN}→${NC} React:  http://localhost:5173"
+echo ""
 
-echo -e "${BOLD}Usuarios de prueba (después de npm run seed):${NC}"
-echo "   Superadmin:  admin@sistema.com       / Admin123!@#"
+echo -e "${BOLD}👥 Usuarios de prueba (después de npm run seed):${NC}"
+echo "   Admin:       admin@sistema.com       / Admin123!@#"
 echo "   Editor:      editor@sistema.com      / Editor123!@#"
 echo "   Organizador: organizador@sistema.com / Organizador123!@#"
 echo "   Estudiante:  estudiante@sistema.com  / Estudiante123!@#"

@@ -40,26 +40,32 @@ services:
       - pw2-network
     command: npm run dev
 
-  # Frontend (React) - Preparado para cuando lo implementes
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #   container_name: pw2-frontend
-  #   restart: unless-stopped
-  #   environment:
-  #     - REACT_APP_API_URL=http://localhost:4000
-  #   ports:
-  #     - '3000:3000'
-  #   volumes:
-  #     - ./frontend/src:/app/src
-  #     - ./frontend/public:/app/public
-  #     - /app/node_modules
-  #   depends_on:
-  #     - backend
-  #   networks:
-  #     - pw2-network
-  #   command: npm start
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    container_name: pw2-frontend
+    restart: unless-stopped
+    environment:
+      - VITE_API_URL=http://localhost:3000
+    ports:
+      - '5173:5173'
+    volumes:
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/index.html:/app/index.html
+      - ./frontend/package.json:/app/package.json
+      - ./frontend/vite.config.ts:/app/vite.config.ts
+      - ./frontend/tsconfig.json:/app/tsconfig.json
+      - ./frontend/tsconfig.node.json:/app/tsconfig.node.json
+      - ./frontend/tailwind.config.js:/app/tailwind.config.js
+      - ./frontend/postcss.config.js:/app/postcss.config.js
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - pw2-network
+    command: npm run dev
 
 networks:
   pw2-network:

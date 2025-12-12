@@ -1,0 +1,23 @@
+# Dockerfile para desarrollo del Frontend (React + Vite)
+FROM node:20-alpine
+
+# Instalar dependencias necesarias
+RUN apk add --no-cache git
+
+# Establecer directorio de trabajo
+WORKDIR /app
+
+# Copiar archivos de configuración de paquetes
+COPY package*.json ./
+
+# Instalar dependencias
+RUN npm install
+
+# Copiar el resto de los archivos (se sobrescribirán con volúmenes)
+COPY . .
+
+# Exponer el puerto de Vite
+EXPOSE 5173
+
+# Comando por defecto (se puede sobrescribir en docker-compose)
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
