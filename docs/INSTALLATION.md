@@ -1,5 +1,7 @@
 # 📦 GUÍA DE INSTALACIÓN
 
+> 💡 **Tip VS Code**: Presiona `Ctrl+Shift+V` (Windows/Linux) o `Cmd+Shift+V` (Mac) para ver este documento con formato preview.
+
 > 📖 **Guía Completa de Configuración:** Ver [CONFIGURATION.md](./CONFIGURATION.md) para instrucciones detalladas de MongoDB Atlas, Gmail y todas las variables de entorno.
 
 ---

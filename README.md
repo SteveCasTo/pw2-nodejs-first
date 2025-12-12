@@ -11,10 +11,14 @@ Backend completo con Node.js, Express, TypeScript y MongoDB Atlas para sistema d
 
 ---
 
-## 📚 Documentación (Ubicados en docs)
+## 📚 Documentación
 
-- 📦 **[INSTALLATION.md](./INSTALLATION.md)** - Guía de instalación rápida
-- ⚙️ **[CONFIGURATION.md](./CONFIGURATION.md)** - Configuración detallada (MongoDB, Gmail, variables de entorno)
+> 💡 **Tip**: Si usas Visual Studio Code, abre cualquier archivo `.md` y presiona `Ctrl+Shift+V` (Windows/Linux) o `Cmd+Shift+V` (Mac) para ver el formato con preview.
+
+Todos los documentos están ubicados en la carpeta **`docs/`**:
+
+- 📦 **[docs/INSTALLATION.md](./docs/INSTALLATION.md)** - Guía de instalación rápida
+- ⚙️ **[docs/CONFIGURATION.md](./docs/CONFIGURATION.md)** - Configuración detallada (MongoDB, Gmail, variables de entorno)
 - 🧪 **[docs/PRUEBAS.md](./docs/PRUEBAS.md)** - Guía completa de endpoints y testing
 
 ---

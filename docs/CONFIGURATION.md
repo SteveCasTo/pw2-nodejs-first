@@ -1,5 +1,7 @@
 # ⚙️ GUÍA DE CONFIGURACIÓN
 
+> 💡 **Tip VS Code**: Presiona `Ctrl+Shift+V` (Windows/Linux) o `Cmd+Shift+V` (Mac) para ver este documento con formato preview.
+
 Esta guía explica cómo configurar todas las variables de entorno necesarias para el proyecto.
 
 ---
@@ -47,12 +49,12 @@ PORT_HTTP2=3002
 
 ### Paso 2: Crear un Cluster (Base de Datos)
 
-1. Después de iniciar sesión, haz clic en **"Build a Database"**
+1. Después de iniciar sesión, haz clic en **"Create"**
 2. Selecciona **"M0 Free"** (cluster gratuito)
 3. Elige un proveedor cloud (AWS, Google Cloud o Azure)
 4. Selecciona la región más cercana a ti
 5. Dale un nombre a tu cluster (ej: `WebFormsCluster`)
-6. Haz clic en **"Create Cluster"** (tomará 1-3 minutos)
+6. Haz clic en **"Create Deployment"** (tomará 1-3 minutos)
 
 ### Paso 3: Configurar Acceso de Red
 
@@ -64,7 +66,7 @@ PORT_HTTP2=3002
 
 ### Paso 4: Crear Usuario de Base de Datos
 
-1. En el menú lateral, ve a **"Database Access"**
+1. En el menú lateral, ve a **"Database & Network Acces"**
 2. Haz clic en **"Add New Database User"**
 3. Selecciona **"Password"** como método de autenticación
 4. Ingresa:
@@ -75,7 +77,7 @@ PORT_HTTP2=3002
 
 ### Paso 5: Obtener Connection String (URI)
 
-1. Regresa a **"Database"** en el menú lateral
+1. Regresa a **"Clusters"** en el menú lateral
 2. En tu cluster, haz clic en **"Connect"**
 3. Selecciona **"Connect your application"**
 4. Asegúrate de que esté seleccionado:
