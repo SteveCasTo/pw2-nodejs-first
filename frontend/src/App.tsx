@@ -4,6 +4,7 @@ import ProtectedRoute from './components/common/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import DashboardPage from './pages/DashboardPage';
 import CategoriasPage from './pages/CategoriasPage';
+import CiclosPage from './pages/CiclosPage';
 
 function App() {
   return (
@@ -84,15 +85,7 @@ function App() {
             path="/ciclos"
             element={
               <ProtectedRoute>
-                <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-500 to-blue-500">
-                  <div className="text-center text-white">
-                    <h1 className="text-4xl font-bold mb-4">Módulo de Ciclos</h1>
-                    <p className="text-xl">En desarrollo...</p>
-                    <a href="/dashboard" className="mt-4 inline-block px-6 py-3 bg-white/20 hover:bg-white/30 rounded-lg">
-                      Volver al Dashboard
-                    </a>
-                  </div>
-                </div>
+                <CiclosPage />
               </ProtectedRoute>
             }
           />
