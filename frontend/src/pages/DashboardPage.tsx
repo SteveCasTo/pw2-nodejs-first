@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import EndpointCard from '../components/dashboard/EndpointCard';
 import type { DashboardCard } from '../types';
-import ParallaxBackground from '../components/common/ParallaxBackground';
 
 const DashboardPage = () => {
   const { user, logout } = useAuth();
@@ -76,9 +75,7 @@ const DashboardPage = () => {
   };
 
   return (
-    <div className="fixed inset-0 w-screen h-screen overflow-hidden">
-      <ParallaxBackground />
-      
+    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900">
       <div className="relative z-10 w-full h-full flex flex-col overflow-y-auto">
         {/* Header */}
         <motion.div

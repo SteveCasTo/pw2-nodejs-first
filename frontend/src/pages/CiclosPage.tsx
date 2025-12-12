@@ -4,7 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import type { Ciclo } from '../types';
 import { cicloService } from '../services/dataService';
-import ParallaxBackground from '../components/common/ParallaxBackground';
 
 const CiclosPage = () => {
   const [ciclos, setCiclos] = useState<Ciclo[]>([]);
@@ -93,9 +92,7 @@ const CiclosPage = () => {
   };
 
   return (
-    <div className="fixed inset-0 w-screen h-screen overflow-hidden">
-      <ParallaxBackground />
-      
+    <div className="fixed inset-0 w-screen h-screen overflow-hidden bg-gradient-to-br from-indigo-900 via-blue-900 to-purple-900">
       <div className="relative z-10 w-full h-full flex flex-col overflow-y-auto">
         {/* Header */}
         <motion.div

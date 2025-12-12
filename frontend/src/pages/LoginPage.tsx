@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import AnimatedTitle from '../components/common/AnimatedTitle';
-import ParallaxBackground from '../components/common/ParallaxBackground';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -35,9 +34,7 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="fixed inset-0 w-screen h-screen flex items-center justify-center p-4 overflow-hidden">
-      <ParallaxBackground />
-      
+    <div className="fixed inset-0 w-screen h-screen flex items-center justify-center p-4 overflow-hidden bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
