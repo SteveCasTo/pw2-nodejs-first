@@ -1,14 +1,15 @@
 // User types
 export interface User {
   _id: string;
-  nombre: string;
-  apellido_paterno: string;
+  nombre?: string;
+  apellido_paterno?: string;
   apellido_materno?: string;
   correo_electronico: string;
-  fecha_nacimiento: string;
-  genero: 'masculino' | 'femenino' | 'otro' | 'prefiero_no_decir';
-  id_rango_edad: string;
-  privilegios: UserPrivilege[];
+  fecha_nacimiento?: string;
+  genero?: 'masculino' | 'femenino' | 'otro' | 'prefiero_no_decir';
+  id_rango_edad?: string;
+  activo?: boolean;
+  privilegios?: UserPrivilege[];
 }
 
 export interface UserPrivilege {
@@ -65,6 +66,17 @@ export interface ApiError {
 export interface Categoria {
   _id: string;
   nombre_categoria: string;
+  fecha_creacion?: string;
+  activo: boolean;
+  subcategorias?: Subcategoria[];
+}
+
+// Subcategoria types
+export interface Subcategoria {
+  _id: string;
+  id_categoria: string;
+  nombre_subcategoria: string;
+  descripcion?: string;
   fecha_creacion?: string;
   activo: boolean;
 }

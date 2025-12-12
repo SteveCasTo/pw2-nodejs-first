@@ -1,6 +1,7 @@
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import EndpointCard from '../components/dashboard/EndpointCard';
 import type { DashboardCard } from '../types';
 import ParallaxBackground from '../components/common/ParallaxBackground';
@@ -8,6 +9,7 @@ import ParallaxBackground from '../components/common/ParallaxBackground';
 const DashboardPage = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [expandedPrivilege, setExpandedPrivilege] = useState<number | null>(null);
 
   const handleLogout = () => {
     logout();
@@ -134,19 +136,44 @@ const DashboardPage = () => {
                 </div>
                 <div className="flex-1">
                   <h2 className="text-3xl font-bold text-white mb-1">
-                    {user?.nombre} {user?.apellido_paterno}
+                    {user?.nombre} {user?.apellido_paterno || ''}
                   </h2>
                   <p className="text-white/70 text-lg mb-3">{user?.correo_electronico}</p>
                   <div className="flex flex-wrap gap-2">
                     {user?.privilegios && user.privilegios.length > 0 ? (
                       user.privilegios.map((priv, idx) => (
                         priv.activo && (
-                          <span
+                          <motion.button
                             key={idx}
-                            className="px-4 py-1.5 bg-purple-500/30 rounded-full text-sm text-white border border-purple-400/50 font-medium"
+                            onClick={() => setExpandedPrivilege(expandedPrivilege === idx ? null : idx)}
+                            className="relative overflow-hidden px-4 py-1.5 bg-purple-500/30 rounded-full text-sm text-white border border-purple-400/50 font-medium cursor-pointer hover:bg-purple-500/40 transition-colors"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            layout
+                            transition={{ 
+                              layout: { duration: 0.3, ease: "easeInOut" }
+                            }}
                           >
-                            {priv.id_privilegio.nombre}
-                          </span>
+                            <motion.div 
+                              className="flex items-center gap-2 whitespace-nowrap"
+                              layout="position"
+                            >
+                              <span>{priv.id_privilegio.nombre}</span>
+                              <AnimatePresence>
+                                {expandedPrivilege === idx && priv.id_privilegio.descripcion && (
+                                  <motion.span
+                                    initial={{ width: 0, opacity: 0 }}
+                                    animate={{ width: "auto", opacity: 1 }}
+                                    exit={{ width: 0, opacity: 0 }}
+                                    transition={{ duration: 0.3, ease: "easeInOut" }}
+                                    className="text-white/80 border-l border-white/30 pl-2"
+                                  >
+                                    - {priv.id_privilegio.descripcion}
+                                  </motion.span>
+                                )}
+                              </AnimatePresence>
+                            </motion.div>
+                          </motion.button>
                         )
                       ))
                     ) : (

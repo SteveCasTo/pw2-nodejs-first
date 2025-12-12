@@ -22,6 +22,7 @@ export interface IUsuarioPrivilegio extends Document {
   id_privilegio: Types.ObjectId;
   asignado_por?: Types.ObjectId;
   fecha_asignacion: Date;
+  activo: boolean;
 }
 
 export interface ICategoria extends Document {

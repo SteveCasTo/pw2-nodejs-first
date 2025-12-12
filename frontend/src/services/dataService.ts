@@ -1,5 +1,5 @@
 import apiClient from './api';
-import type { Categoria, Pregunta, Examen, Ciclo, Contenido, UsuarioAdmin, ApiResponse } from '../types';
+import type { Categoria, Subcategoria, Pregunta, Examen, Ciclo, Contenido, UsuarioAdmin, ApiResponse } from '../types';
 
 export const categoriaService = {
   getAll: async (): Promise<ApiResponse<Categoria[]>> => {
@@ -24,6 +24,38 @@ export const categoriaService = {
 
   delete: async (id: string): Promise<ApiResponse<void>> => {
     const response = await apiClient.delete(`/api/categorias/${id}`);
+    return response.data;
+  },
+};
+
+export const subcategoriaService = {
+  getAll: async (): Promise<ApiResponse<Subcategoria[]>> => {
+    const response = await apiClient.get('/api/subcategorias');
+    return response.data;
+  },
+
+  getByCategoria: async (categoriaId: string): Promise<ApiResponse<Subcategoria[]>> => {
+    const response = await apiClient.get(`/api/subcategorias/categoria/${categoriaId}`);
+    return response.data;
+  },
+
+  getById: async (id: string): Promise<ApiResponse<Subcategoria>> => {
+    const response = await apiClient.get(`/api/subcategorias/${id}`);
+    return response.data;
+  },
+
+  create: async (data: Partial<Subcategoria>): Promise<ApiResponse<Subcategoria>> => {
+    const response = await apiClient.post('/api/subcategorias', data);
+    return response.data;
+  },
+
+  update: async (id: string, data: Partial<Subcategoria>): Promise<ApiResponse<Subcategoria>> => {
+    const response = await apiClient.put(`/api/subcategorias/${id}`, data);
+    return response.data;
+  },
+
+  delete: async (id: string): Promise<ApiResponse<void>> => {
+    const response = await apiClient.delete(`/api/subcategorias/${id}`);
     return response.data;
   },
 };

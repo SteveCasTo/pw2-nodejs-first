@@ -42,7 +42,7 @@ const authService = {
       id_usuario: usuario._id,
     })
       .populate('id_privilegio', 'nombre_privilegio descripcion')
-      .select('id_privilegio');
+      .select('id_privilegio activo');
 
     const token = generateToken({
       id: usuario._id.toString(),
@@ -56,12 +56,17 @@ const authService = {
         correo_electronico: usuario.correo_electronico,
         nombre: usuario.nombre,
         activo: usuario.activo,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        privilegios: (privilegios as any).map((up: any) => ({
+          _id: up._id,
+          id_privilegio: {
+            _id: up.id_privilegio?._id,
+            nombre: up.id_privilegio?.nombre_privilegio,
+            descripcion: up.id_privilegio?.descripcion,
+          },
+          activo: up.activo !== undefined ? up.activo : true,
+        })),
       },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      privilegios: (privilegios as any).map((up: any) => ({
-        nombre: up.id_privilegio?.nombre_privilegio,
-        descripcion: up.id_privilegio?.descripcion,
-      })),
     };
   },
 
@@ -151,7 +156,7 @@ const authService = {
       id_usuario: usuario._id,
     })
       .populate('id_privilegio', 'nombre_privilegio descripcion')
-      .select('id_privilegio');
+      .select('id_privilegio activo');
 
     return {
       usuario: {
@@ -159,12 +164,17 @@ const authService = {
         correo_electronico: usuario.correo_electronico,
         nombre: usuario.nombre,
         activo: usuario.activo,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        privilegios: (privilegios as any).map((up: any) => ({
+          _id: up._id,
+          id_privilegio: {
+            _id: up.id_privilegio?._id,
+            nombre: up.id_privilegio?.nombre_privilegio,
+            descripcion: up.id_privilegio?.descripcion,
+          },
+          activo: up.activo !== undefined ? up.activo : true,
+        })),
       },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      privilegios: (privilegios as any).map((up: any) => ({
-        nombre: up.id_privilegio?.nombre_privilegio,
-        descripcion: up.id_privilegio?.descripcion,
-      })),
     };
   },
 
