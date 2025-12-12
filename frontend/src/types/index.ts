@@ -102,14 +102,18 @@ export interface Examen {
   _id: string;
   titulo: string;
   descripcion?: string;
-  id_ciclo: string;
+  id_ciclo: string | Ciclo;
   fecha_inicio: string;
   fecha_fin: string;
   duracion_minutos?: number;
   intentos_permitidos: number;
   calificacion_minima?: number;
   mostrar_resultados: boolean;
+  aleatorizar_preguntas: boolean;
+  aleatorizar_opciones: boolean;
   activo: boolean;
+  fecha_creacion?: string;
+  creado_por?: string;
 }
 
 // Ciclo types
@@ -117,10 +121,11 @@ export interface Ciclo {
   _id: string;
   nombre_ciclo: string;
   descripcion?: string;
-  fecha_inicio?: string;
-  fecha_fin?: string;
+  fecha_inicio: string;
+  fecha_fin: string;
   activo: boolean;
   fecha_creacion?: string;
+  creado_por?: string;
 }
 
 // Contenido types
