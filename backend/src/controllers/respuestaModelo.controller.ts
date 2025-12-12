@@ -43,7 +43,9 @@ export const respuestaModeloController = {
     try {
       const { idPregunta } = req.params;
 
-      const respuesta = await respuestaModeloService.getByPreguntaId(idPregunta!);
+      const respuesta = await respuestaModeloService.getByPreguntaId(
+        idPregunta!
+      );
 
       if (!respuesta) {
         res.status(404).json({

@@ -108,7 +108,10 @@ export const respuestaModeloService = {
     }
 
     // Si se intenta cambiar la pregunta, validar que no exista ya una respuesta modelo para la nueva pregunta
-    if (data.id_pregunta && data.id_pregunta !== respuestaExistente.id_pregunta.toString()) {
+    if (
+      data.id_pregunta &&
+      data.id_pregunta !== respuestaExistente.id_pregunta.toString()
+    ) {
       const respuestaEnNuevaPregunta = await RespuestaModelo.findOne({
         id_pregunta: data.id_pregunta,
         _id: { $ne: id },

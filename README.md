@@ -1,13 +1,62 @@
-# PW2 Node.js Project
+# PW2 Full-Stack Project
 
-Proyecto backend desarrollado con Node.js, Express, TypeScript y MongoDB Atlas para un sistema de exámenes educativos.
+Aplicación completa con **React + TypeScript** frontend y **Node.js + Express** backend para sistema de exámenes educativos. Incluye autenticación JWT, animaciones con Framer Motion, y servidores HTTP, HTTPS y HTTP/2 simultáneos.
+
+---
+
+## 👥 Equipo
+
+- Castro Tejada Steven Lisandro
+- Soliz Alcocer Leandro Wilson
+
+---
+
+## 📚 Documentación
+
+> 💡 **Tip**: Si usas Visual Studio Code, abre cualquier archivo `.md` y presiona `Ctrl+Shift+V` (Windows/Linux) o `Cmd+Shift+V` (Mac) para ver el formato con preview.
+
+Todos los documentos están ubicados en la carpeta **`docs/`**:
+
+- 📦 **[docs/INSTALLATION.md](./docs/INSTALLATION.md)** - Guía completa de instalación, configuración y arquitectura del frontend
+- ⚙️ **[docs/CONFIGURATION.md](./docs/CONFIGURATION.md)** - Configuración de MongoDB Atlas, Gmail y variables de entorno
+- 🧪 **[docs/PRUEBAS.md](./docs/PRUEBAS.md)** - Guía completa de endpoints y testing
+
+---
+
+## 🚀 Inicio Rápido
+
+> 📖 **Guía de Instalación Completa:** Ver **[docs/INSTALLATION.md](./docs/INSTALLATION.md)** para instrucciones detalladas de instalación, configuración, arquitectura del frontend, uso de componentes, animaciones, y troubleshooting.
+
+### Resumen de Instalación
+
+1. **Clonar** el repositorio
+2. **Ejecutar** `./install.sh` (Linux/Mac) o instalación manual
+3. **Configurar** variables de entorno (MongoDB, JWT, Email)
+4. **Iniciar** backend (`npm run dev` en `backend/`)
+5. **Iniciar** frontend (`npm run dev` en `frontend/`)
+
+**Acceder a:**
+- 🎨 Frontend: `http://localhost:5173`
+- 🌐 Backend: `http://localhost:3000`
+
+---
 
 ## 🚀 Tecnologías
 
+### Frontend
+- **React** 19.2.0 con **TypeScript** - Framework UI moderno
+- **Vite** 7.2.7 - Build tool ultrarrápido con HMR
+- **Tailwind CSS** v4 - Framework CSS utility-first
+- **Framer Motion** 12.23.26 - Animaciones fluidas
+- **React Router** 7.10.1 - Navegación SPA
+- **Axios** 1.13.2 - Cliente HTTP con interceptores
+
 ### Backend
-- **Node.js** v20.x con **TypeScript**
-- **Express.js** v5 - Framework web
+- **Node.js** v20.x con **TypeScript** - Runtime JavaScript
+- **Express.js** v5 - Framework web minimalista
 - **MongoDB Atlas** con **Mongoose** - Base de datos NoSQL
+- **JWT** - Autenticación sin estado
+- **Nodemailer** - Envío de emails (Gmail)
 - **Docker** & **Docker Compose** - Containerización
 
 ### Herramientas de Desarrollo
@@ -18,35 +67,66 @@ Proyecto backend desarrollado con Node.js, Express, TypeScript y MongoDB Atlas p
 - **Nodemon** - Hot reload en desarrollo
 - **ts-node** - Ejecución TypeScript directa
 
+---
+
 ## 📁 Estructura del Proyecto
 
 ```
 pw2-nodejs-first/
-├── backend/
+├── frontend/                    # Aplicación React
+│   ├── public/                  # Assets estáticos
 │   ├── src/
-│   │   ├── config/         # Configuraciones (DB, variables de entorno)
-│   │   ├── controllers/    # Controladores HTTP
-│   │   ├── middlewares/    # Middlewares personalizados
-│   │   ├── models/         # Modelos de Mongoose (esquemas)
-│   │   ├── routes/         # Definición de rutas API
-│   │   ├── services/       # Lógica de negocio
-│   │   ├── types/          # Interfaces y tipos TypeScript
-│   │   ├── utils/          # Funciones auxiliares
-│   │   ├── app.ts          # Configuración de Express
-│   │   └── server.ts       # Entry point del servidor
-│   ├── Dockerfile          # Dockerfile para producción
-│   ├── Dockerfile.dev      # Dockerfile para desarrollo
+│   │   ├── components/          # Componentes reutilizables
+│   │   │   ├── auth/            # Login, ProtectedRoute
+│   │   │   ├── common/          # Button, Input, Modal
+│   │   │   ├── dashboard/       # Cards de módulos
+│   │   │   └── layout/          # Header, ParallaxBackground
+│   │   ├── context/             # AuthContext (estado global)
+│   │   ├── pages/               # Páginas de la aplicación
+│   │   │   ├── LoginPage.tsx    # Página de login animada
+│   │   │   ├── DashboardPage.tsx # Dashboard principal
+│   │   │   └── CategoriasPage.tsx # CRUD de categorías
+│   │   ├── services/            # Lógica de negocio
+│   │   │   ├── api.ts           # Cliente Axios configurado
+│   │   │   ├── authService.ts   # Autenticación (login/logout)
+│   │   │   └── dataService.ts   # CRUD endpoints (todas las entidades)
+│   │   ├── types/               # Interfaces TypeScript
+│   │   ├── App.tsx              # Componente raíz
+│   │   └── main.tsx             # Entry point
+│   ├── Dockerfile               # Producción (Nginx)
+│   ├── Dockerfile.dev           # Desarrollo (Vite)
+│   ├── nginx.conf               # Config Nginx para SPA
 │   ├── package.json
 │   ├── tsconfig.json
-│   ├── eslint.config.mjs
+│   ├── tailwind.config.ts
+│   └── vite.config.ts
+│
+├── backend/                     # API REST
+│   ├── src/
+│   │   ├── config/              # Configuraciones (DB, env)
+│   │   ├── controllers/         # Controladores HTTP
+│   │   ├── middlewares/         # Middlewares personalizados
+│   │   ├── models/              # Modelos Mongoose (22 colecciones)
+│   │   ├── routes/              # Definición de rutas API
+│   │   ├── services/            # Lógica de negocio
+│   │   ├── types/               # Interfaces TypeScript
+│   │   ├── utils/               # Funciones auxiliares
+│   │   ├── app.ts               # Configuración Express
+│   │   ├── server.ts            # Entry point (HTTP/HTTPS/HTTP2)
+│   │   └── seed.ts              # Datos iniciales
+│   ├── certs/                   # Certificados SSL
+│   ├── Dockerfile               # Producción
+│   ├── Dockerfile.dev           # Desarrollo
+│   ├── package.json
+│   ├── tsconfig.json
 │   └── .env.example
-├── docker-compose.yml
+│
+├── docker-compose.yml           # Orquestación (frontend + backend)
+├── install.sh                   # Instalador automático (Linux/Mac)
 └── README.md
 ```
 
-## 🗄️ Estructura de Base de Datos
-
-El proyecto incluye 22 colecciones MongoDB basadas en el siguiente esquema:
+---
 
 **Entidades Principales:**
 - `usuarios` - Usuarios del sistema
@@ -65,204 +145,88 @@ El proyecto incluye 22 colecciones MongoDB basadas en el siguiente esquema:
 - `respuestas_*` - Diferentes tipos de respuestas
 - Y más...
 
-## 🛠️ Instalación
-
-### Prerrequisitos
-- **Node.js** >= 20.x
-- **npm** o **yarn**
-- **Docker** y **Docker Compose** (opcional)
-- Cuenta en **MongoDB Atlas** (o MongoDB local)
-
-### Instalación Local
-
-1. **Clonar el repositorio**
-```bash
-git clone <url-del-repositorio>
-cd pw2-nodejs-first
-```
-
-2. **Instalar dependencias del backend**
-```bash
-cd backend
-npm install
-```
-
-3. **Configurar variables de entorno**
-```bash
-cp .env.example .env
-```
-
-Edita el archivo `.env` y configura tu **MongoDB Atlas URI**:
-```env
-MONGO_URI=mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority
-```
-
 ## 🚀 Uso
 
 ### Desarrollo Local
 
+**Terminal 1 - Backend:**
 ```bash
 cd backend
-npm run dev
+npm run dev       # Inicia servidor en puerto 3000/3001/3002
 ```
 
-El servidor estará disponible en **http://localhost:4000**
+**Terminal 2 - Frontend:**
+```bash
+cd frontend
+npm run dev       # Inicia Vite en puerto 5173
+```
+
+Accede a: **http://localhost:5173**
 
 ### Desarrollo con Docker
 
 ```bash
-# Desde la raíz del proyecto
-docker-compose up
+# Iniciar ambos servicios (frontend + backend)
+docker-compose up --build
 
-# En modo detached (background)
+# Modo detached (background)
 docker-compose up -d
 
 # Ver logs
+docker-compose logs -f frontend
 docker-compose logs -f backend
 
 # Detener contenedores
 docker-compose down
 ```
 
+El Docker Compose levanta:
+- **Frontend**: http://localhost:5173 (hot-reload habilitado)
+- **Backend**: http://localhost:3000 (nodemon habilitado)
+
 ### Comandos Disponibles
 
+**Backend:**
 ```bash
-# Desarrollo
-npm run dev          # Inicia servidor con nodemon y hot-reload
-
-# Producción
-npm run build        # Compila TypeScript a JavaScript
-npm start            # Inicia servidor compilado
-
-# Code Quality
-npm run lint         # Ejecuta ESLint
-npm run lint:fix     # Corrige errores de ESLint automáticamente
-npm run format       # Formatea código con Prettier
-npm run format:check # Verifica formateo sin modificar
+npm run dev          # Desarrollo con nodemon
+npm run build        # Compilar TypeScript
+npm start            # Ejecutar versión compilada
+npm run seed         # Cargar datos iniciales
+npm run clean        # Limpiar base de datos
+npm run lint         # Verificar código
+npm run lint:fix     # Corregir errores ESLint
+npm run format       # Formatear con Prettier
 ```
 
-## 🔧 Configuración
-
-### Variables de Entorno
-
-Archivo `.env`:
-
-```env
-NODE_ENV=development
-PORT=4000
-MONGO_URI=mongodb+srv://<usuario>:<password>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority
-CORS_ORIGIN=http://localhost:3000
+**Frontend:**
+```bash
+npm run dev          # Desarrollo con Vite (HMR)
+npm run build        # Build de producción
+npm run preview      # Preview del build
+npm run lint         # Verificar código
 ```
-
-### TypeScript Path Aliases
-
-El proyecto usa path aliases para imports más limpios:
-
-```typescript
-import { connectDB } from '@config/database';
-import { RangoEdad } from '@models/rangoEdad.model';
-import { rangoEdadService } from '@services/rangoEdad.service';
-import { errorHandler } from '@middlewares/errorHandler';
-```
-
-## 🐳 Docker
-
-### Servicios en Docker Compose
-
-- **mongodb**: Base de datos MongoDB local (puerto 27017) - para desarrollo sin Atlas
-- **backend**: API de Node.js (puerto 4000)
-
-**Nota**: Para producción se recomienda usar MongoDB Atlas en lugar del contenedor local.
-
-## 📚 API Endpoints
-
-### Rangos de Edad (Ejemplo CRUD)
-
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/rangos-edad` | Obtener todos los rangos de edad |
-| GET | `/api/rangos-edad/:id` | Obtener un rango por ID |
-| POST | `/api/rangos-edad` | Crear nuevo rango de edad |
-| PUT | `/api/rangos-edad/:id` | Actualizar rango existente |
-| DELETE | `/api/rangos-edad/:id` | Eliminar rango de edad |
-
-#### Ejemplo de Request (POST)
-
-```json
-{
-  "nombre_rango": "Adolescentes",
-  "edad_minima": 13,
-  "edad_maxima": 17,
-  "activo": true
-}
-```
-
-### Testing con Postman
-
-1. Importa la colección de Postman (si está disponible)
-2. Configura la variable `baseUrl` a `http://localhost:4000`
-3. Prueba los endpoints de CRUD
-
-## 📚 Funcionalidades Implementadas
-
-- [x] Conexión a MongoDB Atlas
-- [x] Estructura MVC completa y modular
-- [x] 22 modelos Mongoose con esquemas completos
-- [x] CRUD completo de Rangos de Edad (ejemplo funcional)
-- [x] Middleware global de manejo de errores
-- [x] Configuración Docker para desarrollo
-- [x] TypeScript con strict mode
-- [x] ESLint + Prettier configurados
-- [x] Path aliases para imports limpios
-
-## 🚧 Próximos Pasos
-
-- [ ] Implementar autenticación JWT
-- [ ] Agregar validación de datos con Zod
-- [ ] Implementar testing con Jest
-- [ ] Desarrollar frontend con React
-- [ ] Agregar más CRUDs para otras entidades
-- [ ] Implementar paginación y filtros
-- [ ] Configurar CI/CD
-- [ ] Documentación con Swagger/OpenAPI
-
-## 🤝 Contribuir
-
-1. **Branch naming**: `feature/nombre-feature`, `fix/nombre-fix`
-2. **Code style**: El código debe pasar ESLint y Prettier
-3. **Pull Requests**: Describe claramente los cambios realizados
-4. **Testing**: Asegúrate de probar tu código antes de hacer push
-
-## 👥 Equipo
-
-- [Añadir nombres del equipo]
-
-## 📄 Licencia
-
-ISC
 
 ---
 
-## 🆘 Troubleshooting
+## 🤝 Contribuir
 
-### Error de conexión a MongoDB
-- Verifica que tu MongoDB Atlas URI sea correcta
-- Asegúrate de que tu IP esté en la whitelist de Atlas
-- Verifica usuario y contraseña
+### Branch Naming
+- `feature/nombre-feature` - Nuevas funcionalidades
+- `fix/nombre-fix` - Corrección de bugs
+- `docs/nombre-doc` - Cambios en documentación
 
-### Puerto 4000 en uso
+### Code Style
+El código debe pasar ESLint y Prettier antes de commit:
+
 ```bash
-# Windows
-netstat -ano | findstr :4000
+# Backend
+cd backend
+npm run lint:fix
+npm run format
 
-# Cambiar puerto en .env
-PORT=5000
+# Frontend
+cd frontend
+npm run lint:fix
 ```
 
-### Errores de TypeScript
-```bash
-# Limpiar y reconstruir
-rm -rf dist node_modules
-npm install
-npm run build
-```
+---

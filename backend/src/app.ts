@@ -28,7 +28,13 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: config.BACKEND_URL,
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://localhost:3001',
+      'https://localhost:3002',
+      config.BACKEND_URL,
+    ],
     credentials: true,
   })
 );

@@ -57,8 +57,13 @@ export const opcionPreguntaController = {
 
   async create(req: Request, res: Response, next: NextFunction) {
     try {
-      const { id_pregunta, texto_opcion, id_contenido_opcion, es_correcta, orden } =
-        req.body;
+      const {
+        id_pregunta,
+        texto_opcion,
+        id_contenido_opcion,
+        es_correcta,
+        orden,
+      } = req.body;
 
       const nuevaOpcion = await opcionPreguntaService.create({
         id_pregunta,
@@ -81,8 +86,13 @@ export const opcionPreguntaController = {
   async update(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = req.params;
-      const { id_pregunta, texto_opcion, id_contenido_opcion, es_correcta, orden } =
-        req.body;
+      const {
+        id_pregunta,
+        texto_opcion,
+        id_contenido_opcion,
+        es_correcta,
+        orden,
+      } = req.body;
 
       const opcionActualizada = await opcionPreguntaService.update(id!, {
         id_pregunta,

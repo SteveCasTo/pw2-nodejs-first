@@ -64,8 +64,9 @@ export const examenPreguntaController = {
     try {
       const { idExamen } = req.params;
 
-      const puntajeTotal =
-        await examenPreguntaService.getPuntajeTotalExamen(idExamen!);
+      const puntajeTotal = await examenPreguntaService.getPuntajeTotalExamen(
+        idExamen!
+      );
 
       res.status(200).json({
         success: true,
