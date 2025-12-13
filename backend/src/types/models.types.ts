@@ -22,6 +22,7 @@ export interface IUsuarioPrivilegio extends Document {
   id_privilegio: Types.ObjectId;
   asignado_por?: Types.ObjectId;
   fecha_asignacion: Date;
+  activo: boolean;
 }
 
 export interface ICategoria extends Document {
@@ -135,8 +136,8 @@ export interface IRevisionPregunta extends Document {
 export interface ICiclo extends Document {
   nombre_ciclo: string;
   descripcion?: string;
-  fecha_inicio?: Date;
-  fecha_fin?: Date;
+  fecha_inicio: Date;
+  fecha_fin: Date;
   activo: boolean;
   fecha_creacion: Date;
   creado_por?: Types.ObjectId;

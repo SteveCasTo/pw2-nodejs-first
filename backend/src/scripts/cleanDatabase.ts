@@ -6,22 +6,22 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const cleanDatabase = async () => {
   try {
-    console.log('Conectando a MongoDB...');
+    console.warn('Conectando a MongoDB...');
     await mongoose.connect(process.env.MONGO_URI as string);
-    console.log('✓ Conectado a MongoDB');
+    console.warn('✓ Conectado a MongoDB');
 
     const db = mongoose.connection.db;
     if (!db) {
       throw new Error('No se pudo obtener la instancia de la base de datos');
     }
 
-    console.log('\n🗑️  Limpiando base de datos...\n');
+    console.warn('\n🗑️  Limpiando base de datos...\n');
 
     // Obtener todas las colecciones
     const collections = await db.listCollections().toArray();
-    
+
     if (collections.length === 0) {
-      console.log('✓ La base de datos ya está vacía');
+      console.warn('✓ La base de datos ya está vacía');
       await mongoose.connection.close();
       return;
     }
@@ -31,14 +31,16 @@ const cleanDatabase = async () => {
       const collectionName = collection.name;
       await db.collection(collectionName).deleteMany({});
       const count = await db.collection(collectionName).countDocuments();
-      console.log(`✓ Colección "${collectionName}" limpiada (${count} documentos restantes)`);
+      console.warn(
+        `✓ Colección "${collectionName}" limpiada (${count} documentos restantes)`
+      );
     }
 
-    console.log('\n✅ Base de datos limpiada exitosamente');
-    console.log(`Total de colecciones procesadas: ${collections.length}\n`);
+    console.warn('\n✅ Base de datos limpiada exitosamente');
+    console.warn(`Total de colecciones procesadas: ${collections.length}\n`);
 
     await mongoose.connection.close();
-    console.log('✓ Conexión cerrada');
+    console.warn('✓ Conexión cerrada');
     process.exit(0);
   } catch (error) {
     console.error('❌ Error al limpiar la base de datos:', error);
@@ -48,7 +50,9 @@ const cleanDatabase = async () => {
 };
 
 // Confirmar antes de ejecutar
-console.log('⚠️  ADVERTENCIA: Este script eliminará TODOS los datos de la base de datos');
-console.log(`Base de datos: ${process.env.MONGO_URI}\n`);
+console.warn(
+  '⚠️  ADVERTENCIA: Este script eliminará TODOS los datos de la base de datos'
+);
+console.warn(`Base de datos: ${process.env.MONGO_URI}\n`);
 
 cleanDatabase();

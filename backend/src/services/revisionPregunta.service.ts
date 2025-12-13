@@ -55,7 +55,7 @@ export const revisionPreguntaService = {
 
     // Para cada pregunta, obtener el conteo de revisiones
     const preguntasConRevisiones = await Promise.all(
-      preguntas.map(async (pregunta) => {
+      preguntas.map(async pregunta => {
         const revisiones = await RevisionPregunta.find({
           id_pregunta: pregunta._id,
         });
@@ -73,12 +73,8 @@ export const revisionPreguntaService = {
   async getEstadisticasRevisor(idRevisor: string): Promise<unknown> {
     const revisiones = await RevisionPregunta.find({ id_revisor: idRevisor });
 
-    const votosPositivos = revisiones.filter(
-      (r) => r.voto === 'positivo'
-    ).length;
-    const votosNegativos = revisiones.filter(
-      (r) => r.voto === 'negativo'
-    ).length;
+    const votosPositivos = revisiones.filter(r => r.voto === 'positivo').length;
+    const votosNegativos = revisiones.filter(r => r.voto === 'negativo').length;
 
     return {
       total_revisiones: revisiones.length,

@@ -98,11 +98,16 @@ export const examenService = {
 
     // Validar que fecha_inicio < fecha_fin
     if (new Date(data.fecha_fin) <= new Date(data.fecha_inicio)) {
-      throw new Error('La fecha de fin debe ser posterior a la fecha de inicio');
+      throw new Error(
+        'La fecha de fin debe ser posterior a la fecha de inicio'
+      );
     }
 
     // Validar que las fechas del examen estén dentro del ciclo
-    if (ciclo.fecha_inicio && new Date(data.fecha_inicio) < ciclo.fecha_inicio) {
+    if (
+      ciclo.fecha_inicio &&
+      new Date(data.fecha_inicio) < ciclo.fecha_inicio
+    ) {
       throw new Error(
         'La fecha de inicio del examen no puede ser anterior a la fecha de inicio del ciclo'
       );
@@ -175,14 +180,18 @@ export const examenService = {
       : examenExistente.fecha_fin;
 
     if (fechaFin <= fechaInicio) {
-      throw new Error('La fecha de fin debe ser posterior a la fecha de inicio');
+      throw new Error(
+        'La fecha de fin debe ser posterior a la fecha de inicio'
+      );
     }
 
     return await Examen.findByIdAndUpdate(
       id,
       {
         ...(data.titulo && { titulo: data.titulo }),
-        ...(data.descripcion !== undefined && { descripcion: data.descripcion }),
+        ...(data.descripcion !== undefined && {
+          descripcion: data.descripcion,
+        }),
         ...(data.id_ciclo && { id_ciclo: new Types.ObjectId(data.id_ciclo) }),
         ...(data.fecha_inicio && { fecha_inicio: new Date(data.fecha_inicio) }),
         ...(data.fecha_fin && { fecha_fin: new Date(data.fecha_fin) }),

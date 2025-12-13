@@ -21,7 +21,7 @@ export const respuestaModeloValidators = {
       .withMessage('Las palabras clave no pueden estar vacías'),
 
     // Validación personalizada: debe haber al menos respuesta_texto o palabras_clave
-    body().custom((value) => {
+    body().custom(value => {
       if (!value.respuesta_texto && !value.palabras_clave) {
         throw new Error(
           'Debe proporcionar respuesta_texto o palabras_clave (o ambos)'

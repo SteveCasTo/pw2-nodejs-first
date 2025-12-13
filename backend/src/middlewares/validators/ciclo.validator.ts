@@ -7,13 +7,22 @@ export const cicloValidators = {
       .withMessage('El nombre del ciclo es requerido')
       .isString()
       .trim()
-      .matches(/^(\d{4}\/[12]|[IVX]+\/\d{4})$/)
+      .matches(/^[1-4]\/\d{4}$/)
       .withMessage(
-        'El formato debe ser YYYY/1, YYYY/2, I/YYYY, II/YYYY, III/YYYY o IV/YYYY'
+        'El formato debe ser: ciclo/año (Ejemplo: 1/2025, 2/2025, 3/2025, 4/2025)'
       ),
     body('descripcion').optional().isString().trim(),
-    body('fecha_inicio').optional().isISO8601().toDate(),
-    body('fecha_fin').optional().isISO8601().toDate(),
+    body('fecha_inicio')
+      .notEmpty()
+      .withMessage('La fecha de inicio es requerida')
+      .isISO8601()
+      .toDate(),
+    body('fecha_fin')
+      .notEmpty()
+      .withMessage('La fecha de fin es requerida')
+      .isISO8601()
+      .toDate(),
+    body('activo').optional().isBoolean(),
   ],
 
   update: [
@@ -21,12 +30,13 @@ export const cicloValidators = {
       .optional()
       .isString()
       .trim()
-      .matches(/^(\d{4}\/[12]|[IVX]+\/\d{4})$/)
+      .matches(/^[1-4]\/\d{4}$/)
       .withMessage(
-        'El formato debe ser YYYY/1, YYYY/2, I/YYYY, II/YYYY, III/YYYY o IV/YYYY'
+        'El formato debe ser: ciclo/año (Ejemplo: 1/2025, 2/2025, 3/2025, 4/2025)'
       ),
     body('descripcion').optional().isString().trim(),
     body('fecha_inicio').optional().isISO8601().toDate(),
     body('fecha_fin').optional().isISO8601().toDate(),
+    body('activo').optional().isBoolean(),
   ],
 };

@@ -36,7 +36,11 @@ export const examenPreguntaValidators = {
 
     // Validación: si usar_puntos_recomendados es false, puntos_asignados es requerido
     body('puntos_asignados').custom((value, { req }) => {
-      if (req.body.usar_puntos_recomendados === false && !value && value !== 0) {
+      if (
+        req.body.usar_puntos_recomendados === false &&
+        !value &&
+        value !== 0
+      ) {
         throw new Error(
           'puntos_asignados es requerido cuando usar_puntos_recomendados es false'
         );

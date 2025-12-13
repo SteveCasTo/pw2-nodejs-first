@@ -44,8 +44,9 @@ export const revisionPreguntaController = {
     try {
       const { idPregunta } = req.params;
 
-      const revisiones =
-        await revisionPreguntaService.getByPreguntaId(idPregunta!);
+      const revisiones = await revisionPreguntaService.getByPreguntaId(
+        idPregunta!
+      );
 
       res.status(200).json({
         success: true,
@@ -61,8 +62,9 @@ export const revisionPreguntaController = {
     try {
       const { idRevisor } = req.params;
 
-      const revisiones =
-        await revisionPreguntaService.getByRevisorId(idRevisor!);
+      const revisiones = await revisionPreguntaService.getByRevisorId(
+        idRevisor!
+      );
 
       res.status(200).json({
         success: true,
@@ -100,8 +102,9 @@ export const revisionPreguntaController = {
     try {
       const { idRevisor } = req.params;
 
-      const estadisticas =
-        await revisionPreguntaService.getEstadisticasRevisor(idRevisor!);
+      const estadisticas = await revisionPreguntaService.getEstadisticasRevisor(
+        idRevisor!
+      );
 
       res.status(200).json({
         success: true,
@@ -197,7 +200,10 @@ export const revisionPreguntaController = {
       const { estado } = req.body;
 
       const preguntaActualizada =
-        await revisionPreguntaService.cambiarEstadoPregunta(idPregunta!, estado);
+        await revisionPreguntaService.cambiarEstadoPregunta(
+          idPregunta!,
+          estado
+        );
 
       res.status(200).json({
         success: true,

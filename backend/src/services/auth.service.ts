@@ -42,7 +42,7 @@ const authService = {
       id_usuario: usuario._id,
     })
       .populate('id_privilegio', 'nombre_privilegio descripcion')
-      .select('id_privilegio');
+      .select('id_privilegio activo');
 
     const token = generateToken({
       id: usuario._id.toString(),
@@ -56,12 +56,17 @@ const authService = {
         correo_electronico: usuario.correo_electronico,
         nombre: usuario.nombre,
         activo: usuario.activo,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        privilegios: (privilegios as any).map((up: any) => ({
+          _id: up._id,
+          id_privilegio: {
+            _id: up.id_privilegio?._id,
+            nombre: up.id_privilegio?.nombre_privilegio,
+            descripcion: up.id_privilegio?.descripcion,
+          },
+          activo: up.activo !== undefined ? up.activo : true,
+        })),
       },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      privilegios: (privilegios as any).map((up: any) => ({
-        nombre: up.id_privilegio?.nombre_privilegio,
-        descripcion: up.id_privilegio?.descripcion,
-      })),
     };
   },
 
@@ -83,24 +88,29 @@ const authService = {
 
     // Si es el primer usuario del sistema, asignarle privilegio de superadmin
     const userCount = await Usuario.countDocuments();
-    console.log('👤 Total de usuarios en el sistema:', userCount);
-    
+    console.warn('👤 Total de usuarios en el sistema:', userCount);
+
     if (userCount === 1) {
-      console.log('🔐 Primer usuario detectado. Asignando privilegio de superadmin...');
-      
+      console.warn(
+        '🔐 Primer usuario detectado. Asignando privilegio de superadmin...'
+      );
+
       // Buscar o crear el privilegio de superadmin
       let superadminPrivilegio = await Privilegio.findOne({
         nombre_privilegio: 'superadmin',
       });
 
       if (!superadminPrivilegio) {
-        console.log('➕ Creando privilegio de superadmin...');
+        console.warn('➕ Creando privilegio de superadmin...');
         superadminPrivilegio = await Privilegio.create({
           nombre_privilegio: 'superadmin',
           descripcion: 'Acceso total al sistema',
         });
       } else {
-        console.log('✅ Privilegio superadmin encontrado:', superadminPrivilegio._id);
+        console.warn(
+          '✅ Privilegio superadmin encontrado:',
+          superadminPrivilegio._id
+        );
       }
 
       // Asignar el privilegio al usuario
@@ -108,7 +118,7 @@ const authService = {
         id_usuario: usuario._id,
         id_privilegio: superadminPrivilegio._id,
       });
-      console.log('✅ Privilegio asignado exitosamente:', usuarioPrivilegio);
+      console.warn('✅ Privilegio asignado exitosamente:', usuarioPrivilegio);
     }
 
     let emailSent = false;
@@ -146,7 +156,7 @@ const authService = {
       id_usuario: usuario._id,
     })
       .populate('id_privilegio', 'nombre_privilegio descripcion')
-      .select('id_privilegio');
+      .select('id_privilegio activo');
 
     return {
       usuario: {
@@ -154,12 +164,17 @@ const authService = {
         correo_electronico: usuario.correo_electronico,
         nombre: usuario.nombre,
         activo: usuario.activo,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        privilegios: (privilegios as any).map((up: any) => ({
+          _id: up._id,
+          id_privilegio: {
+            _id: up.id_privilegio?._id,
+            nombre: up.id_privilegio?.nombre_privilegio,
+            descripcion: up.id_privilegio?.descripcion,
+          },
+          activo: up.activo !== undefined ? up.activo : true,
+        })),
       },
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      privilegios: (privilegios as any).map((up: any) => ({
-        nombre: up.id_privilegio?.nombre_privilegio,
-        descripcion: up.id_privilegio?.descripcion,
-      })),
     };
   },
 

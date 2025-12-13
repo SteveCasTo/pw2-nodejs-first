@@ -21,6 +21,10 @@ const usuarioPrivilegioSchema = new Schema<IUsuarioPrivilegio>(
       type: Date,
       default: Date.now,
     },
+    activo: {
+      type: Boolean,
+      default: true,
+    },
   },
   {
     timestamps: false,

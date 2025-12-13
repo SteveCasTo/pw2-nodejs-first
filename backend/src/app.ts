@@ -9,6 +9,7 @@ import subcategoriaRoutes from '@routes/subcategoria.routes';
 import nivelDificultadRoutes from '@routes/nivelDificultad.routes';
 import authRoutes from '@routes/auth.routes';
 import privilegioRoutes from '@routes/privilegio.routes';
+import usuarioRoutes from '@routes/usuario.routes';
 import usuarioPrivilegioRoutes from '@routes/usuarioPrivilegio.routes';
 import cicloRoutes from '@routes/ciclo.routes';
 import estadoPreguntaRoutes from '@routes/estadoPregunta.routes';
@@ -20,6 +21,10 @@ import respuestaModeloRoutes from '@routes/respuestaModelo.routes';
 import revisionPreguntaRoutes from '@routes/revisionPregunta.routes';
 import examenRoutes from '@routes/examen.routes';
 import examenPreguntaRoutes from '@routes/examenPregunta.routes';
+import intentoExamenRoutes from '@routes/intentoExamen.routes';
+import respuestaSeleccionRoutes from '@routes/respuestaSeleccion.routes';
+import respuestaDesarrolloRoutes from '@routes/respuestaDesarrollo.routes';
+import respuestaEmparejamientoRoutes from '@routes/respuestaEmparejamiento.routes';
 import config from '@config/constants';
 
 const app: Application = express();
@@ -28,7 +33,13 @@ app.use(helmet());
 
 app.use(
   cors({
-    origin: config.BACKEND_URL,
+    origin: [
+      'http://localhost:5173',
+      'http://localhost:3000',
+      'https://localhost:3001',
+      'https://localhost:3002',
+      config.BACKEND_URL,
+    ],
     credentials: true,
   })
 );
@@ -73,6 +84,7 @@ app.use('/api/categorias', categoriaRoutes);
 app.use('/api/subcategorias', subcategoriaRoutes);
 app.use('/api/niveles-dificultad', nivelDificultadRoutes);
 app.use('/api/privilegios', privilegioRoutes);
+app.use('/api/usuarios', usuarioRoutes);
 app.use('/api/usuario-privilegios', usuarioPrivilegioRoutes);
 app.use('/api/ciclos', cicloRoutes);
 app.use('/api/estados-pregunta', estadoPreguntaRoutes);
@@ -84,6 +96,10 @@ app.use('/api/respuestas-modelo', respuestaModeloRoutes);
 app.use('/api/revisiones-pregunta', revisionPreguntaRoutes);
 app.use('/api/examenes', examenRoutes);
 app.use('/api/examenes-preguntas', examenPreguntaRoutes);
+app.use('/api/intentos-examen', intentoExamenRoutes);
+app.use('/api/respuestas-seleccion', respuestaSeleccionRoutes);
+app.use('/api/respuestas-desarrollo', respuestaDesarrolloRoutes);
+app.use('/api/respuestas-emparejamiento', respuestaEmparejamientoRoutes);
 
 app.use(notFound);
 app.use(notFound);

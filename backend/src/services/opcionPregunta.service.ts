@@ -207,7 +207,9 @@ export const opcionPreguntaService = {
         ...(data.id_contenido_opcion && {
           id_contenido_opcion: new Types.ObjectId(data.id_contenido_opcion),
         }),
-        ...(data.es_correcta !== undefined && { es_correcta: data.es_correcta }),
+        ...(data.es_correcta !== undefined && {
+          es_correcta: data.es_correcta,
+        }),
         ...(data.orden !== undefined && { orden: data.orden }),
       },
       { new: true, runValidators: true }
@@ -245,7 +247,10 @@ export const opcionPreguntaService = {
       );
     }
 
-    if (pregunta.tipo_pregunta === 'seleccion_multiple' && opcionesRestantes < 1) {
+    if (
+      pregunta.tipo_pregunta === 'seleccion_multiple' &&
+      opcionesRestantes < 1
+    ) {
       throw new Error(
         'No se puede eliminar esta opción. Las preguntas de selección múltiple deben tener al menos 2 opciones'
       );

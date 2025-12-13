@@ -1,8 +1,58 @@
-# ⚙️ GUÍA DE CONFIGURACIÓN
+# ⚙️ GUÍA DE CONFIGURACIÓN - FULL STACK
 
 > 💡 **Tip VS Code**: Presiona `Ctrl+Shift+V` (Windows/Linux) o `Cmd+Shift+V` (Mac) para ver este documento con formato preview.
 
-Esta guía explica cómo configurar todas las variables de entorno necesarias para el proyecto.
+Esta guía explica cómo configurar todas las variables de entorno necesarias para el proyecto **frontend y backend**.
+
+---
+
+## 📋 Resumen de Configuración
+
+El proyecto tiene **dos archivos de configuración**:
+
+1. **`backend/.env`** - Configuración del servidor (MongoDB, JWT, Email, puertos)
+2. **`frontend/.env`** - Configuración del cliente (URL del backend)
+
+---
+
+## 🎨 Configuración del Frontend
+
+### Variables de Entorno
+
+**Archivo:** `frontend/.env`
+
+```env
+# URL del backend API
+VITE_API_URL=http://localhost:3000
+```
+
+### Descripción de Variables
+
+| Variable | Valor por Defecto | Descripción |
+|----------|-------------------|-------------|
+| `VITE_API_URL` | `http://localhost:3000` | URL del servidor backend |
+
+**Cuándo cambiar:**
+- ✅ Si cambias el puerto del backend (ej: 3003)
+- ✅ Si usas HTTPS: `https://localhost:3001`
+- ✅ En producción: `https://api.tudominio.com`
+
+> 🔴 **IMPORTANTE:** En Vite, todas las variables deben empezar con `VITE_` para ser accesibles en el código del cliente.
+
+**Ejemplo de uso en código:**
+
+```typescript
+// src/services/api.ts
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+});
+```
+
+---
+
+## 🔧 Configuración del Backend
+
+Esta guía explica cómo configurar todas las variables de entorno necesarias para el backend.
 
 ---
 
@@ -234,12 +284,12 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem \
 
 ## ✅ Verificar Configuración
 
-Después de configurar todo, verifica que la conexión funcione:
+### Backend
+
+Después de configurar todo, verifica que el backend funcione:
 
 ```bash
 cd backend
-
-# Probar conexión a MongoDB
 npm run dev
 ```
 
@@ -251,11 +301,108 @@ HTTPS (HTTP/1.1) -> https://localhost:3001
 HTTP/2 -> https://localhost:3002
 ```
 
+**Probar endpoints:**
+
+```bash
+# Health check
+curl http://localhost:3000/health
+
+# Login
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"correo_electronico":"admin@sistema.com","password":"Admin123!@#"}'
+```
+
+### Frontend
+
+En otra terminal, verifica que el frontend funcione:
+
+```bash
+cd frontend
+npm run dev
+```
+
+Verás:
+```
+  VITE v7.2.7  ready in 850 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+```
+
+**Prueba manual:**
+1. Abre http://localhost:5173 en tu navegador
+2. Deberías ver la página de login "FormifyX"
+3. Intenta hacer login con: `admin@sistema.com` / `Admin123!@#`
+4. Si funciona, te redirige al dashboard
+
+### Verificar Comunicación Frontend ↔ Backend
+
+**En el navegador (DevTools - Console):**
+
+Deberías ver estos logs al hacer login:
+```
+✅ Login exitoso: { token: "eyJhbG...", usuario: "admin@sistema.com" }
+✅ Token guardado en localStorage
+✅ Estado actualizado
+```
+
+**En el navegador (DevTools - Network):**
+
+La petición POST a `/api/auth/login` debe devolver:
+- Status: `200 OK`
+- Response Body: `{ "success": true, "data": { "token": "...", "usuario": {...} } }`
+
+**En el navegador (DevTools - Application → Storage → Local Storage):**
+
+Deberías ver:
+- `token`: `eyJhbGciOiJIUzI1NiIs...`
+- `user`: `{"_id":"...","correo_electronico":"admin@sistema.com",...}`
+
 ---
 
 ## 🆘 Solución de Problemas
 
-### Error: MongoServerError: Authentication failed
+### Frontend
+
+#### Error: CORS - Access-Control-Allow-Origin
+
+**Causa:** El backend no permite peticiones desde `http://localhost:5173`.
+
+**Solución:**
+Verificar `backend/src/app.ts`:
+```typescript
+app.use(cors({
+  origin: ['http://localhost:5173'], // Debe incluir frontend
+  credentials: true
+}));
+```
+
+#### Login no funciona - Token no se guarda
+
+**Causa:** localStorage bloqueado (común en Firefox).
+
+**Solución:**
+1. Abre DevTools (F12) → Console
+2. Prueba: `localStorage.setItem('test', 'value'); localStorage.getItem('test');`
+3. Si falla, ve a `about:preferences#privacy`
+4. Cambia "Enhanced Tracking Protection" a "Standard"
+
+#### Vite no puede conectar con backend
+
+**Causa:** `VITE_API_URL` mal configurado o backend no está corriendo.
+
+**Solución:**
+1. Verifica que backend esté corriendo en puerto 3000
+2. Revisa `frontend/.env`:
+   ```env
+   VITE_API_URL=http://localhost:3000
+   ```
+3. Reinicia Vite: `npm run dev`
+
+### Backend
+
+#### Error: MongoServerError: Authentication failed
 
 **Causa:** Usuario o contraseña incorrectos en `MONGO_URI`.
 
@@ -267,7 +414,7 @@ HTTP/2 -> https://localhost:3002
    - `#` → `%23`
    - `$` → `%24`
 
-### Error: MongoServerError: IP not whitelisted
+#### Error: MongoServerError: IP not whitelisted
 
 **Causa:** Tu IP no está permitida en MongoDB Atlas.
 
@@ -275,7 +422,7 @@ HTTP/2 -> https://localhost:3002
 1. Ve a "Network Access" en MongoDB Atlas
 2. Agrega `0.0.0.0/0` para permitir todas las IPs (desarrollo)
 
-### Error: Invalid login credentials (Email)
+#### Error: Invalid login credentials (Email)
 
 **Causa:** Contraseña de aplicación incorrecta o verificación en 2 pasos no activada.
 

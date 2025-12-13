@@ -40,7 +40,7 @@ const seedDatabase = async () => {
     const privilegiosData = [
       {
         nombre_privilegio: 'superadmin',
-        descripcion: 'Administrador con acceso total al sistema',
+        descripcion: 'Acceso total al sistema',
       },
       {
         nombre_privilegio: 'editor',
@@ -340,14 +340,14 @@ const seedDatabase = async () => {
     console.warn('\nCreando ciclos...');
     const ciclosData = [
       {
-        nombre_ciclo: '2025/1',
+        nombre_ciclo: '1/2025',
         descripcion: 'Primer ciclo 2025',
         fecha_inicio: new Date('2025-01-15'),
         fecha_fin: new Date('2025-06-15'),
         creado_por: adminUser._id,
       },
       {
-        nombre_ciclo: '2025/2',
+        nombre_ciclo: '2/2025',
         descripcion: 'Segundo ciclo 2025',
         fecha_inicio: new Date('2025-07-15'),
         fecha_fin: new Date('2025-12-15'),
@@ -372,11 +372,31 @@ const seedDatabase = async () => {
 
     console.warn('\nCreando estados de pregunta...');
     const estadosData = [
-      { nombre_estado: 'borrador', descripcion: 'Pregunta en borrador', orden: 1 },
-      { nombre_estado: 'revision', descripcion: 'Pregunta en revisión', orden: 2 },
-      { nombre_estado: 'publicada', descripcion: 'Pregunta publicada', orden: 3 },
-      { nombre_estado: 'rechazada', descripcion: 'Pregunta rechazada', orden: 4 },
-      { nombre_estado: 'archivada', descripcion: 'Pregunta archivada', orden: 5 },
+      {
+        nombre_estado: 'borrador',
+        descripcion: 'Pregunta en borrador',
+        orden: 1,
+      },
+      {
+        nombre_estado: 'revision',
+        descripcion: 'Pregunta en revisión',
+        orden: 2,
+      },
+      {
+        nombre_estado: 'publicada',
+        descripcion: 'Pregunta publicada',
+        orden: 3,
+      },
+      {
+        nombre_estado: 'rechazada',
+        descripcion: 'Pregunta rechazada',
+        orden: 4,
+      },
+      {
+        nombre_estado: 'archivada',
+        descripcion: 'Pregunta archivada',
+        orden: 5,
+      },
     ];
 
     const estados = [];
@@ -430,12 +450,18 @@ const seedDatabase = async () => {
     }
 
     console.warn('\nCreando preguntas...');
-    const matematicasSub = await Subcategoria.findOne({ nombre_subcategoria: 'Suma y Resta' });
-    const cienciasSub = await Subcategoria.findOne({ nombre_subcategoria: 'Biología' });
+    const matematicasSub = await Subcategoria.findOne({
+      nombre_subcategoria: 'Suma y Resta',
+    });
+    const cienciasSub = await Subcategoria.findOne({
+      nombre_subcategoria: 'Biología',
+    });
     const rango6_8 = await RangoEdad.findOne({ nombre_rango: '6-8 años' });
     const rango9_12 = await RangoEdad.findOne({ nombre_rango: '9-12 años' });
     const facilDif = await NivelDificultad.findOne({ nivel: 'Fácil' });
-    const intermediateDif = await NivelDificultad.findOne({ nivel: 'Intermedio' });
+    const intermediateDif = await NivelDificultad.findOne({
+      nivel: 'Intermedio',
+    });
     const publicadaEstado = estados.find(e => e.nombre_estado === 'publicada');
 
     const preguntasData = [
@@ -495,12 +521,42 @@ const seedDatabase = async () => {
 
     console.warn('\nCreando opciones de preguntas...');
     const opcionesData = [
-      { id_pregunta: preguntas[0]!._id, texto_opcion: '8', es_correcta: true, orden: 1 },
-      { id_pregunta: preguntas[0]!._id, texto_opcion: '7', es_correcta: false, orden: 2 },
-      { id_pregunta: preguntas[0]!._id, texto_opcion: '9', es_correcta: false, orden: 3 },
-      { id_pregunta: preguntas[0]!._id, texto_opcion: '6', es_correcta: false, orden: 4 },
-      { id_pregunta: preguntas[1]!._id, texto_opcion: 'Verdadero', es_correcta: true, orden: 1 },
-      { id_pregunta: preguntas[1]!._id, texto_opcion: 'Falso', es_correcta: false, orden: 2 },
+      {
+        id_pregunta: preguntas[0]!._id,
+        texto_opcion: '8',
+        es_correcta: true,
+        orden: 1,
+      },
+      {
+        id_pregunta: preguntas[0]!._id,
+        texto_opcion: '7',
+        es_correcta: false,
+        orden: 2,
+      },
+      {
+        id_pregunta: preguntas[0]!._id,
+        texto_opcion: '9',
+        es_correcta: false,
+        orden: 3,
+      },
+      {
+        id_pregunta: preguntas[0]!._id,
+        texto_opcion: '6',
+        es_correcta: false,
+        orden: 4,
+      },
+      {
+        id_pregunta: preguntas[1]!._id,
+        texto_opcion: 'Verdadero',
+        es_correcta: true,
+        orden: 1,
+      },
+      {
+        id_pregunta: preguntas[1]!._id,
+        texto_opcion: 'Falso',
+        es_correcta: false,
+        orden: 2,
+      },
     ];
 
     const opciones = [];
@@ -512,9 +568,24 @@ const seedDatabase = async () => {
 
     console.warn('\nCreando pares de emparejamiento...');
     const paresData = [
-      { id_pregunta: preguntas[3]!._id, elemento_izquierdo: 'Pez', elemento_derecho: 'Agua', orden: 1 },
-      { id_pregunta: preguntas[3]!._id, elemento_izquierdo: 'Águila', elemento_derecho: 'Cielo', orden: 2 },
-      { id_pregunta: preguntas[3]!._id, elemento_izquierdo: 'Oso', elemento_derecho: 'Bosque', orden: 3 },
+      {
+        id_pregunta: preguntas[3]!._id,
+        elemento_izquierdo: 'Pez',
+        elemento_derecho: 'Agua',
+        orden: 1,
+      },
+      {
+        id_pregunta: preguntas[3]!._id,
+        elemento_izquierdo: 'Águila',
+        elemento_derecho: 'Cielo',
+        orden: 2,
+      },
+      {
+        id_pregunta: preguntas[3]!._id,
+        elemento_izquierdo: 'Oso',
+        elemento_derecho: 'Bosque',
+        orden: 3,
+      },
     ];
 
     for (const parData of paresData) {
@@ -526,7 +597,8 @@ const seedDatabase = async () => {
     const respuestasModeloData = [
       {
         id_pregunta: preguntas[2]!._id,
-        texto_respuesta: 'La fotosíntesis es el proceso mediante el cual las plantas convierten la luz solar, agua y dióxido de carbono en oxígeno y glucosa. Este proceso ocurre principalmente en las hojas, específicamente en los cloroplastos que contienen clorofila.',
+        texto_respuesta:
+          'La fotosíntesis es el proceso mediante el cual las plantas convierten la luz solar, agua y dióxido de carbono en oxígeno y glucosa. Este proceso ocurre principalmente en las hojas, específicamente en los cloroplastos que contienen clorofila.',
         puntos_asignados: 5,
       },
     ];
@@ -579,10 +651,30 @@ const seedDatabase = async () => {
 
     console.warn('\nAsignando preguntas a exámenes...');
     const examenPreguntasData = [
-      { id_examen: examenes[0]!._id, id_pregunta: preguntas[0]!._id, orden: 1, puntos: 1 },
-      { id_examen: examenes[0]!._id, id_pregunta: preguntas[1]!._id, orden: 2, puntos: 1 },
-      { id_examen: examenes[1]!._id, id_pregunta: preguntas[2]!._id, orden: 1, puntos: 5 },
-      { id_examen: examenes[1]!._id, id_pregunta: preguntas[3]!._id, orden: 2, puntos: 3 },
+      {
+        id_examen: examenes[0]!._id,
+        id_pregunta: preguntas[0]!._id,
+        orden: 1,
+        puntos: 1,
+      },
+      {
+        id_examen: examenes[0]!._id,
+        id_pregunta: preguntas[1]!._id,
+        orden: 2,
+        puntos: 1,
+      },
+      {
+        id_examen: examenes[1]!._id,
+        id_pregunta: preguntas[2]!._id,
+        orden: 1,
+        puntos: 5,
+      },
+      {
+        id_examen: examenes[1]!._id,
+        id_pregunta: preguntas[3]!._id,
+        orden: 2,
+        puntos: 3,
+      },
     ];
 
     const examenPreguntas = [];
@@ -590,7 +682,9 @@ const seedDatabase = async () => {
       const ep = await ExamenPregunta.create(epData);
       examenPreguntas.push(ep);
     }
-    console.warn(`${examenPreguntasData.length} preguntas asignadas a exámenes`);
+    console.warn(
+      `${examenPreguntasData.length} preguntas asignadas a exámenes`
+    );
 
     console.warn('\nCreando intentos de examen...');
     const intentosData = [
@@ -644,11 +738,13 @@ const seedDatabase = async () => {
     await RespuestaDesarrollo.create({
       id_intento: intentos[1]!._id,
       id_examen_pregunta: examenPreguntas[2]!._id,
-      respuesta_texto: 'Las plantas usan la luz del sol para convertir agua y CO2 en azúcar y oxígeno.',
+      respuesta_texto:
+        'Las plantas usan la luz del sol para convertir agua y CO2 en azúcar y oxígeno.',
       puntos_obtenidos: 3,
       calificada: true,
       calificada_por: editorUser._id,
-      comentario_calificador: 'Buena respuesta pero falta más detalle sobre los cloroplastos.',
+      comentario_calificador:
+        'Buena respuesta pero falta más detalle sobre los cloroplastos.',
     });
 
     console.warn('Respuestas de estudiantes creadas');
